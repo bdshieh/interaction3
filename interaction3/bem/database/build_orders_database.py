@@ -13,6 +13,7 @@ import sqlite3 as sql
 import multiprocessing
 from itertools import repeat
 import os
+from contextlib import closing
 from tqdm import tqdm
 
 from .. core . fma_tests import calculate_error_measures, nine_point_test as test
@@ -103,9 +104,9 @@ def process(proc_args):
             breakdown = False
 
     # write raw order and other data to database
-    conn = sql.connect(file)
-    update_orders_table(conn, f, k, l, raw_order, breakdown, passed)
-    conn.close()
+    with closing(sql.connect(file)) as conn:
+        update_orders_table(conn, f, k, l, raw_order, breakdown, passed)
+
 
 
 ## POSTPROCESS FUNCTIONS ##
@@ -378,7 +379,7 @@ def main(**kwargs):
     # Check for existing file
     if os.path.isfile(file):
 
-        response = input('Database ' + str(file) + ' already exists. Overwrite (y/n)?')
+        response = input('Database ' + str(file) + ' already exists. \nOverwrite (y/n)?')
         if response.lower() in ['y', 'yes']:
             os.remove(file)
         else:
@@ -390,12 +391,12 @@ def main(**kwargs):
         os.makedirs(file_dir)
 
     # create database
-    conn = sql.connect(file)
+    with closing(sql.connect(file)) as conn:
 
-    create_metadata_table(conn, **kwargs)
-    create_frequencies_table(conn, fs, ks)
-    create_levels_table(conn, levels)
-    create_orders_table(conn)
+        create_metadata_table(conn, **kwargs)
+        create_frequencies_table(conn, fs, ks)
+        create_levels_table(conn, levels)
+        create_orders_table(conn)
 
     try:
 
@@ -407,7 +408,8 @@ def main(**kwargs):
         for r in tqdm(result, desc='Building', total=len(proc_args)):
             pass
 
-        postprocess(conn, fs, levels)
+        with closing(sql.connect(file)) as conn:
+            postprocess(conn, fs, levels)
 
 
     except Exception as e:
@@ -415,7 +417,6 @@ def main(**kwargs):
 
     finally:
 
-        conn.close()
         pool.terminate()
         pool.close()
 

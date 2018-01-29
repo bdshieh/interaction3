@@ -18,12 +18,12 @@ import pandas as pd
 import sqlite3 as sql
 import multiprocessing
 from itertools import repeat
-from scipy.interpolate import interp1d
+from contextlib import closing
 import os
 from tqdm import tqdm
-# import h5py
 
 from .. core import fma_functions as fma
+from . import get_order
 
 # register adapters for sqlite to convert numpy types
 sql.register_adapter(np.float64, float)
@@ -34,79 +34,67 @@ sql.register_adapter(np.int32, int)
 
 ## PROCESS FUNCTIONS ##
 
-def get_unique_coords():
-
-    x, y, z = np.mgrid[1:4, 0:4, 0:1:1j]
-    unique_coords = np.c_[x.ravel(), y.ravel(), z.ravel()].astype(int)
-    unique_coords = unique_coords[2:, :]
-
-    return unique_coords
-
-
-def get_orders_interp_funcs(orders_db, levels):
-
-    minlevel, maxlevel = levels
-    orders_interp_funcs = dict()
-    conn = sql.connect(orders_db)
-
-    for l in range(minlevel, maxlevel + 1):
-
-        query = '''
-                SELECT wavenumber, translation_order FROM orders
-                WHERE level=?
-                ORDER BY wavenumber
-                '''
-        table = pd.read_sql(query, conn, params=[l,])
-
-        ks = table['wavenumber']
-        orders = table['translation_order']
-
-        orders_interp_funcs[l] = interp1d(ks, orders)
-
-    return orders_interp_funcs
+# def get_orders_interp_funcs(orders_db, levels):
+#
+#     minlevel, maxlevel = levels
+#     orders_interp_funcs = dict()
+#     conn = sql.connect(orders_db)
+#
+#     for l in range(minlevel, maxlevel + 1):
+#
+#         query = '''
+#                 SELECT wavenumber, translation_order FROM orders
+#                 WHERE level=?
+#                 ORDER BY wavenumber
+#                 '''
+#         table = pd.read_sql(query, conn, params=[l,])
+#
+#         ks = table['wavenumber']
+#         orders = table['translation_order']
+#
+#         orders_interp_funcs[l] = interp1d(ks, orders)
+#
+#     return orders_interp_funcs
 
 
-def generate_translations(conn, f, k, dims, levels, orders_interp_funcs):
+def generate_translations(file, f, k, dims, levels, orders_db):
 
     xdim, ydim = dims
     minlevel, maxlevel = levels
 
-    def mag(r):
-        return np.sqrt(np.sum(r ** 2))
-
     for l in range(minlevel, maxlevel + 1):
 
-        order = int(orders_interp_funcs[l](k))
-        if order % 2 == 0:
-            order += 1
+        order = get_order(orders_db, l, f)
 
         qrule = fma.fft_quadrule(order, order)
         group_xdim, group_ydim = xdim / (2 ** l), ydim / (2 ** l)
 
-        kcoordT = qrule['kcoord'].transpose((0, 2, 1))
+        kcoordT = qrule['kcoordT']
         theta = qrule['theta']
         phi = qrule['phi']
 
-        unique_coords = get_unique_coords()
+        unique_coords = fma.get_unique_coords()
 
         for coords in unique_coords:
 
             r = coords * np.array([group_xdim, group_ydim, 1])
-            rhat = r / mag(r)
+            rhat = r / fma.mag(r)
             cos_angle = rhat.dot(kcoordT)
 
-            translation = np.ascontiguousarray(fma.mod_ff2nf_op(mag(r), cos_angle, k, order))
-            update_translations_table(conn, f, k, l, order, tuple(coords), theta, phi, translation)
+            translation = np.ascontiguousarray(fma.mod_ff2nf_op(fma.mag(r), cos_angle, k, order))
+
+            with closing(sql.connect(file)) as conn:
+                update_translations_table(conn, f, k, l, order, tuple(coords), theta, phi, translation)
 
 
 def process(proc_args):
 
-    f, k, dims, levels, orders_interp_funcs, file = proc_args
+    file, f, k, dims, levels, orders_db = proc_args
 
-    conn = sql.connect(file)
-    generate_translations(conn, f, k, dims, levels, orders_interp_funcs)
-    update_progress(conn, f)
-    conn.close()
+    generate_translations(file, f, k, dims, levels, orders_db)
+
+    with closing(sql.connect(file)) as conn:
+        update_progress(conn, f)
 
 
 ## DATABASE FUNCTIONS ##
@@ -196,7 +184,7 @@ def create_levels_table(conn, levels):
 
 def create_coordinates_table(conn):
 
-    unique_coords = get_unique_coords()
+    unique_coords = fma.get_unique_coords()
 
     query = '''
             CREATE TABLE coordinates (
@@ -308,7 +296,7 @@ def main(**kwargs):
         kwargs['orders_db'] = orders_db
 
     # read orders database and form interpolating functions
-    orders_interp_funcs = get_orders_interp_funcs(orders_db, levels)
+    # orders_interp_funcs = get_orders_interp_funcs(orders_db, levels)
 
     # check for existing file
     if os.path.isfile(file):
@@ -327,23 +315,24 @@ def main(**kwargs):
             ks = 2 * np.pi * fs / c
 
             # create database
-            conn = sql.connect(file)
+            with closing(sql.connect(file)) as conn:
 
-            # create database tables
-            create_metadata_table(conn, **kwargs)
-            create_frequencies_table(conn, fs, ks)
-            create_levels_table(conn, levels)
-            create_coordinates_table(conn)
-            create_translations_table(conn)
+                # create database tables
+                create_metadata_table(conn, **kwargs)
+                create_frequencies_table(conn, fs, ks)
+                create_levels_table(conn, levels)
+                create_coordinates_table(conn)
+                create_translations_table(conn)
 
         elif response.lower() in ['c', 'continue']:
 
-            conn = sql.connect(file)
-            query = '''
-                    SELECT (frequency, wavenumber) FROM frequencies 
-                    WHERE is_complete=False
-                    '''
-            table = pd.read_sql(query, conn)
+            with closing(sql.connect(file)) as conn:
+
+                query = '''
+                        SELECT (frequency, wavenumber) FROM frequencies 
+                        WHERE is_complete=False
+                        '''
+                table = pd.read_sql(query, conn)
 
             fs = np.array(table['frequency'])
             ks = np.array(table['wavenumber'])
@@ -364,20 +353,20 @@ def main(**kwargs):
         ks = 2 * np.pi * fs / c
 
         # create database
-        conn = sql.connect(file)
+        with closing(sql.connect(file)) as conn:
 
-        # create database tables
-        create_metadata_table(conn, **kwargs)
-        create_frequencies_table(conn, fs, ks)
-        create_levels_table(conn, levels)
-        create_coordinates_table(conn)
-        create_translations_table(conn)
+            # create database tables
+            create_metadata_table(conn, **kwargs)
+            create_frequencies_table(conn, fs, ks)
+            create_levels_table(conn, levels)
+            create_coordinates_table(conn)
+            create_translations_table(conn)
 
     try:
 
         # start multiprocessing pool and run process
         pool = multiprocessing.Pool(threads)
-        proc_args = [(f, k, dims, levels, orders_interp_funcs, file) for f, k in zip(fs, ks)]
+        proc_args = [(file, f, k, dims, levels, orders_db) for f, k in zip(fs, ks)]
         result = pool.imap_unordered(process, proc_args)
 
         for r in tqdm(result, desc='Building', total=len(fs)):
@@ -388,7 +377,6 @@ def main(**kwargs):
 
     finally:
 
-        conn.close()
         pool.terminate()
         pool.close()
 

@@ -4,8 +4,7 @@ import numpy as np
 from scipy.sparse import linalg as spsl
 from timeit import default_timer as timer
 
-from . core . trees import QuadTree
-# from . base_simulation import BaseSimulation
+from .. core . fma_trees import QuadTree
 
 
 class ArrayTransmitSimulation:

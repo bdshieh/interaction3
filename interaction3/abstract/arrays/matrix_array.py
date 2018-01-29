@@ -1,6 +1,6 @@
 
-from . classes import *
-from . manipulations import *
+from interaction3.abstract.classes import *
+from interaction3.abstract.manipulations import *
 
 
 # default parameters

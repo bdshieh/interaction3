@@ -4,14 +4,8 @@ Data structures for the multi-level fast multipole algorithm.
 Author: Bernard Shieh (bshieh@gatech.edu)
 '''
 import numpy as np
-import sqlite3 as sql
-import matplotlib.pyplot as plt
-from matplotlib.patches import Rectangle
-from scipy.interpolate import interp1d
 import os.path
-import h5py
 import sys
-from ast import literal_eval
 
 from . import fma_functions as fma
 from .. import database as db
@@ -57,7 +51,7 @@ class Group():
 
         # set center
         x0, y0, x1, y1 = bbox
-        self.center = np.array([x0 + (x1 - x0) / 2, y0 + (y1 - y0) / 2, 0.0])
+        self.center = np.array([x0 + (x1 - x0) / 2, y0 + (y1 - y0) / 2, 0.])
 
         # set nodes
         self.nodes = None
@@ -135,27 +129,15 @@ class QuadTree():
     This is a recursive implementation meant to be simpler and more readable 
     (but probably a bit slower). 
     '''
-    _parameters = ['maxlevel', 'wavenumber', 'node_area', 'density', 'sound_speed', 'orders_db', 'translations_db']
-    
-    def __init__(self, nodes, bounding_box, maxlevel, **kwargs):
-        
-        # Read in configuration parameters
-        config = dict.fromkeys(QuadTree._parameters)
-
-        for k, v in kwargs.items():
-            if k in config:
-                config[k] = v
-                
-        config['maxlevel'] = maxlevel
-        self.config = config
+    def __init__(self, nodes, bbox, maxlevel):
 
         # Set tree parameters
         Group.maxlevel = maxlevel
-        self.bbox = map(float, bounding_box)
+        self.bbox = map(float, bbox)
         self.apply_counter = 0
 
         # Plant and grow full tree
-        root = Group(parent=None, bbox=bounding_box)
+        root = Group(parent=None, bbox=bbox)
         root.subdivide()
 
         # Setup tree and prune
@@ -189,8 +171,8 @@ class QuadTree():
         self.nodes = nodes
 
         x0, y0, x1, y1 = self.root.bbox
-        maxid = 2**self.root.maxlevel
-        xdim, ydim = (x1 - x0)/maxid, (y1 - y0)/maxid
+        maxid = 2 ** self.root.maxlevel
+        xdim, ydim = (x1 - x0) // maxid, (y1 - y0) // maxid
 
         # calculate usid of each node: the unique single digit id which 
         # identifies the group it belongs to
@@ -337,6 +319,24 @@ class QuadTree():
                     if child not in group.neighbors:
                         group.ntnn.append(child)
 
+
+class FmaQuadTree(QuadTree):
+
+    _parameters = ['frequency', 'wavenumber', 'node_area', 'density', 'sound_speed', 'orders_db',
+                   'translations_db']
+
+    def __init__(self, **kwargs):
+
+        # Read in configuration parameters
+        config = dict.fromkeys(QuadTree._parameters)
+
+        for k, v in kwargs.items():
+            if k in config:
+                config[k] = v
+
+        config['maxlevel'] = maxlevel
+        self.config = config
+
     def setup(self):
         '''
         Set the QuadTree up for solving. This function calls the individual
@@ -353,14 +353,9 @@ class QuadTree():
         # zero apply counter
         self.apply_counter = 0
 
-        # setup fmm (quadrature rule etc.)
-        self._setup_fmm()
-
-        # setup translators
-        self._setup_translators()
-
-        #setup shifters
-        self._setup_shifters()
+        self._setup_fma() # setup fma (quadrature rule etc.)
+        self._setup_translators() # setup translators
+        self._setup_shifters() # setup shifters
 
         # precompute distances and exp part for leaves
         for group in leaves:
@@ -369,7 +364,7 @@ class QuadTree():
             self._calc_neighbor_dist(group)
             self._calc_exp_part(group)
 
-    def _setup_fmm(self):
+    def _setup_fma(self):
         '''
         Setup quadrature rules and translation operator order.
         '''
@@ -384,18 +379,15 @@ class QuadTree():
         xlength, ylength = x1 - x0, y1 - y0
 
         self.ldata = dict()
-        conn = sql.connect(orders_db)
 
         # compute far-field angles for each level
         for l in range(2, maxlevel + 1):
 
-            order = db.get_order(conn, f, l)
+            order = db.get_order(orders_db, f, l)
 
             self.ldata[l] = fma.fft_quadrule(order, order)
             self.ldata[l]['trans_order'] = order
-            self.ldata[l]['group_dims'] = xlength / (2**l), ylength / (2**l)
-
-        conn.close()
+            self.ldata[l]['group_dims'] = xlength / (2 ** l), ylength / (2 ** l)
 
     def _setup_translators(self):
         '''
@@ -410,17 +402,19 @@ class QuadTree():
         maxlevel = config['maxlevel']
         translations_db = os.path.normpath(config['translations_db'])
         
-        x0, y0, x1, y1 = self.bbox
-        xlength, ylength = x1 - x0, y1 - y0
+        # x0, y0, x1, y1 = self.bbox
+        # xlength, ylength = x1 - x0, y1 - y0
 
         # load translations for every level
         self.translators = dict()
-        conn = sql.connect(translations_db)
-            
+        unique_coords = fma.get_unique_coords()
+
         for l in range(2, maxlevel + 1):
 
             cache = dict()
-            cache[literal_eval(vec)] = db.get_translation_from_database(conn, f, l)
+
+            for vec in unique_coords:
+                cache[vec] = db.get_translation_from_db(translations_db, f, l, vec)
 
             expanded_cache = dict()
 
@@ -430,16 +424,16 @@ class QuadTree():
                 ntheta, nphi = translation.shape
 
                 # Quadrant II
-                a = np.flipud(translation)[:, nphi/2:]
-                b = translation[:, :nphi/2]
+                a = np.flipud(translation)[:, nphi // 2:]
+                b = translation[:, :nphi // 2]
                 expanded_cache[(-y, x, z)] = np.ascontiguousarray(np.concatenate((a, b), axis=1))
 
                 # Quadrant III
                 expanded_cache[(-x, -y, z)] = np.ascontiguousarray(np.flipud(translation))
 
                 # Quadrant IV
-                a = translation[:, nphi/2:]
-                b = np.flipud(translation)[:, :nphi/2]
+                a = translation[:, nphi // 2:]
+                b = np.flipud(translation)[:, :nphi // 2]
                 expanded_cache[(y, -x, z)] =  np.ascontiguousarray(np.concatenate((a, b), axis=1))
 
             cache.update(expanded_cache)
@@ -463,8 +457,8 @@ class QuadTree():
 
                 rx, ry, _ = group.center - fargroup.center
 
-                x = int(round(rx/xdim))
-                y = int(round(ry/ydim))
+                x = int(round(rx / xdim))
+                y = int(round(ry / ydim))
                 z = 0
 
                 group.translators.append(self.translators[l][(x, y, z)])
@@ -514,7 +508,6 @@ class QuadTree():
         ldata = self.ldata
         
         k = config['wavenumber']
-        #k = self.wavenumber
 
         nodes = group.nodes
         center = group.center
@@ -605,7 +598,7 @@ class QuadTree():
 
         for child, shifter in zip(group.children, shifters[group.level + 1]):
             if child is not None:
-                sum_coeffs += child.coeffs*shifter
+                sum_coeffs += child.coeffs * shifter
 
         if ntheta2 > ntheta1:
             group.coeffs = fma.fft_interpolate(sum_coeffs, ntheta2, nphi2)
@@ -684,68 +677,84 @@ class QuadTree():
 
         # self pressures (piston radiation)
         a_eff = np.sqrt(s_n / np.pi)
-        pres[node_ids] += rho * c * (0.5 * (k * a_eff)**2 + 1j * 8 / (3 * np.pi) * k * a_eff) / 2 * (q / s_n)
+        pres[node_ids] += rho * c * (0.5 * (k * a_eff) ** 2 + 1j * 8 / (3 * np.pi) * k * a_eff) / 2 * (q / s_n)
 
     
-    def _draw_group(self, group, ax, **kwargs):
-        
-        x0, y0, x1, y1 = group.bbox
-        xdim, ydim = x1 - x0, y1 - y0
-        
-        if 'facecolor' not in kwargs: kwargs['facecolor'] = 'none'
-            
-        ax.add_patch(Rectangle((x0, y0), xdim, ydim, **kwargs))
-        
-    def draw(self, ax=None, **kwargs):
+    # def _draw_group(self, group, ax, **kwargs):
+    #
+    #     x0, y0, x1, y1 = group.bbox
+    #     xdim, ydim = x1 - x0, y1 - y0
+    #
+    #     if 'facecolor' not in kwargs: kwargs['facecolor'] = 'none'
+    #
+    #     ax.add_patch(Rectangle((x0, y0), xdim, ydim, **kwargs))
+    #
+    # def draw(self, ax=None, **kwargs):
+    #
+    #     if ax is None:
+    #         fig = plt.figure(tight_layout=True)
+    #         ax = fig.add_subplot(111)
+    #     else:
+    #         fig = ax.get_figure()
+    #
+    #     self._draw(self.root, ax)
+    #
+    #     return fig, ax
+    #
+    # def _draw(self, group, ax, **kwargs):
+    #
+    #     self._draw_group(group, ax, **kwargs)
+    #
+    #     for child in group.children:
+    #         if child is not None:
+    #             self._draw(child, ax, **kwargs)
+    #
+    # def draw_interaction_map(self, uid, ax=None, **kwargs):
+    #
+    #     if ax is None:
+    #         fig = plt.figure(tight_layout=True)
+    #         ax = fig.add_subplot(111)
+    #     else:
+    #         fig = ax.get_figure()
+    #
+    #     group = self._find(uid)
+    #
+    #     self._draw_interaction_map(group, ax, **kwargs)
+    #
+    #     return fig, ax
+    #
+    # def _draw_interaction_map(self, group, ax, **kwargs):
+    #
+    #     if group is None:
+    #         return
+    #
+    #     if group.type == Group.LEAF:
+    #
+    #         self._draw_group(group, ax, **kwargs)
+    #
+    #         for neighbor in group.ntnn:
+    #             self._draw_group(neighbor, ax, **kwargs)
+    #
+    #     else:
+    #
+    #         for neighbor in group.ntnn:
+    #             self._draw_group(neighbor, ax, **kwargs)
+    #
+    #     self._draw_interaction_map(group.parent, ax, **kwargs)
 
-        if ax is None:
-            fig = plt.figure(tight_layout=True)
-            ax = fig.add_subplot(111)
-        else:
-            fig = ax.get_figure()
-            
-        self._draw(self.root, ax)
-        
-        return fig, ax
+class OctTree():
+    pass
 
-    def _draw(self, group, ax, **kwargs):
 
-        self._draw_group(group, ax, **kwargs)
+import attr
 
-        for child in group.children:
-            if child is not None:
-                self._draw(child, ax, **kwargs)
-                  
-    def draw_interaction_map(self, uid, ax=None, **kwargs):
-        
-        if ax is None:
-            fig = plt.figure(tight_layout=True)
-            ax = fig.add_subplot(111)
-        else:
-            fig = ax.get_figure()
-            
-        group = self._find(uid)
-        
-        self._draw_interaction_map(group, ax, **kwargs)
-        
-        return fig, ax
-        
-    def _draw_interaction_map(self, group, ax, **kwargs):
-        
-        if group is None:
-            return
-            
-        if group.type == Group.LEAF:
-        
-            self._draw_group(group, ax, **kwargs)
-            
-            for neighbor in group.ntnn:
-                self._draw_group(neighbor, ax, **kwargs)
-        
-        else:
-            
-            for neighbor in group.ntnn:
-                self._draw_group(neighbor, ax, **kwargs)
-        
-        self._draw_interaction_map(group.parent, ax, **kwargs)
+@attr.s
+class QuadTreeTest(object):
 
+    nodes = attr.ib(callable=np.atleast_2d)
+    bbox = attr.ib()
+    maxlevel = attr.ib(default=6)
+
+    def __attrs_post_init__(self):
+
+        pass
