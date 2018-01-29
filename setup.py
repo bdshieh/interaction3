@@ -5,20 +5,22 @@ Setup script to compile cython files. To compile, use:
 
 Author: Bernard Shieh (bshieh@gatech.edu)
 '''
-from setuptools import setup, Extension
+# from distutils.core import setup, Extension
+from setuptools import setup
+from setuptools.extension import Extension
 from Cython.Build import cythonize
 
 import numpy as np
 
 
-
-
 ext_modules = [
     Extension(name = 'bem.core.fma_functions',
               sources = ['bem/core/fma_functions.pyx'],
-              include_dirs = [np.get_include()]
+              include_dirs = [np.get_include()],
+              language='c++'
     )
 ]
+
 
 setup(
     name = 'interaction3',

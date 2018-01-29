@@ -4,6 +4,7 @@ Data structures for the multi-level fast multipole algorithm.
 Author: Bernard Shieh (bshieh@gatech.edu)
 '''
 import numpy as np
+import sqlite3 as sql
 import matplotlib.pyplot as plt
 from matplotlib.patches import Rectangle
 from scipy.interpolate import interp1d
@@ -12,7 +13,8 @@ import h5py
 import sys
 from ast import literal_eval
 
-import . import fma_functions as fma
+from . import fma_functions as fma
+from .. import database as db
 
 # extend recursion limit
 sys.setrecursionlimit(30000)
@@ -28,7 +30,7 @@ class Group():
     LEAF = 2
     maxlevel = 1
 
-    def __init__(self, parent, bbox, uid=(0,0,0)):
+    def __init__(self, parent, bbox, uid=(0, 0, 0)):
 
         # set level
         if parent is None:
@@ -133,9 +135,7 @@ class QuadTree():
     This is a recursive implementation meant to be simpler and more readable 
     (but probably a bit slower). 
     '''
-    _parameters = ['maxlevel', 'wavenumber', 'node_area', 'density', 
-        'sound_speed', 'path_to_translation_order_file', 
-        'path_to_translation_repository']
+    _parameters = ['maxlevel', 'wavenumber', 'node_area', 'density', 'sound_speed', 'orders_db', 'translations_db']
     
     def __init__(self, nodes, bounding_box, maxlevel, **kwargs):
         
@@ -375,31 +375,27 @@ class QuadTree():
         '''
         config = self.config
         
-        k = config['wavenumber']
-        trans_order_filepath = config['path_to_translation_order_file']
+        # k = config['wavenumber']
+        f = config['frequency']
+        orders_db = config['orders_db']
         maxlevel = config['maxlevel']
         
         x0, y0, x1, y1 = self.bbox
         xlength, ylength = x1 - x0, y1 - y0
 
-        self.ldata = {}
+        self.ldata = dict()
+        conn = sql.connect(orders_db)
+
         # compute far-field angles for each level
         for l in range(2, maxlevel + 1):
 
-            # load translation order file
-            with h5py.File(trans_order_filepath, 'r') as root:
-                
-                ks = root['wavenumbers'][:]
-                orders = root[str(l)]['order'][:]
-            
-            orders_interp_func = interp1d(ks, orders)
-            order = int(orders_interp_func(k))
-            if order % 2 == 0:
-                order += 1
+            order = db.get_order(conn, f, l)
 
             self.ldata[l] = fma.fft_quadrule(order, order)
             self.ldata[l]['trans_order'] = order
             self.ldata[l]['group_dims'] = xlength / (2**l), ylength / (2**l)
+
+        conn.close()
 
     def _setup_translators(self):
         '''
@@ -409,54 +405,46 @@ class QuadTree():
         config = self.config
         ldata = self.ldata
         
-        k = config['wavenumber']
+        # k = config['wavenumber']
+        f = config['frequency']
         maxlevel = config['maxlevel']
-        filepath = os.path.normpath(config['path_to_translation_repository'])
+        translations_db = os.path.normpath(config['translations_db'])
         
         x0, y0, x1, y1 = self.bbox
         xlength, ylength = x1 - x0, y1 - y0
 
         # load translations for every level
-        self.translators = {}
-        
-        with h5py.File(filepath, 'r') as root:
+        self.translators = dict()
+        conn = sql.connect(translations_db)
             
-            for l in range(2, maxlevel + 1):
-                
-                cache = {}
-                key = '{:0.4f}/{:n}'.format(k, l)
-                
-                for vec, trans in root[key].items():
-                    cache[literal_eval(vec)] = trans[:]
-                    
-                expanded_cache = {}
-    
-                for vec, translation in cache.items():
-                    
-                    try:
-                        x, y, z = vec
-                    except Exception:
-                        print(vec)
-                        raise Exception
-                        
-                    ntheta, nphi = translation.shape
-    
-                    # Quadrant II
-                    a = np.flipud(translation)[:, nphi/2:]
-                    b = translation[:, :nphi/2]
-                    expanded_cache[(-y, x, z)] = np.ascontiguousarray(np.concatenate((a, b), axis=1))
-    
-                    # Quadrant III
-                    expanded_cache[(-x, -y, z)] = np.ascontiguousarray(np.flipud(translation))
-    
-                    # Quadrant IV
-                    a = translation[:, nphi/2:]
-                    b = np.flipud(translation)[:, :nphi/2]
-                    expanded_cache[(y, -x, z)] =  np.ascontiguousarray(np.concatenate((a, b), axis=1))
-    
-                cache.update(expanded_cache)
-                
-                self.translators[l] = cache
+        for l in range(2, maxlevel + 1):
+
+            cache = dict()
+            cache[literal_eval(vec)] = db.get_translation_from_database(conn, f, l)
+
+            expanded_cache = dict()
+
+            for vec, translation in cache.items():
+
+                x, y, z = vec
+                ntheta, nphi = translation.shape
+
+                # Quadrant II
+                a = np.flipud(translation)[:, nphi/2:]
+                b = translation[:, :nphi/2]
+                expanded_cache[(-y, x, z)] = np.ascontiguousarray(np.concatenate((a, b), axis=1))
+
+                # Quadrant III
+                expanded_cache[(-x, -y, z)] = np.ascontiguousarray(np.flipud(translation))
+
+                # Quadrant IV
+                a = translation[:, nphi/2:]
+                b = np.flipud(translation)[:, :nphi/2]
+                expanded_cache[(y, -x, z)] =  np.ascontiguousarray(np.concatenate((a, b), axis=1))
+
+            cache.update(expanded_cache)
+
+            self.translators[l] = cache
 
         # assign each group's translators
         allgroups = self.allgroups
@@ -496,8 +484,9 @@ class QuadTree():
         for l in range(2, maxlevel + 1):
 
             xdim, ydim = ldata[l]['group_dims']
-            kcoordT = ldata[l]['kcoord'].transpose((0, 2, 1))
-            r = np.sqrt(xdim**2 + ydim**2) / 2
+            kcoordT = ldata[l]['kcoordT']
+            r = np.sqrt(xdim ** 2 + ydim ** 2) / 2
+            # kcoordT = ldata[l]['kcoord'].transpose((0, 2, 1))
 
             # define direction unit vectors for the four quadrants
             rhat00 = np.array([1, 1, 0]) / np.sqrt(2) # lower left group
@@ -511,7 +500,7 @@ class QuadTree():
             shift01 = fma.ff2ff_op(r, rhat01.dot(kcoordT), k)
             shift11 = fma.ff2ff_op(r, rhat11.dot(kcoordT), k)
 
-            self.shifters[l] = []
+            self.shifters[l] = list()
             self.shifters[l].append(shift00)
             self.shifters[l].append(shift10)
             self.shifters[l].append(shift01)

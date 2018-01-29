@@ -21,12 +21,52 @@ from itertools import repeat
 from scipy.interpolate import interp1d
 import os
 from tqdm import tqdm
-import h5py
+# import h5py
 
-from . import fma_functions as fma
+from .. core import fma_functions as fma
+
+# register adapters for sqlite to convert numpy types
+sql.register_adapter(np.float64, float)
+sql.register_adapter(np.float32, float)
+sql.register_adapter(np.int64, int)
+sql.register_adapter(np.int32, int)
 
 
-def generate_translations(f, k, dims, levels, orders_interp_funcs, conn):
+## PROCESS FUNCTIONS ##
+
+def get_unique_coords():
+
+    x, y, z = np.mgrid[1:4, 0:4, 0:1:1j]
+    unique_coords = np.c_[x.ravel(), y.ravel(), z.ravel()].astype(int)
+    unique_coords = unique_coords[2:, :]
+
+    return unique_coords
+
+
+def get_orders_interp_funcs(orders_db, levels):
+
+    minlevel, maxlevel = levels
+    orders_interp_funcs = dict()
+    conn = sql.connect(orders_db)
+
+    for l in range(minlevel, maxlevel + 1):
+
+        query = '''
+                SELECT wavenumber, translation_order FROM orders
+                WHERE level=?
+                ORDER BY wavenumber
+                '''
+        table = pd.read_sql(query, conn, params=[l,])
+
+        ks = table['wavenumber']
+        orders = table['translation_order']
+
+        orders_interp_funcs[l] = interp1d(ks, orders)
+
+    return orders_interp_funcs
+
+
+def generate_translations(conn, f, k, dims, levels, orders_interp_funcs):
 
     xdim, ydim = dims
     minlevel, maxlevel = levels
@@ -34,14 +74,11 @@ def generate_translations(f, k, dims, levels, orders_interp_funcs, conn):
     def mag(r):
         return np.sqrt(np.sum(r ** 2))
 
-    orders = list()
-
     for l in range(minlevel, maxlevel + 1):
 
         order = int(orders_interp_funcs[l](k))
         if order % 2 == 0:
             order += 1
-        orders.append(order)
 
         qrule = fma.fft_quadrule(order, order)
         group_xdim, group_ydim = xdim / (2 ** l), ydim / (2 ** l)
@@ -50,109 +87,194 @@ def generate_translations(f, k, dims, levels, orders_interp_funcs, conn):
         theta = qrule['theta']
         phi = qrule['phi']
 
-        x, y, z = np.mgrid[1:4, 0:4, 0:1:1j]
-        uniques = np.c_[x.ravel(), y.ravel(), z.ravel()].astype(int)
-        uniques = uniques[2:, :]
+        unique_coords = get_unique_coords()
 
-        for coords in uniques:
+        for coords in unique_coords:
 
             r = coords * np.array([group_xdim, group_ydim, 1])
             rhat = r / mag(r)
             cos_angle = rhat.dot(kcoordT)
 
-            translation = np.ascontiguousarray(fma.mod_ff2nf_op(mag(r), cos_angle, k, qrule))
-            append_translations_table(conn, f, k, l, tuple(coords), theta, phi, translation)
-
-    append_orders_table(conn, f, k, list(range(minlevel, maxlevel + 1)), orders)
-
-
-def create_metadata_table(conn, dims, levels, freqs, rho, c):
-
-    xdim, ydim = dims
-    f_start, f_stop, f_step = freqs
-    minlevel, maxlevel = levels
-
-    table = [xdim, ydim, minlevel, maxlevel, f_start, f_stop, f_step, rho, c]
-    columns = ['x_dimension', 'y_dimension', 'minimum_level', 'maximum_level', 'frequency_start', 'frequency_stop',
-               'frequency_step', 'density', 'sound_speed']
-
-    pd.DataFrame(table, columns=columns).to_sql('METADATA', conn, if_exists='replace', index=False)
-
-
-def append_orders_table(conn, f, k, levels, orders):
-
-    table = [f, k] + list(orders)
-    columns = ['frequency', 'wavenumber'] + ['level_' + str(l) for l in list(levels)]
-
-    pd.DataFrame(table, columns=columns).to_sql('ORDERS', conn, if_exists='append', index=False)
-
-
-def append_translations_table(conn, f, k, l, coords, theta, phi, translation):
-
-    x, y, z = coords
-    thetav, phiv = np.meshgrid(theta, phi, indexing='ij')
-
-    table = dict()
-    table['frequency'] = f
-    table['wavenumber'] = k
-    table['x'] = int(x)
-    table['y'] = int(y)
-    table['z'] = int(z)
-    table['theta'] = thetav.ravel()
-    table['phi'] = phiv.ravel()
-    table['translation_real'] = np.real(translation.ravel())
-    table['translation_imag'] = np.imag(translation.ravel())
-    table['level'] = int(l)
-
-    pd.DataFrame(table).to_sql('TRANSLATIONS', conn, if_exists='append', index=False)
-
-
-def create_progress_table(conn, frequencies, wavenumbers):
-
-    table = dict()
-    table['frequency'] = frequencies
-    table['wavenumber'] = wavenumbers
-    table['is_complete'] = False
-
-    pd.DataFrame(table).to_sql(conn, 'PROGRESS', if_exists='replace', index=False)
-
-
-def update_progress_table(conn, k):
-    conn.execute('UPDATE progress SET is_complete=True WHERE wavenumber=?', k)
-
-
-
-def get_orders_interp_funcs(orders_db, levels):
-
-    minlevel, maxlevel = levels
-
-    orders_interp_funcs = dict()
-
-    with h5py.File(orders_db, 'r') as root:
-
-        ks = root['wavenumbers'][:]
-
-        for l in range(minlevel, maxlevel + 1):
-
-            orders = root[str(l) + '/' + 'order'][:]
-            orders_interp_funcs[l] = interp1d(ks, orders)
-
-    return orders_interp_funcs
-
-
-def default_file_path(xdim, ydim):
-    
-    str_format = 'translations_dims_{:0.4f}_{:0.4f}'
-    return str_format.format(xdim, ydim)
+            translation = np.ascontiguousarray(fma.mod_ff2nf_op(mag(r), cos_angle, k, order))
+            update_translations_table(conn, f, k, l, order, tuple(coords), theta, phi, translation)
 
 
 def process(proc_args):
 
-    f, k, dims, levels, orders_interp_funcs, conn = proc_args
+    f, k, dims, levels, orders_interp_funcs, file = proc_args
 
-    generate_translations(f, k, dims, levels, orders_interp_funcs, conn)
-    update_progress_table(conn, k)
+    conn = sql.connect(file)
+    generate_translations(conn, f, k, dims, levels, orders_interp_funcs)
+    update_progress(conn, f)
+    conn.close()
 
+
+## DATABASE FUNCTIONS ##
+
+def create_metadata_table(conn, **kwargs):
+    '''
+    '''
+    table = [[str(v) for v in list(kwargs.values())]]
+    columns = list(kwargs.keys())
+
+    pd.DataFrame(table, columns=columns, dtype=str).to_sql('metadata', conn, if_exists='replace', index=False)
+
+
+def create_frequencies_table(conn, fs, ks):
+    '''
+    '''
+    # create table
+    query = '''
+            CREATE TABLE frequencies ( 
+            frequency float,
+            wavenumber float,
+            is_complete boolean
+            )
+            '''
+    conn.execute(query)
+
+    # create unique index on frequency
+    query = '''
+            CREATE UNIQUE INDEX frequency_index ON frequencies (frequency)
+            '''
+    conn.execute(query)
+
+    # create unique index on wavenumber
+    query = '''
+            CREATE UNIQUE INDEX wavenumber_index ON frequencies (wavenumber)
+            '''
+    conn.execute(query)
+
+    # insert values into table
+    query = '''
+            INSERT INTO frequencies (frequency, wavenumber, is_complete)
+            VALUES (?, ?, ?)
+            '''
+    conn.executemany(query, zip(fs, ks, repeat(False)))
+
+    conn.commit()
+
+
+def update_progress(conn, f):
+
+    query = '''
+            UPDATE frequencies SET is_complete=1 WHERE frequency=?
+            '''
+    conn.execute(query, [f,])
+
+    conn.commit()
+
+
+def create_levels_table(conn, levels):
+    '''
+    '''
+    minlevel, maxlevel = levels
+
+    # create table
+    query = '''
+            CREATE TABLE levels (
+            level int
+            )
+            '''
+    conn.execute(query)
+
+    # create unique index on level
+    query = '''
+            CREATE UNIQUE INDEX level_index ON levels (level)
+            '''
+    conn.execute(query)
+
+    # insert values into table
+    query = '''
+            INSERT INTO levels (level)
+            VALUES (?)
+            '''
+    conn.executemany(query, list((x,) for x in range(minlevel, maxlevel + 1)))
+
+    conn.commit()
+
+
+def create_coordinates_table(conn):
+
+    unique_coords = get_unique_coords()
+
+    query = '''
+            CREATE TABLE coordinates (
+            x int,
+            y int,
+            z int
+            )
+            '''
+    conn.execute(query)
+
+    query = '''
+            CREATE UNIQUE INDEX coordinates_index ON coordinates (x, y, z)
+            '''
+    conn.execute(query)
+
+    query = '''
+            INSERT INTO coordinates
+            VALUES (?, ?, ?)
+            '''
+    conn.executemany(query, unique_coords)
+
+    conn.commit()
+
+
+def create_translations_table(conn):
+
+    query = '''
+            CREATE TABLE translations (
+            id INTEGER PRIMARY KEY,
+            frequency float,
+            wavenumber float,
+            level int,
+            x int,
+            y int,
+            z int,
+            theta float,
+            phi float,
+            ntheta int,
+            nphi int,
+            translation_order int,
+            translation_real float,
+            translation_imag float,
+            FOREIGN KEY (frequency) REFERENCES frequencies (frequency),
+            FOREIGN KEY (wavenumber) REFERENCES frequencies (wavenumber),
+            FOREIGN KEY (level) REFERENCES levels (level),
+            FOREIGN KEY (x, y, z) REFERENCES coordinates (x, y, z)
+            )
+            '''
+    conn.execute(query)
+
+    query = '''
+            CREATE INDEX translation_index ON translations (frequency, level, x, y, z)
+            '''
+    conn.execute(query)
+
+    conn.commit()
+
+
+def update_translations_table(conn, f, k, l, order, coord, thetas, phis, translations):
+
+    x, y, z = coord
+    thetav, phiv = np.meshgrid(thetas, phis, indexing='ij')
+    ntheta = len(thetas)
+    nphi = len(phis)
+
+    query = '''
+            INSERT INTO translations (frequency, wavenumber, level, x, y, z, ntheta, nphi, theta, phi, 
+            translation_order, translation_real, translation_imag)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            '''
+    conn.executemany(query, zip(repeat(f), repeat(k), repeat(l), repeat(x), repeat(y), repeat(z), repeat(ntheta),
+                                repeat(nphi), thetav.ravel(), phiv.ravel(), repeat(order),
+                                np.real(translations.ravel()), np.imag(translations.ravel())))
+
+    conn.commit()
+
+
+## ENTRY POINT ##
 
 def main(**kwargs):
 
@@ -161,29 +283,29 @@ def main(**kwargs):
     levels = kwargs['levels']
     dims = kwargs['dims']
     c = kwargs['sound_speed']
-    rho = kwargs['density']
     file = kwargs['file']
     orders_db = kwargs['orders_db']
 
     # set default threads to logical core count
     if threads is None:
+
         threads = multiprocessing.cpu_count()
+        kwargs['threads'] = threads
 
     # path to this module's directory
     module_dir = os.path.dirname(os.path.realpath(__file__))
 
     # set default file name for database
     if file is None:
+
         file = os.path.join(module_dir, 'translations_dims_{:0.4f}_{:0.4f}.db'.format(*dims))
+        kwargs['file'] = file
 
     # set default file nam of orders database to use
     if orders_db is None:
-        orders_db = os.path.join(module_dir, 'orders_dims_{:0.4f}_{:0.4f}.db'.format(*dims))
 
-    # determine frequencies and wavenumbers
-    f_start, f_stop, f_step = freqs
-    fs = np.arange(f_start, f_stop + f_step, f_step)
-    ks = 2 * np.pi * fs / c
+        orders_db = os.path.join(module_dir, 'orders_dims_{:0.4f}_{:0.4f}.db'.format(*dims))
+        kwargs['orders_db'] = orders_db
 
     # read orders database and form interpolating functions
     orders_interp_funcs = get_orders_interp_funcs(orders_db, levels)
@@ -191,12 +313,43 @@ def main(**kwargs):
     # check for existing file
     if os.path.isfile(file):
 
-        conn = sql.connect(file)
-        existing_ks = pd.read_sql('SELECT wavenumber FROM progress WHERE is_complete=True', conn)
+        # conn = sql.connect(file)
+        response = input('Database ' + str(file) + ' already exists. \nContinue (c), Overwrite (o), or Do nothing ('
+                                                   'any other key)?')
 
-        # Set to iterate over only new wavenumbers
-        new_ks = np.array([k for k in ks if k not in existing_ks])
-        # new_k = np.array([x for x in k if round(x, 4) not in existing_k])
+        if response.lower() in ['o', 'overwrite']:
+
+            os.remove(file)
+
+            # determine frequencies and wavenumbers
+            f_start, f_stop, f_step = freqs
+            fs = np.arange(f_start, f_stop + f_step, f_step)
+            ks = 2 * np.pi * fs / c
+
+            # create database
+            conn = sql.connect(file)
+
+            # create database tables
+            create_metadata_table(conn, **kwargs)
+            create_frequencies_table(conn, fs, ks)
+            create_levels_table(conn, levels)
+            create_coordinates_table(conn)
+            create_translations_table(conn)
+
+        elif response.lower() in ['c', 'continue']:
+
+            conn = sql.connect(file)
+            query = '''
+                    SELECT (frequency, wavenumber) FROM frequencies 
+                    WHERE is_complete=False
+                    '''
+            table = pd.read_sql(query, conn)
+
+            fs = np.array(table['frequency'])
+            ks = np.array(table['wavenumber'])
+
+        else:
+            raise Exception('Database already exists')
 
     else:
 
@@ -205,26 +358,29 @@ def main(**kwargs):
         if not os.path.exists(file_dir):
             os.makedirs(file_dir)
 
+        # determine frequencies and wavenumbers
+        f_start, f_stop, f_step = freqs
+        fs = np.arange(f_start, f_stop + f_step, f_step)
+        ks = 2 * np.pi * fs / c
+
         # create database
         conn = sql.connect(file)
 
-        # write metadata to database
-        create_metadata_table(conn, dims, levels, fs, rho, c)
-
-        # write progress to database
-        create_progress_table(conn, fs, ks)
-
-        # Set to iterate over all wavenumbers
-        new_ks = ks
+        # create database tables
+        create_metadata_table(conn, **kwargs)
+        create_frequencies_table(conn, fs, ks)
+        create_levels_table(conn, levels)
+        create_coordinates_table(conn)
+        create_translations_table(conn)
 
     try:
 
         # start multiprocessing pool and run process
         pool = multiprocessing.Pool(threads)
-        proc_args = zip(fs, ks, repeat(dims), repeat(levels), repeat(orders_interp_funcs), repeat(conn))
+        proc_args = [(f, k, dims, levels, orders_interp_funcs, file) for f, k in zip(fs, ks)]
         result = pool.imap_unordered(process, proc_args)
 
-        for r in tqdm(result, desc='Building', total=len(new_ks)):
+        for r in tqdm(result, desc='Building', total=len(fs)):
             pass
 
     except Exception as e:
@@ -232,9 +388,12 @@ def main(**kwargs):
 
     finally:
 
+        conn.close()
         pool.terminate()
         pool.close()
 
+
+## COMMAND LINE INTERFACE ##
 
 if __name__ == '__main__':
 
@@ -246,7 +405,6 @@ if __name__ == '__main__':
     levels = 2, 6
     dims = 4e-3, 4e-3
     sound_speed = 1500
-    density = 1000
     file = None
     orders_db = None
 
@@ -259,7 +417,6 @@ if __name__ == '__main__':
     parser.add_argument('-d', '--dims', nargs=2, default=dims)
     parser.add_argument('-o', '--orders-db', nargs=1, type=str, default=orders_db)
     parser.add_argument('--sound-speed', nargs=1, type=float, default=sound_speed)
-    parser.add_argument('--density', nargs=1, type=float, default=density)
 
     args = vars(parser.parse_args())
     main(**args)
