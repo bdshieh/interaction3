@@ -66,3 +66,5 @@ ENV/
 # Pycharm
 .idea
 
+# VS code
+.vscode
