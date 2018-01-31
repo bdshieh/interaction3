@@ -13,6 +13,8 @@ def connector(array, simulation):
     f = simulation['frequency']
     use_preconditioner = simulation['use_preconditioner']
     use_pressure_load = simulation['use_pressure_load']
+    tol = simulation['tolerance']
+    maxiter = simulation['max_iterations']
 
     is_cmut = isinstance(array['channels']['membranes'][0], (SquareCmutMembrane, CircularCmutMembrane))
     is_pmut = isinstance(array['channels']['membranes'][0], (SquarePmutMembrane, CircularPmutMembrane))
@@ -35,12 +37,14 @@ def connector(array, simulation):
 
     # CMUTs only
     if is_cmut:
+
         Kss_list = list()
         t_ratios_list = list()
         u0_list = list()
 
     # PMUTs only
     if is_pmut:
+
         Peq_list = list()
 
     for ch in array['channels']:
