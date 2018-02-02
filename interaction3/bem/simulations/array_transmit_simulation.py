@@ -23,6 +23,7 @@ class ArrayTransmitSimulation(object):
     # M, B, K, Kss, Zr1, G, G1, P1inv
 
     frequency = attr.ib()
+    bbox = attr.ib()
     Gmech = attr.ib(repr=False)
     P = attr.ib(repr=False)
     nodes = attr.ib(repr=False)
@@ -32,6 +33,7 @@ class ArrayTransmitSimulation(object):
     use_preconditioner = attr.ib(default=True, repr=False)
     use_pressure_load = attr.ib(default=False, repr=False)
     Ginv = attr.ib(default=None, repr=False)
+    max_level = attr.ib(default=6)
     tolerance = attr.ib(default=1.0, repr=False)
     max_iterations = attr.ib(default=100, repr=False)
 
@@ -122,19 +124,24 @@ class ArrayTransmitSimulation(object):
 
         # determine max RAM usage
         if _RESOURCE_IMPORTED:
-
-            ram_usage = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss / 1000.
-            result['ram_usage']
+            result['ram_usage'] = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss / 1000
 
         result['x'] = x
         result['niter'] = niter.count
         result['solve_time'] = solve_time
 
 
-def connector(specification):
+def connector(*args):
 
-    array = specification['array']
-    simulation = specification['simulation']
+    if len(args) != 2:
+        raise TypeError
+
+    for arg in args:
+
+        if isinstance(arg, abstract.Array):
+            array = arg
+        if isinstance(arg, abstract.Simulation):
+            simulation = arg
 
     f = simulation['frequency']
     use_preconditioner = simulation['use_preconditioner']
@@ -170,7 +177,6 @@ def connector(specification):
 
     # PMUTs only
     if is_pmut:
-
         Peq_list = list()
 
     for ch in array['channels']:
@@ -181,42 +187,42 @@ def connector(specification):
         for m in ch['membranes']:
 
             if isinstance(m, abstract.SquareCmutMembrane):
-                conn = sub.connector_square_cmut_membrane(m, simulation, dc_bias=dc_bias)
+                subc = sub.connector_square_cmut_membrane(m, simulation, dc_bias=dc_bias)
 
             elif isinstance(m, abstract.CircularCmutMembrane):
-                conn = sub.connector_circular_cmut_membrane(m, simulation, dc_bias=dc_bias)
+                subc = sub.connector_circular_cmut_membrane(m, simulation, dc_bias=dc_bias)
 
             elif isinstance(m, abstract.SquarePmutMembrane):
-                conn = sub.connector_square_pmut_membrane(m, simulation)
+                subc = sub.connector_square_pmut_membrane(m, simulation)
 
             elif isinstance(m, abstract.CircularPmutMembrane):
-                conn = sub.connector_circular_pmut_membrane(m, simulation)
+                subc = sub.connector_circular_pmut_membrane(m, simulation)
 
             # add general matrices
-            M_list.append(conn['M'])
-            B_list.append(conn['B'])
-            K_list.append(conn['K'])
-            nodes_list.append(conn['nodes'])
-            e_mask_list.append(conn['e_mask'])
+            M_list.append(subc['M'])
+            B_list.append(subc['B'])
+            K_list.append(subc['K'])
+            nodes_list.append(subc['nodes'])
+            e_mask_list.append(subc['e_mask'])
             if use_preconditioner:
-                Zr1_list.append(conn['Zr1'])
+                Zr1_list.append(subc['Zr1'])
 
             # add CMUT matrices
             if is_cmut:
 
-                Kss_list.append(conn['Kss'])
-                t_ratios_list.append(conn['t_ratios'])
-                u0_list.append(conn['u0'])
+                Kss_list.append(subc['Kss'])
+                t_ratios_list.append(subc['t_ratios'])
+                u0_list.append(subc['u0'])
 
             # determine node excitations
             if use_pressure_load:
 
-                nnodes = len(conn['nodes'])
+                nnodes = len(subc['nodes'])
                 P_list.append(np.ones(nnodes) * np.exp(-1j * omega * delay))
 
             elif is_cmut:
 
-                t_ratios = conn['t_ratios']
+                t_ratios = subc['t_ratios']
                 P_list.append(t_ratios * np.exp(-1j * omega * delay))
 
             elif is_pmut:

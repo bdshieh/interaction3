@@ -182,6 +182,17 @@
     "items": { "$ref": "#/channel" }
   },
 
-    "simulation": {
+  "simulation": {
+    "type": "object",
+    "name": "simulation",
+    "properties": {
+      "frequency": { "type": "number"},
+      "sound_speed": { "type": "number"},
+      "density": { "type": "number"},
+      "tolerance": { "type": "number"},
+      "max_iterations": { "type": "integer"},
+      "use_preconditioner": { "type": "boolean"},
+      "use_pressure_load": { "type": "boolean"}
+    }
   }
 }

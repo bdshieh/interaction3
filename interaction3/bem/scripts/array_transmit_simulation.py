@@ -8,6 +8,7 @@ from tqdm import tqdm
 import attr
 
 from interaction3.bem.simulations.array_transmit_simulation import ArrayTransmitSimulation, connector
+from interaction3 import abstract
 
 # register adapters for sqlite to convert numpy types
 sql.register_adapter(np.float64, float)
@@ -20,9 +21,10 @@ sql.register_adapter(np.int32, int)
 
 def process(args):
 
-    json_file = args
+    json_files = args
+    connector_args = list(abstract.load(f) for f in json_files)
 
-    simulation = ArrayTransmitSimulation(connector(json_file))
+    simulation = ArrayTransmitSimulation(connector(*connector_args))
     simulation.solve()
 
     write_to_db(simulation.result)
@@ -114,12 +116,35 @@ def main(**kwargs):
 
 if __name__ == '__main__':
 
-    import argparse
-
+    # command line ideas ...
     # interaction3 abstract matrix_array myarray.json --options ...
     # interaction3 abstract simulation mysim.json --options ...
     # interaction3 bem array_transmit_simulation myoutput.db -i myarray.json mysim.json ...
     # interaction3 bem array_transmit_simulation myoutput.db -i myspecification.json
-    pass
+
+    import argparse
+
+    # default arguments
+    nthreads = None
+    freqs = 50e3, 50e6, 50e3
+    levels = 2, 6
+    dims = 4e-3, 4e-3
+    sound_speed = 1500
+    file = None
+    orders_db = None
+
+    # define and parse arguments
+    parser = argparse.ArgumentParser()
+    parser.add_argument('file', nargs='?', default=file)
+    parser.add_argument('-t', '--threads', nargs=1, type=int, default=nthreads)
+    parser.add_argument('-f', '--freqs', nargs=3, type=float, default=freqs)
+    parser.add_argument('-l', '--levels', nargs=2, type=int, default=levels)
+    parser.add_argument('-d', '--dims', nargs=2, default=dims)
+    parser.add_argument('-o', '--orders-db', nargs=1, type=str, default=orders_db)
+    parser.add_argument('--sound-speed', nargs=1, type=float, default=sound_speed)
+
+    args = vars(parser.parse_args())
+    main(**args)
+
 
 

@@ -4,9 +4,10 @@ import jsonschema
 import os
 import re
 
-
 SCHEMA_FILENAME = 'base-schema-1.0.json' # relative path to schema json file
 
+
+## BASE CLASSES ##
 
 class BaseList(list):
 
@@ -254,6 +255,8 @@ class ObjectFactory(object):
             return BaseDict(*args, **kwargs)
 
 
+## JSON HELPER FUNCTIONS ##
+
 def get_base_schema(path):
     return json.load(open(path,'r'))
 
@@ -360,22 +363,28 @@ def string_to_class_name(string):
     return str(string)
 
 
+## (DE)SERIALIZATION FUNCTIONS ##
+
 def generate_json_object_with_name(var):
 
-    if isinstance(var, BaseDict):
+    if isinstance(var, (BaseDict, dict)):
 
         d = dict()
-        d['_name'] = var._name
+
+        if isinstance(var, BaseDict):
+            d['_name'] = var._name
 
         for key, val in var.items():
             d[key] = generate_json_object_with_name(val)
 
         return d
 
-    elif isinstance(var, BaseList):
+    elif isinstance(var, (BaseList, list)):
 
         l = list()
-        l.append(var._name)
+
+        if isinstance(var, BaseList):
+            l.append(var._name)
 
         for i in var:
             l.append(generate_json_object_with_name(i))
@@ -384,14 +393,6 @@ def generate_json_object_with_name(var):
 
     else:
         return var
-
-
-def dump(obj, fp, *args, **kwargs):
-    json.dump(generate_json_object_with_name(obj), fp, *args, **kwargs)
-
-
-def dumps(obj, *args, **kwargs):
-    return json.dumps(generate_json_object_with_name(obj), *args, **kwargs)
 
 
 def generate_objects_from_json(var):
@@ -428,13 +429,23 @@ def generate_objects_from_json(var):
         return var
 
 
+def dump(obj, fp, indent=2, *args, **kwargs):
+    json.dump(generate_json_object_with_name(obj), open(fp, 'x'), indent=indent, *args, **kwargs)
+
+
+def dumps(obj, indent=2, *args, **kwargs):
+    return json.dumps(generate_json_object_with_name(obj), indent=indent, *args, **kwargs)
+
+
 def load(fp, *args, **kwargs):
-    return generate_objects_from_json(json.load(fp, *args, **kwargs))
+    return generate_objects_from_json(json.load(open(fp, 'r'), *args, **kwargs))
 
 
 def loads(s, *args, **kwargs):
     return generate_objects_from_json(json.loads(s, *args, **kwargs))
 
+
+## SETUP GLOBALS ##
 
 base_dir = os.path.abspath(os.path.dirname(__file__))
 schema_path = os.path.join(base_dir, SCHEMA_FILENAME)
@@ -445,6 +456,8 @@ RESOLVER = jsonschema.RefResolver(schema_resolver_path, BASE_SCHEMA)
 BASE_REFERENCE = parse_json_allof(resolve_json_refs(BASE_SCHEMA))
 OBJECTS, ARRAYS = get_classes_from_reference(BASE_REFERENCE)
 
+
+## CLASS DEFINITIONS ##
 
 class Membrane(BaseDict):
     _name = 'membrane'

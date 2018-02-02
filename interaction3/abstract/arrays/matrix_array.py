@@ -92,4 +92,4 @@ if __name__ == '__main__':
     print(array)
 
     if filename is not None:
-        dump(array, open(filename, 'w+'), indent=2)
+        dump(array, filename)

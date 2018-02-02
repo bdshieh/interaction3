@@ -325,6 +325,7 @@ def connector_circular_pmut_membrane(obj, simulation, **kwargs):
 
     return output
 
+
 def connector_channel():
     pass
 
