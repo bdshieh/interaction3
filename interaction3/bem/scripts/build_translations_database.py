@@ -22,8 +22,8 @@ from contextlib import closing
 import os
 from tqdm import tqdm
 
-from .. core import fma_functions as fma
-from . import get_order
+from interaction3.bem.core import fma_functions as fma
+from interaction3.bem.core.db_functions import get_order
 
 # register adapters for sqlite to convert numpy types
 sql.register_adapter(np.float64, float)

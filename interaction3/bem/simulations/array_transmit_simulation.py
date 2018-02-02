@@ -1,6 +1,6 @@
 
 import numpy as np
-import scipy.sparse.linalg as spsl
+import scipy.sparse as sps
 from timeit import default_timer as timer
 import attr
 
@@ -10,11 +10,15 @@ try:
 except ImportError:
     _RESOURCE_IMPORTED = False
 
+from interaction3 import abstract
+
 from .. core . fma_trees import FmaQuadTree
+from .. core import bem_functions as bem
+from . import _subconnectors as sub
 
 
 @attr.s
-class ArrayTransmitSimulation:
+class ArrayTransmitSimulation(object):
 
     # M, B, K, Kss, Zr1, G, G1, P1inv
 
@@ -83,7 +87,7 @@ class ArrayTransmitSimulation:
                 return Gmech.dot(x) + tree.apply(2 * np.squeeze(q))
 
         # define LinearOperator
-        return spsl.LinearOperator(shape=(nnodes, nnodes), matvec=matvec, dtype=np.complex128)
+        return sps.linalg.LinearOperator(shape=(nnodes, nnodes), matvec=matvec, dtype=np.complex128)
 
     class Counter:
 
@@ -107,7 +111,8 @@ class ArrayTransmitSimulation:
 
         niter = self.Counter()
         t0 = timer()
-        y, _ = spsl.lgmres(linear_operator, P, x0=None, M=None, tol=tol, maxiter=maxiter, callback=niter.increment)
+        y, _ = sps.linalg.lgmres(linear_operator, P, x0=None, M=None, tol=tol, maxiter=maxiter,
+                                 callback=niter.increment)
 
         if use_preconditioner:
             x = Ginv.dot(y)
@@ -126,3 +131,155 @@ class ArrayTransmitSimulation:
         result['solve_time'] = solve_time
 
 
+def connector(specification):
+
+    array = specification['array']
+    simulation = specification['simulation']
+
+    f = simulation['frequency']
+    use_preconditioner = simulation['use_preconditioner']
+    use_pressure_load = simulation['use_pressure_load']
+
+    is_cmut = isinstance(array['channels']['membranes'][0], (abstract.SquareCmutMembrane,
+                                                             abstract.CircularCmutMembrane))
+    is_pmut = isinstance(array['channels']['membranes'][0], (abstract.SquarePmutMembrane,
+                                                             abstract.CircularPmutMembrane))
+
+    omega = 2 * np.pi * f
+
+    # general
+    M_list = list()
+    B_list = list()
+    K_list = list()
+    P_list = list()
+    nodes_list = list()
+    e_mask_list = list()
+
+    if use_preconditioner:
+
+        G1_list = list()
+        Zr1_list = list()
+        G1inv_list = list()
+
+    # CMUTs only
+    if is_cmut:
+
+        Kss_list = list()
+        t_ratios_list = list()
+        u0_list = list()
+
+    # PMUTs only
+    if is_pmut:
+
+        Peq_list = list()
+
+    for ch in array['channels']:
+
+        dc_bias = ch['dc_bias']
+        delay = ch['delay']
+
+        for m in ch['membranes']:
+
+            if isinstance(m, abstract.SquareCmutMembrane):
+                conn = sub.connector_square_cmut_membrane(m, simulation, dc_bias=dc_bias)
+
+            elif isinstance(m, abstract.CircularCmutMembrane):
+                conn = sub.connector_circular_cmut_membrane(m, simulation, dc_bias=dc_bias)
+
+            elif isinstance(m, abstract.SquarePmutMembrane):
+                conn = sub.connector_square_pmut_membrane(m, simulation)
+
+            elif isinstance(m, abstract.CircularPmutMembrane):
+                conn = sub.connector_circular_pmut_membrane(m, simulation)
+
+            # add general matrices
+            M_list.append(conn['M'])
+            B_list.append(conn['B'])
+            K_list.append(conn['K'])
+            nodes_list.append(conn['nodes'])
+            e_mask_list.append(conn['e_mask'])
+            if use_preconditioner:
+                Zr1_list.append(conn['Zr1'])
+
+            # add CMUT matrices
+            if is_cmut:
+
+                Kss_list.append(conn['Kss'])
+                t_ratios_list.append(conn['t_ratios'])
+                u0_list.append(conn['u0'])
+
+            # determine node excitations
+            if use_pressure_load:
+
+                nnodes = len(conn['nodes'])
+                P_list.append(np.ones(nnodes) * np.exp(-1j * omega * delay))
+
+            elif is_cmut:
+
+                t_ratios = conn['t_ratios']
+                P_list.append(t_ratios * np.exp(-1j * omega * delay))
+
+            elif is_pmut:
+                pass
+
+    if is_cmut:
+        Gmech_list = [-omega ** 2 * M + 1j * omega * B + K - Kss for M, B, K, Kss in
+                      zip(M_list, B_list, K_list, Kss_list)]
+
+    elif is_pmut:
+        Gmech_list = [-omega ** 2 * M + 1j * omega * B + K for M, B, K in
+                      zip(M_list, B_list, K_list)]
+
+    if use_preconditioner:
+
+        G1_list = [G1 + 1j * omega * Zr1 for G1, Zr1 in zip(Gmech_list, Zr1_list)]
+        G1inv_list = [bem.g1inv_matrix(G1) for G1 in G1_list]
+
+    # form full (sparse) matrices
+    M = sps.block_diag(M_list, format='csr')
+    B = sps.block_diag(B_list, format='csr')
+    K = sps.block_diag(K_list, format='csr')
+    nodes = np.concatenate(nodes_list, axis=0)
+    e_mask = np.concatenate(e_mask_list)
+    Gmech = sps.block_diag(Gmech_list, format='csr')
+    P = np.concatenate(P_list, format='csr')
+
+    if use_preconditioner:
+
+        G1 = sps.block_diag(G1_list, format='csr')
+        G1inv = sps.block_diag(G1inv_list, format='csr')
+
+    if is_cmut:
+
+        Kss = sps.block_diag(Kss_list, format='csr')
+        t_ratios = np.concatenate(t_ratios_list, axis=0)
+        u0 = np.concatenate(u0_list, axis=0)
+
+    # elif is_pmut:
+        # Peq = np.concatenate(Peq_list, axis=0)
+
+
+    result = dict()
+    result.update(simulation)
+    result['nodes'] = nodes
+    result['nnodes'] = len(nodes)
+    result['node_area'] = dx * dy
+    result['M'] = M
+    result['B'] = B
+    result['K'] = K
+    result['Gmech'] = Gmech
+    result['electrode_mask'] = e_mask
+    result['P'] = P
+
+    if is_cmut:
+
+        result['Kss'] = Kss
+        result['transformer_ratios'] = t_ratios
+        result['static_displacement'] = u0
+
+    if use_preconditioner:
+
+        result['G1inv'] = G1inv
+        result['G1'] = G1
+
+    return result

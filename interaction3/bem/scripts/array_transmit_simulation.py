@@ -7,8 +7,7 @@ from contextlib import closing
 from tqdm import tqdm
 import attr
 
-from .. simulations import ArrayTransmitSimulation
-from .. import connector
+from interaction3.bem.simulations.array_transmit_simulation import ArrayTransmitSimulation, connector
 
 # register adapters for sqlite to convert numpy types
 sql.register_adapter(np.float64, float)
