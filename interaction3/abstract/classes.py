@@ -507,6 +507,10 @@ class Channels(BaseList):
     _name = 'channels'
 
 
+class Simulation(BaseDict):
+    _name = 'simulation'
+
+
 if __name__ == '__main__':
 
     pass

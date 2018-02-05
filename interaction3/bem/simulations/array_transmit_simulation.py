@@ -161,6 +161,8 @@ def connector(*args):
     P_list = list()
     nodes_list = list()
     e_mask_list = list()
+    channel_id_list = list()
+    membrane_id_list = list()
 
     if use_preconditioner:
 
@@ -207,6 +209,10 @@ def connector(*args):
             if use_preconditioner:
                 Zr1_list.append(subc['Zr1'])
 
+            nnodes = len(subc['nodes'])
+            membrane_id_list.append(np.ones(nnodes, dtype=int) * m['id'])
+            channel_id_list.append(np.ones(nnodes, dtype=int) * ch['id'])
+
             # add CMUT matrices
             if is_cmut:
 
@@ -216,8 +222,6 @@ def connector(*args):
 
             # determine node excitations
             if use_pressure_load:
-
-                nnodes = len(subc['nodes'])
                 P_list.append(np.ones(nnodes) * np.exp(-1j * omega * delay))
 
             elif is_cmut:

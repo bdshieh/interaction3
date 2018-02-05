@@ -3,9 +3,10 @@ import numpy as np
 import multiprocessing
 import os
 import sqlite3 as sql
+import pandas as pd
+from itertools import repeat
 from contextlib import closing
 from tqdm import tqdm
-import attr
 
 from interaction3.bem.simulations.array_transmit_simulation import ArrayTransmitSimulation, connector
 from interaction3 import abstract
@@ -21,47 +22,198 @@ sql.register_adapter(np.int32, int)
 
 def process(args):
 
-    json_files = args
-    connector_args = list(abstract.load(f) for f in json_files)
+    file, f, k, simulation, array = args
 
-    simulation = ArrayTransmitSimulation(connector(*connector_args))
+    simulation = ArrayTransmitSimulation(connector([simulation, array]))
     simulation.solve()
 
-    write_to_db(simulation.result)
+    nodes = simulation.result['nodes']
+
+    update_displacements_table(simulation.result)
 
 
 ## DATABASE FUNCTIONS ##
 
-def write_to_db():
+def create_metadata_table(conn, **kwargs):
+    '''
+    '''
+    table = [[str(v) for v in list(kwargs.values())]]
+    columns = list(kwargs.keys())
+
+    pd.DataFrame(table, columns=columns, dtype=str).to_sql('metadata', conn, if_exists='replace', index=False)
+
+
+def create_frequencies_table(conn, fs, ks):
+    '''
+    '''
+    # create table
+    query = '''
+            CREATE TABLE frequencies ( 
+            frequency float,
+            wavenumber float,
+            is_complete boolean
+            )
+            '''
+    conn.execute(query)
+
+    # create unique index on frequency
+    query = '''
+            CREATE UNIQUE INDEX frequency_index ON frequencies (frequency)
+            '''
+    conn.execute(query)
+
+    # create unique index on wavenumber
+    query = '''
+            CREATE UNIQUE INDEX wavenumber_index ON frequencies (wavenumber)
+            '''
+    conn.execute(query)
+
+    # insert values into table
+    query = '''
+            INSERT INTO frequencies (frequency, wavenumber, is_complete)
+            VALUES (?, ?, ?)
+            '''
+    conn.executemany(query, zip(fs, ks, repeat(False)))
+
+    conn.commit()
+
+
+def update_progress(conn, f):
+
+    query = '''
+            UPDATE frequencies SET is_complete=1 WHERE frequency=?
+            '''
+    conn.execute(query, [f,])
+
+    conn.commit()
+
+
+def create_nodes_table(conn, nodes):
     pass
+
+
+def create_displacement_table(conn):
+
+    query = '''
+            CREATE TABLE displacements (
+            id INTEGER PRIMARY KEY,
+            frequency float,
+            wavenumber float,
+            x float,
+            y float,
+            z float,
+            membrane_id int,
+            channel_id int,
+            displacement_real float,
+            displacement_imag float,
+            FOREIGN KEY (frequency) REFERENCES frequencies (frequency),
+            FOREIGN KEY (wavenumber) REFERENCES frequencies (wavenumber),
+            FOREIGN KEY (x, y, z) REFERENCES nodes (x, y, z)
+            )
+            '''
+    conn.execute(query)
+
+    query = '''
+            CREATE INDEX translation_index ON displacements (frequency, x, y, z)
+            '''
+    conn.execute(query)
+
+    query = '''
+            CREATE INDEX translation_index ON displacements (membrane_id)
+            '''
+    conn.execute(query)
+
+    query = '''
+            CREATE INDEX translation_index ON displacements (channel_id)
+            '''
+    conn.execute(query)
+
+    conn.commit()
+
+
+def update_displacements_table(conn, f, k, nodes, membrane_ids, channel_ids, displacements):
+
+    x, y, z = nodes.T
+
+    query = '''
+            INSERT INTO translations (frequency, wavenumber, x, y, z, displacement_real, displacement_imag)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
+            '''
+    conn.executemany(query, zip(repeat(f), repeat(k), repeat(x), repeat(y), repeat(z), np.real(displacements.ravel()),
+                                np.imag(displacements.ravel())))
+
+    conn.commit()
+
+
+## MAIN FUNCTIONS ##
+
+def read_json_files(*args):
+
+    spec = list()
+
+    for arg in args:
+
+        obj = abstract.load(arg)
+
+        if isinstance(obj, list):
+            spec += obj
+        else:
+            spec.append(obj)
+
+    return spec
+
+
+def get_objects_from_spec(spec):
+
+    for obj in spec:
+
+        if isinstance(obj, abstract.Array):
+            array = obj
+
+        elif isinstance(obj, abstract.Simulation):
+            simulation = obj
+
+    return simulation, array
 
 
 ## ENTRY POINT ##
 
 def main(**kwargs):
 
+
     threads = kwargs['threads']
     freqs = kwargs['freqs']
-    levels = kwargs['levels']
-    dims = kwargs['dims']
-    c = kwargs['sound_speed']
     file = kwargs['file']
-    orders_db = kwargs['orders_db']
+    spec = kwargs['specification']
+
+    simulation, array = get_objects_from_spec(read_json_files(spec))
 
     # set default threads to logical core count
     if threads is None:
-        threads = multiprocessing.cpu_count()
+
+        if 'threads' in simulation:
+            threads = simulation['threads']
+        else:
+            threads = multiprocessing.cpu_count()
+
         kwargs['threads'] = threads
 
-    # path to this module's directory
-    module_dir = os.path.dirname(os.path.realpath(__file__))
+    if freqs is None:
 
+        if 'freqs' in simulation:
+            freqs = simulation['freqs']
+        else:
+            freqs = 50e3, 50e6, 50e3
+
+        kwargs['freqs'] = freqs
+
+    c = simulation['sound_speed']
 
     # check for existing file
     if os.path.isfile(file):
 
         # conn = sql.connect(file)
-        response = input('Database ' + str(file) + ' already exists. \nContinue (c), Overwrite (o), or Do nothing ('
+        response = input('File ' + str(file) + ' already exists. \nContinue (c), Overwrite (o), or Do nothing ('
                                                    'any other key)?')
 
         if response.lower() in ['o', 'overwrite']:
@@ -73,7 +225,22 @@ def main(**kwargs):
             fs = np.arange(f_start, f_stop + f_step, f_step)
             ks = 2 * np.pi * fs / c
 
+            # create database
+            with closing(sql.connect(file)) as conn:
+
+                # create database tables
+                create_metadata_table(conn, **kwargs)
+                create_frequencies_table(conn, fs, ks)
+
         elif response.lower() in ['c', 'continue']:
+
+            with closing(sql.connect(file)) as conn:
+
+                query = '''
+                        SELECT (frequency, wavenumber) FROM frequencies 
+                        WHERE is_complete=False
+                        '''
+                table = pd.read_sql(query, conn)
 
             fs = np.array(table['frequency'])
             ks = np.array(table['wavenumber'])
@@ -93,14 +260,21 @@ def main(**kwargs):
         fs = np.arange(f_start, f_stop + f_step, f_step)
         ks = 2 * np.pi * fs / c
 
+        # create database
+        with closing(sql.connect(file)) as conn:
+
+            # create database tables
+            create_metadata_table(conn, **kwargs)
+            create_frequencies_table(conn, fs, ks)
+
     try:
 
         # start multiprocessing pool and run process
         pool = multiprocessing.Pool(threads)
-        proc_args = [(file, f, k, dims, levels, orders_db) for f, k in zip(fs, ks)]
+        proc_args = [(file, f, k, simulation, array) for f, k in zip(fs, ks)]
         result = pool.imap_unordered(process, proc_args)
 
-        for r in tqdm(result, desc='Building', total=len(fs)):
+        for r in tqdm(result, desc='Simulating', total=len(fs)):
             pass
 
     except Exception as e:
@@ -126,22 +300,28 @@ if __name__ == '__main__':
 
     # default arguments
     nthreads = None
-    freqs = 50e3, 50e6, 50e3
-    levels = 2, 6
-    dims = 4e-3, 4e-3
-    sound_speed = 1500
+    freqs = None
     file = None
-    orders_db = None
+    specification = None
+
+    # max_level = 6
+    # dims = 4e-3, 4e-3
+    # sound_speed = 1500
+    # density = 1000
+    # orders_db = None
+    # translations_db = None
+    # bbox = [0, 1, 0, 1]
+    # max_iterations = 100
+    # tolerance = 0.01
+    # use_preconditioner = True
+    # use_pressure_load = False
 
     # define and parse arguments
     parser = argparse.ArgumentParser()
     parser.add_argument('file', nargs='?', default=file)
+    parser.add_argument('-s', '--specification', nargs='+', default=specification)
     parser.add_argument('-t', '--threads', nargs=1, type=int, default=nthreads)
     parser.add_argument('-f', '--freqs', nargs=3, type=float, default=freqs)
-    parser.add_argument('-l', '--levels', nargs=2, type=int, default=levels)
-    parser.add_argument('-d', '--dims', nargs=2, default=dims)
-    parser.add_argument('-o', '--orders-db', nargs=1, type=str, default=orders_db)
-    parser.add_argument('--sound-speed', nargs=1, type=float, default=sound_speed)
 
     args = vars(parser.parse_args())
     main(**args)
