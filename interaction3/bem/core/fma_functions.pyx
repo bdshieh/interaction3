@@ -538,7 +538,7 @@ def get_unique_coords(dims=2):
 
         x, y, z = np.mgrid[1:4, 0:4, 0:1:1j]
         unique_coords = np.c_[x.ravel(), y.ravel(), z.ravel()].astype(int)
-        unique_coords = unique_coords[2:, :]
+        unique_coords = unique_coords[2:, :].tolist()
 
     elif dims == 3:
         unique_coords = None

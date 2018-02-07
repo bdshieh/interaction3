@@ -20,8 +20,9 @@ def connector_square_cmut_membrane(obj, simulation, **kwargs):
     electrode_y = obj['electrode_y']
     nnodes_x = obj['nnodes_x']
     nnodes_y = obj['nnodes_y']
-    center = obj['center']
+    position = obj['position']
     rotations = obj.get('rotations', None)
+    mem_rho = obj['density']
 
     dc_bias = kwargs['dc_bias']
 
@@ -34,12 +35,12 @@ def connector_square_cmut_membrane(obj, simulation, **kwargs):
             nodes_at_origin = rotate_nodes(nodes_at_origin, vec, angle)
 
     # translate to membrane center
-    nodes = nodes_at_origin + center
+    nodes = nodes_at_origin + position
 
     # create matrices
     # mass matrix
     h = obj['thickness']
-    M = bem.m_matrix(rho, h, nnodes)
+    M = bem.m_matrix(mem_rho, h, nnodes)
 
     # damping matrix
     att_mech = obj['att_mech']

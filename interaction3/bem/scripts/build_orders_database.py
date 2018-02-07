@@ -16,7 +16,7 @@ import os
 from contextlib import closing
 from tqdm import tqdm
 
-from .. core . fma_tests import calculate_error_measures, nine_point_test as test
+from interaction3.bem.core.fma_tests import calculate_error_measures, nine_point_test as test
 
 # register adapters for sqlite to convert numpy types
 sql.register_adapter(np.float64, float)

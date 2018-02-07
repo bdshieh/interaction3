@@ -12,8 +12,9 @@ from scipy.io import loadmat
 
 def _make_hashable(arg):
 
-    if isinstance(arg, np.ndarray):
-        return hash(arg.tostring())
+    if isinstance(arg, (np.ndarray, sps.spmatrix)):
+        return hash(str(arg))
+        # return hash(arg.tostring())
     elif isinstance(arg, list):
         return tuple(arg)
 
@@ -49,9 +50,9 @@ def m_matrix(rho, h, nnodes):
 @memoize
 def b_matrix(att_mech, nnodes):
     '''
-    Damping matrix, generalized to composite membranes.
+    Damping matrix.
     '''
-    return sps.eye(nnodes) * sum(att_mech)
+    return sps.eye(nnodes) * att_mech
 
 
 @memoize
@@ -60,7 +61,7 @@ def flexural_rigidity(E, h, eta):
     N-layer thin-plate flexural rigidity.
     '''
     if len(h) == 1:
-        D = E[0] * h[0]**3 / 12 / (1 - eta[0]**2)
+        D = E[0] * h[0] ** 3 / 12 / (1 - eta[0] ** 2)
 
     elif len(h) > 1:
 
@@ -208,7 +209,7 @@ def kss_matrix(K, e_mask, dc_bias, h_gap, h_isol, e_r, nnodes):
 
     kss_diag = e_0 * dc_bias**2 / (h_eff + u0)**3
     kss_diag[~e_mask] = 0 # zero out non-electrode nodes
-    Kss = sps.diag(kss_diag, 0)
+    Kss = sps.diags(kss_diag, 0)
 
     if dc_bias == 0:
 
@@ -277,7 +278,7 @@ def solve_static_displacement(K, e_mask, dc_bias, h_eff, tol=1.0, maxiter=100):
     else:
         Kinv = linalg.inv(K)
 
-    nnodes = len(K)
+    nnodes = K.shape[0]
     u0 = np.zeros(nnodes)
 
     for i in range(maxiter):
@@ -285,12 +286,12 @@ def solve_static_displacement(K, e_mask, dc_bias, h_eff, tol=1.0, maxiter=100):
         err = K.dot(u0) - p_es(u0, e_mask)
 
         if np.max(np.abs(err)) < tol:
-            is_collapsed = True
+            is_collapsed = False
             return u0, is_collapsed
 
         u0 = Kinv.dot(p_es(u0, e_mask)).squeeze()
 
-    is_collapsed = False
+    is_collapsed = True
     return u0, is_collapsed
 
 # def calculate_collapse_voltage(props):

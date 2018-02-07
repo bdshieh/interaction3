@@ -511,6 +511,10 @@ class Simulation(BaseDict):
     _name = 'simulation'
 
 
+class BemArrayTransmitSimulation(BaseDict):
+    _name = 'bem_array_transmit_simulation'
+
+
 if __name__ == '__main__':
 
     pass

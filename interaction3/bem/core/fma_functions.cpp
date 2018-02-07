@@ -11,12 +11,12 @@
             "D:\\Anaconda3\\lib\\site-packages\\numpy\\core\\include"
         ],
         "language": "c++",
-        "name": "bem.core.fma_functions",
+        "name": "interaction3.bem.core.fma_functions",
         "sources": [
-            "bem/core/fma_functions.pyx"
+            "interaction3/bem/core/fma_functions.pyx"
         ]
     },
-    "module_name": "bem.core.fma_functions"
+    "module_name": "interaction3.bem.core.fma_functions"
 }
 END: Cython Metadata */
 
@@ -511,8 +511,8 @@ static CYTHON_INLINE float __PYX_NAN() {
   #endif
 #endif
 
-#define __PYX_HAVE__bem__core__fma_functions
-#define __PYX_HAVE_API__bem__core__fma_functions
+#define __PYX_HAVE__interaction3__bem__core__fma_functions
+#define __PYX_HAVE_API__interaction3__bem__core__fma_functions
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -744,7 +744,7 @@ static const char *__pyx_filename;
 
 
 static const char *__pyx_f[] = {
-  "bem\\core\\fma_functions.pyx",
+  "interaction3\\bem\\core\\fma_functions.pyx",
   "__init__.pxd",
   "stringsource",
   "type.pxd",
@@ -1496,6 +1496,14 @@ static CYTHON_INLINE int __Pyx_IterFinish(void);
 /* UnpackItemEndCheck.proto */
 static int __Pyx_IternextUnpackEndCheck(PyObject *retval, Py_ssize_t expected);
 
+/* PyIntBinop.proto */
+#if !CYTHON_COMPILING_IN_PYPY
+static PyObject* __Pyx_PyInt_EqObjC(PyObject *op1, PyObject *op2, long intval, int inplace);
+#else
+#define __Pyx_PyInt_EqObjC(op1, op2, intval, inplace)\
+    PyObject_RichCompare(op1, op2, Py_EQ)
+    #endif
+
 /* RaiseException.proto */
 static void __Pyx_Raise(PyObject *type, PyObject *value, PyObject *tb, PyObject *cause);
 
@@ -1994,9 +2002,9 @@ static CYTHON_INLINE char *__pyx_f_5numpy__util_dtypestring(PyArray_Descr *, cha
 
 /* Module declarations from 'libc.math' */
 
-/* Module declarations from 'bem.core.complex' */
+/* Module declarations from 'interaction3.bem.core.complex' */
 
-/* Module declarations from 'bem.core.fma_functions' */
+/* Module declarations from 'interaction3.bem.core.fma_functions' */
 static PyTypeObject *__pyx_array_type = 0;
 static PyTypeObject *__pyx_MemviewEnum_type = 0;
 static PyTypeObject *__pyx_memoryview_type = 0;
@@ -2008,25 +2016,25 @@ static PyObject *contiguous = 0;
 static PyObject *indirect_contiguous = 0;
 static int __pyx_memoryview_thread_locks_used;
 static PyThread_type_lock __pyx_memoryview_thread_locks[8];
-static double __pyx_f_3bem_4core_13fma_functions_mag(__Pyx_memviewslice, int __pyx_skip_dispatch); /*proto*/
-static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_distance(__Pyx_memviewslice, __Pyx_memviewslice, int __pyx_skip_dispatch); /*proto*/
-static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_direct_eval(__Pyx_memviewslice, __Pyx_memviewslice, double, double, double, int __pyx_skip_dispatch); /*proto*/
-static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_ff_coeff(__Pyx_memviewslice, __Pyx_memviewslice, int __pyx_skip_dispatch); /*proto*/
-static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_calc_exp_part(__Pyx_memviewslice, __Pyx_memviewslice, __Pyx_memviewslice, double, int __pyx_skip_dispatch); /*proto*/
-static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_nf_eval(__Pyx_memviewslice, __Pyx_memviewslice, double, double, double, int __pyx_skip_dispatch); /*proto*/
-static __pyx_t_double_complex __pyx_f_3bem_4core_13fma_functions_sph_hankel2(int, double, int __pyx_skip_dispatch); /*proto*/
-static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_ff2nf_op(double, __Pyx_memviewslice, double, int, int __pyx_skip_dispatch); /*proto*/
-static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_mod_ff2nf_op(double, __Pyx_memviewslice, double, int, int __pyx_skip_dispatch); /*proto*/
-static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_ff2ff_op(double, __Pyx_memviewslice, double, int __pyx_skip_dispatch); /*proto*/
-static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_half_fft2(PyArrayObject *, int __pyx_skip_dispatch); /*proto*/
-static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_half_ifft2(PyArrayObject *, int __pyx_skip_dispatch); /*proto*/
-static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_fft_interpolate(PyArrayObject *, int, int, int __pyx_skip_dispatch); /*proto*/
-static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_fft_interpolate_theta(PyArrayObject *, int, int __pyx_skip_dispatch); /*proto*/
-static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_fft_filter(__Pyx_memviewslice, int, int, int __pyx_skip_dispatch); /*proto*/
-static PyObject *__pyx_f_3bem_4core_13fma_functions_fft_quadrule(int, int, int __pyx_skip_dispatch); /*proto*/
-static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_bandlimited_abs_sin(int, int __pyx_skip_dispatch); /*proto*/
-static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_dir2coord(PyObject *, int __pyx_skip_dispatch); /*proto*/
-static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_ff2nf_op2(double, __Pyx_memviewslice, double, int, int __pyx_skip_dispatch); /*proto*/
+static double __pyx_f_12interaction3_3bem_4core_13fma_functions_mag(__Pyx_memviewslice, int __pyx_skip_dispatch); /*proto*/
+static PyArrayObject *__pyx_f_12interaction3_3bem_4core_13fma_functions_distance(__Pyx_memviewslice, __Pyx_memviewslice, int __pyx_skip_dispatch); /*proto*/
+static PyArrayObject *__pyx_f_12interaction3_3bem_4core_13fma_functions_direct_eval(__Pyx_memviewslice, __Pyx_memviewslice, double, double, double, int __pyx_skip_dispatch); /*proto*/
+static PyArrayObject *__pyx_f_12interaction3_3bem_4core_13fma_functions_ff_coeff(__Pyx_memviewslice, __Pyx_memviewslice, int __pyx_skip_dispatch); /*proto*/
+static PyArrayObject *__pyx_f_12interaction3_3bem_4core_13fma_functions_calc_exp_part(__Pyx_memviewslice, __Pyx_memviewslice, __Pyx_memviewslice, double, int __pyx_skip_dispatch); /*proto*/
+static PyArrayObject *__pyx_f_12interaction3_3bem_4core_13fma_functions_nf_eval(__Pyx_memviewslice, __Pyx_memviewslice, double, double, double, int __pyx_skip_dispatch); /*proto*/
+static __pyx_t_double_complex __pyx_f_12interaction3_3bem_4core_13fma_functions_sph_hankel2(int, double, int __pyx_skip_dispatch); /*proto*/
+static PyArrayObject *__pyx_f_12interaction3_3bem_4core_13fma_functions_ff2nf_op(double, __Pyx_memviewslice, double, int, int __pyx_skip_dispatch); /*proto*/
+static PyArrayObject *__pyx_f_12interaction3_3bem_4core_13fma_functions_mod_ff2nf_op(double, __Pyx_memviewslice, double, int, int __pyx_skip_dispatch); /*proto*/
+static PyArrayObject *__pyx_f_12interaction3_3bem_4core_13fma_functions_ff2ff_op(double, __Pyx_memviewslice, double, int __pyx_skip_dispatch); /*proto*/
+static PyArrayObject *__pyx_f_12interaction3_3bem_4core_13fma_functions_half_fft2(PyArrayObject *, int __pyx_skip_dispatch); /*proto*/
+static PyArrayObject *__pyx_f_12interaction3_3bem_4core_13fma_functions_half_ifft2(PyArrayObject *, int __pyx_skip_dispatch); /*proto*/
+static PyArrayObject *__pyx_f_12interaction3_3bem_4core_13fma_functions_fft_interpolate(PyArrayObject *, int, int, int __pyx_skip_dispatch); /*proto*/
+static PyArrayObject *__pyx_f_12interaction3_3bem_4core_13fma_functions_fft_interpolate_theta(PyArrayObject *, int, int __pyx_skip_dispatch); /*proto*/
+static PyArrayObject *__pyx_f_12interaction3_3bem_4core_13fma_functions_fft_filter(__Pyx_memviewslice, int, int, int __pyx_skip_dispatch); /*proto*/
+static PyObject *__pyx_f_12interaction3_3bem_4core_13fma_functions_fft_quadrule(int, int, int __pyx_skip_dispatch); /*proto*/
+static PyArrayObject *__pyx_f_12interaction3_3bem_4core_13fma_functions_bandlimited_abs_sin(int, int __pyx_skip_dispatch); /*proto*/
+static PyArrayObject *__pyx_f_12interaction3_3bem_4core_13fma_functions_dir2coord(PyObject *, int __pyx_skip_dispatch); /*proto*/
+static PyArrayObject *__pyx_f_12interaction3_3bem_4core_13fma_functions_ff2nf_op2(double, __Pyx_memviewslice, double, int, int __pyx_skip_dispatch); /*proto*/
 static struct __pyx_array_obj *__pyx_array_new(PyObject *, Py_ssize_t, char *, char *, char *); /*proto*/
 static void *__pyx_align_pointer(void *, size_t); /*proto*/
 static PyObject *__pyx_memoryview_new(PyObject *, int, int, __Pyx_TypeInfo *); /*proto*/
@@ -2062,10 +2070,10 @@ static void __pyx_memoryview__slice_assign_scalar(char *, Py_ssize_t *, Py_ssize
 static PyObject *__pyx_unpickle_Enum__set_state(struct __pyx_MemviewEnum_obj *, PyObject *); /*proto*/
 static __Pyx_TypeInfo __Pyx_TypeInfo_double = { "double", NULL, sizeof(double), { 0 }, 0, 'R', 0, 0 };
 static __Pyx_TypeInfo __Pyx_TypeInfo___pyx_t_double_complex = { "double complex", NULL, sizeof(__pyx_t_double_complex), { 0 }, 0, 'C', 0, 0 };
-#define __Pyx_MODULE_NAME "bem.core.fma_functions"
-int __pyx_module_is_main_bem__core__fma_functions = 0;
+#define __Pyx_MODULE_NAME "interaction3.bem.core.fma_functions"
+int __pyx_module_is_main_interaction3__bem__core__fma_functions = 0;
 
-/* Implementation of 'bem.core.fma_functions' */
+/* Implementation of 'interaction3.bem.core.fma_functions' */
 static PyObject *__pyx_builtin_range;
 static PyObject *__pyx_builtin_ValueError;
 static PyObject *__pyx_builtin_RuntimeError;
@@ -2084,11 +2092,14 @@ static const char __pyx_k_k[] = "k";
 static const char __pyx_k_l[] = "l";
 static const char __pyx_k_q[] = "q";
 static const char __pyx_k_r[] = "r";
+static const char __pyx_k_x[] = "x";
+static const char __pyx_k_y[] = "y";
 static const char __pyx_k_z[] = "z";
 static const char __pyx_k_id[] = "id";
 static const char __pyx_k_ij[] = "ij";
 static const char __pyx_k_np[] = "np";
 static const char __pyx_k_pi[] = "pi";
+static const char __pyx_k_c_2[] = "c_";
 static const char __pyx_k_cos[] = "cos";
 static const char __pyx_k_dot[] = "dot";
 static const char __pyx_k_fft[] = "fft";
@@ -2103,6 +2114,7 @@ static const char __pyx_k_axis[] = "axis";
 static const char __pyx_k_base[] = "base";
 static const char __pyx_k_copy[] = "copy";
 static const char __pyx_k_dict[] = "__dict__";
+static const char __pyx_k_dims[] = "dims";
 static const char __pyx_k_dist[] = "dist";
 static const char __pyx_k_fft2[] = "fft2";
 static const char __pyx_k_ifft[] = "ifft";
@@ -2125,14 +2137,17 @@ static const char __pyx_k_dtype[] = "dtype";
 static const char __pyx_k_error[] = "error";
 static const char __pyx_k_flags[] = "flags";
 static const char __pyx_k_ifft2[] = "ifft2";
+static const char __pyx_k_mgrid[] = "mgrid";
 static const char __pyx_k_nodes[] = "nodes";
 static const char __pyx_k_numpy[] = "numpy";
 static const char __pyx_k_range[] = "range";
+static const char __pyx_k_ravel[] = "ravel";
 static const char __pyx_k_shape[] = "shape";
 static const char __pyx_k_start[] = "start";
 static const char __pyx_k_theta[] = "theta";
 static const char __pyx_k_zeros[] = "zeros";
 static const char __pyx_k_arange[] = "arange";
+static const char __pyx_k_astype[] = "astype";
 static const char __pyx_k_center[] = "center";
 static const char __pyx_k_double[] = "double";
 static const char __pyx_k_encode[] = "encode";
@@ -2145,12 +2160,14 @@ static const char __pyx_k_ntheta[] = "ntheta";
 static const char __pyx_k_pickle[] = "pickle";
 static const char __pyx_k_reduce[] = "__reduce__";
 static const char __pyx_k_struct[] = "struct";
+static const char __pyx_k_tolist[] = "tolist";
 static const char __pyx_k_unpack[] = "unpack";
 static const char __pyx_k_update[] = "update";
 static const char __pyx_k_asarray[] = "asarray";
 static const char __pyx_k_float64[] = "float64";
 static const char __pyx_k_fortran[] = "fortran";
 static const char __pyx_k_hankel2[] = "hankel2";
+static const char __pyx_k_kcoordT[] = "kcoordT";
 static const char __pyx_k_memview[] = "memview";
 static const char __pyx_k_weights[] = "weights";
 static const char __pyx_k_Ellipsis[] = "Ellipsis";
@@ -2175,6 +2192,7 @@ static const char __pyx_k_new_order[] = "new_order";
 static const char __pyx_k_phi_order[] = "phi_order";
 static const char __pyx_k_pyx_state[] = "__pyx_state";
 static const char __pyx_k_reduce_ex[] = "__reduce_ex__";
+static const char __pyx_k_transpose[] = "transpose";
 static const char __pyx_k_IndexError[] = "IndexError";
 static const char __pyx_k_ValueError[] = "ValueError";
 static const char __pyx_k_complex128[] = "complex128";
@@ -2196,24 +2214,24 @@ static const char __pyx_k_reduce_cython[] = "__reduce_cython__";
 static const char __pyx_k_scipy_fftpack[] = "scipy.fftpack";
 static const char __pyx_k_scipy_special[] = "scipy.special";
 static const char __pyx_k_theta_weights[] = "theta_weights";
+static const char __pyx_k_unique_coords[] = "unique_coords";
 static const char __pyx_k_sph_hankel2_np[] = "sph_hankel2_np";
 static const char __pyx_k_View_MemoryView[] = "View.MemoryView";
 static const char __pyx_k_allocate_buffer[] = "allocate_buffer";
 static const char __pyx_k_dtype_is_object[] = "dtype_is_object";
 static const char __pyx_k_pyx_PickleError[] = "__pyx_PickleError";
 static const char __pyx_k_setstate_cython[] = "__setstate_cython__";
+static const char __pyx_k_get_unique_coords[] = "get_unique_coords";
 static const char __pyx_k_pyx_unpickle_Enum[] = "__pyx_unpickle_Enum";
 static const char __pyx_k_cline_in_traceback[] = "cline_in_traceback";
 static const char __pyx_k_strided_and_direct[] = "<strided and direct>";
 static const char __pyx_k_strided_and_indirect[] = "<strided and indirect>";
 static const char __pyx_k_contiguous_and_direct[] = "<contiguous and direct>";
 static const char __pyx_k_MemoryView_of_r_object[] = "<MemoryView of %r object>";
-static const char __pyx_k_bem_core_fma_functions[] = "bem.core.fma_functions";
 static const char __pyx_k_MemoryView_of_r_at_0x_x[] = "<MemoryView of %r at 0x%x>";
 static const char __pyx_k_contiguous_and_indirect[] = "<contiguous and indirect>";
 static const char __pyx_k_Cannot_index_with_type_s[] = "Cannot index with type '%s'";
 static const char __pyx_k_Invalid_shape_in_axis_d_d[] = "Invalid shape in axis %d: %d.";
-static const char __pyx_k_bem_core_fma_functions_pyx[] = "bem\\core\\fma_functions.pyx";
 static const char __pyx_k_itemsize_0_for_cython_array[] = "itemsize <= 0 for cython.array";
 static const char __pyx_k_ndarray_is_not_C_contiguous[] = "ndarray is not C contiguous";
 static const char __pyx_k_unable_to_allocate_array_data[] = "unable to allocate array data.";
@@ -2232,11 +2250,13 @@ static const char __pyx_k_Non_native_byte_order_not_suppor[] = "Non-native byte 
 static const char __pyx_k_Out_of_bounds_on_buffer_access_a[] = "Out of bounds on buffer access (axis %d)";
 static const char __pyx_k_Unable_to_convert_item_to_object[] = "Unable to convert item to object";
 static const char __pyx_k_got_differing_extents_in_dimensi[] = "got differing extents in dimension %d (got %d and %d)";
+static const char __pyx_k_interaction3_bem_core_fma_functi[] = "interaction3\\bem\\core\\fma_functions.pyx";
 static const char __pyx_k_ndarray_is_not_Fortran_contiguou[] = "ndarray is not Fortran contiguous";
 static const char __pyx_k_no_default___reduce___due_to_non[] = "no default __reduce__ due to non-trivial __cinit__";
 static const char __pyx_k_numpy_core_umath_failed_to_impor[] = "numpy.core.umath failed to import";
 static const char __pyx_k_unable_to_allocate_shape_and_str[] = "unable to allocate shape and strides.";
 static const char __pyx_k_Format_string_allocated_too_shor_2[] = "Format string allocated too short.";
+static const char __pyx_k_interaction3_bem_core_fma_functi_2[] = "interaction3.bem.core.fma_functions";
 static PyObject *__pyx_n_s_ASCII;
 static PyObject *__pyx_kp_s_Buffer_view_does_not_expose_stri;
 static PyObject *__pyx_kp_s_Can_only_create_a_buffer_that_is;
@@ -2267,14 +2287,14 @@ static PyObject *__pyx_n_s_a;
 static PyObject *__pyx_n_s_allocate_buffer;
 static PyObject *__pyx_n_s_arange;
 static PyObject *__pyx_n_s_asarray;
+static PyObject *__pyx_n_s_astype;
 static PyObject *__pyx_n_s_axes;
 static PyObject *__pyx_n_s_axis;
 static PyObject *__pyx_n_s_b;
 static PyObject *__pyx_n_s_base;
-static PyObject *__pyx_n_s_bem_core_fma_functions;
-static PyObject *__pyx_kp_s_bem_core_fma_functions_pyx;
 static PyObject *__pyx_n_s_c;
 static PyObject *__pyx_n_u_c;
+static PyObject *__pyx_n_s_c_2;
 static PyObject *__pyx_n_s_center;
 static PyObject *__pyx_n_s_class;
 static PyObject *__pyx_n_s_cline_in_traceback;
@@ -2288,6 +2308,7 @@ static PyObject *__pyx_n_s_copy;
 static PyObject *__pyx_n_s_cos;
 static PyObject *__pyx_n_s_cos_angle;
 static PyObject *__pyx_n_s_dict;
+static PyObject *__pyx_n_s_dims;
 static PyObject *__pyx_n_s_dist;
 static PyObject *__pyx_n_s_dot;
 static PyObject *__pyx_n_s_double;
@@ -2308,6 +2329,7 @@ static PyObject *__pyx_n_s_float64;
 static PyObject *__pyx_n_s_format;
 static PyObject *__pyx_n_s_fortran;
 static PyObject *__pyx_n_u_fortran;
+static PyObject *__pyx_n_s_get_unique_coords;
 static PyObject *__pyx_n_s_getstate;
 static PyObject *__pyx_kp_s_got_differing_extents_in_dimensi;
 static PyObject *__pyx_n_s_hankel2;
@@ -2318,10 +2340,13 @@ static PyObject *__pyx_n_s_ifftshift;
 static PyObject *__pyx_n_s_ij;
 static PyObject *__pyx_n_s_import;
 static PyObject *__pyx_n_s_indexing;
+static PyObject *__pyx_kp_s_interaction3_bem_core_fma_functi;
+static PyObject *__pyx_n_s_interaction3_bem_core_fma_functi_2;
 static PyObject *__pyx_n_s_itemsize;
 static PyObject *__pyx_kp_s_itemsize_0_for_cython_array;
 static PyObject *__pyx_n_s_k;
 static PyObject *__pyx_n_s_kcoord;
+static PyObject *__pyx_n_s_kcoordT;
 static PyObject *__pyx_n_s_kdir;
 static PyObject *__pyx_n_s_kdir_dim1;
 static PyObject *__pyx_n_s_kdir_dim2;
@@ -2330,6 +2355,7 @@ static PyObject *__pyx_n_s_linspace;
 static PyObject *__pyx_n_s_main;
 static PyObject *__pyx_n_s_memview;
 static PyObject *__pyx_n_s_meshgrid;
+static PyObject *__pyx_n_s_mgrid;
 static PyObject *__pyx_n_s_mode;
 static PyObject *__pyx_n_s_name;
 static PyObject *__pyx_n_s_name_2;
@@ -2366,6 +2392,7 @@ static PyObject *__pyx_n_s_pyx_vtable;
 static PyObject *__pyx_n_s_q;
 static PyObject *__pyx_n_s_r;
 static PyObject *__pyx_n_s_range;
+static PyObject *__pyx_n_s_ravel;
 static PyObject *__pyx_n_s_reduce;
 static PyObject *__pyx_n_s_reduce_cython;
 static PyObject *__pyx_n_s_reduce_ex;
@@ -2390,35 +2417,41 @@ static PyObject *__pyx_n_s_test;
 static PyObject *__pyx_n_s_theta;
 static PyObject *__pyx_n_s_theta_order;
 static PyObject *__pyx_n_s_theta_weights;
+static PyObject *__pyx_n_s_tolist;
 static PyObject *__pyx_n_s_trans_order;
+static PyObject *__pyx_n_s_transpose;
 static PyObject *__pyx_kp_s_unable_to_allocate_array_data;
 static PyObject *__pyx_kp_s_unable_to_allocate_shape_and_str;
+static PyObject *__pyx_n_s_unique_coords;
 static PyObject *__pyx_kp_u_unknown_dtype_code_in_numpy_pxd;
 static PyObject *__pyx_n_s_unpack;
 static PyObject *__pyx_n_s_update;
 static PyObject *__pyx_n_s_weights;
+static PyObject *__pyx_n_s_x;
+static PyObject *__pyx_n_s_y;
 static PyObject *__pyx_n_s_z;
 static PyObject *__pyx_n_s_zeros;
-static PyObject *__pyx_pf_3bem_4core_13fma_functions_mag(CYTHON_UNUSED PyObject *__pyx_self, __Pyx_memviewslice __pyx_v_r); /* proto */
-static PyObject *__pyx_pf_3bem_4core_13fma_functions_2distance(CYTHON_UNUSED PyObject *__pyx_self, __Pyx_memviewslice __pyx_v_a, __Pyx_memviewslice __pyx_v_b); /* proto */
-static PyObject *__pyx_pf_3bem_4core_13fma_functions_4dir2coord(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_kdir); /* proto */
-static PyObject *__pyx_pf_3bem_4core_13fma_functions_6sph_hankel2(CYTHON_UNUSED PyObject *__pyx_self, int __pyx_v_l, double __pyx_v_z); /* proto */
-static PyObject *__pyx_pf_3bem_4core_13fma_functions_8sph_hankel2_np(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_l, PyObject *__pyx_v_z); /* proto */
-static PyObject *__pyx_pf_3bem_4core_13fma_functions_10direct_eval(CYTHON_UNUSED PyObject *__pyx_self, __Pyx_memviewslice __pyx_v_q, __Pyx_memviewslice __pyx_v_dist, double __pyx_v_k, double __pyx_v_rho, double __pyx_v_c); /* proto */
-static PyObject *__pyx_pf_3bem_4core_13fma_functions_12ff_coeff(CYTHON_UNUSED PyObject *__pyx_self, __Pyx_memviewslice __pyx_v_q, __Pyx_memviewslice __pyx_v_exp_part); /* proto */
-static PyObject *__pyx_pf_3bem_4core_13fma_functions_14calc_exp_part(CYTHON_UNUSED PyObject *__pyx_self, __Pyx_memviewslice __pyx_v_nodes, __Pyx_memviewslice __pyx_v_center, __Pyx_memviewslice __pyx_v_kcoord, double __pyx_v_k); /* proto */
-static PyObject *__pyx_pf_3bem_4core_13fma_functions_16nf_eval(CYTHON_UNUSED PyObject *__pyx_self, __Pyx_memviewslice __pyx_v_coeff, __Pyx_memviewslice __pyx_v_exp_part, double __pyx_v_k, double __pyx_v_rho, double __pyx_v_c); /* proto */
-static PyObject *__pyx_pf_3bem_4core_13fma_functions_18ff2nf_op(CYTHON_UNUSED PyObject *__pyx_self, double __pyx_v_r, __Pyx_memviewslice __pyx_v_cos_angle, double __pyx_v_k, int __pyx_v_trans_order); /* proto */
-static PyObject *__pyx_pf_3bem_4core_13fma_functions_20ff2nf_op2(CYTHON_UNUSED PyObject *__pyx_self, double __pyx_v_r, __Pyx_memviewslice __pyx_v_cos_angle, double __pyx_v_k, int __pyx_v_trans_order); /* proto */
-static PyObject *__pyx_pf_3bem_4core_13fma_functions_22mod_ff2nf_op(CYTHON_UNUSED PyObject *__pyx_self, double __pyx_v_r, __Pyx_memviewslice __pyx_v_cos_angle, double __pyx_v_k, int __pyx_v_trans_order); /* proto */
-static PyObject *__pyx_pf_3bem_4core_13fma_functions_24bandlimited_abs_sin(CYTHON_UNUSED PyObject *__pyx_self, int __pyx_v_deg); /* proto */
-static PyObject *__pyx_pf_3bem_4core_13fma_functions_26ff2ff_op(CYTHON_UNUSED PyObject *__pyx_self, double __pyx_v_r, __Pyx_memviewslice __pyx_v_cos_angle, double __pyx_v_k); /* proto */
-static PyObject *__pyx_pf_3bem_4core_13fma_functions_28half_fft2(CYTHON_UNUSED PyObject *__pyx_self, PyArrayObject *__pyx_v_x); /* proto */
-static PyObject *__pyx_pf_3bem_4core_13fma_functions_30half_ifft2(CYTHON_UNUSED PyObject *__pyx_self, PyArrayObject *__pyx_v_x); /* proto */
-static PyObject *__pyx_pf_3bem_4core_13fma_functions_32fft_interpolate(CYTHON_UNUSED PyObject *__pyx_self, PyArrayObject *__pyx_v_coeff, int __pyx_v_kdir_dim1, int __pyx_v_kdir_dim2); /* proto */
-static PyObject *__pyx_pf_3bem_4core_13fma_functions_34fft_interpolate_theta(CYTHON_UNUSED PyObject *__pyx_self, PyArrayObject *__pyx_v_coeff, int __pyx_v_new_order); /* proto */
-static PyObject *__pyx_pf_3bem_4core_13fma_functions_36fft_filter(CYTHON_UNUSED PyObject *__pyx_self, __Pyx_memviewslice __pyx_v_coeff, int __pyx_v_kdir_dim1, int __pyx_v_kdir_dim2); /* proto */
-static PyObject *__pyx_pf_3bem_4core_13fma_functions_38fft_quadrule(CYTHON_UNUSED PyObject *__pyx_self, int __pyx_v_theta_order, int __pyx_v_phi_order); /* proto */
+static PyObject *__pyx_pf_12interaction3_3bem_4core_13fma_functions_mag(CYTHON_UNUSED PyObject *__pyx_self, __Pyx_memviewslice __pyx_v_r); /* proto */
+static PyObject *__pyx_pf_12interaction3_3bem_4core_13fma_functions_2distance(CYTHON_UNUSED PyObject *__pyx_self, __Pyx_memviewslice __pyx_v_a, __Pyx_memviewslice __pyx_v_b); /* proto */
+static PyObject *__pyx_pf_12interaction3_3bem_4core_13fma_functions_4dir2coord(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_kdir); /* proto */
+static PyObject *__pyx_pf_12interaction3_3bem_4core_13fma_functions_6sph_hankel2(CYTHON_UNUSED PyObject *__pyx_self, int __pyx_v_l, double __pyx_v_z); /* proto */
+static PyObject *__pyx_pf_12interaction3_3bem_4core_13fma_functions_8sph_hankel2_np(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_l, PyObject *__pyx_v_z); /* proto */
+static PyObject *__pyx_pf_12interaction3_3bem_4core_13fma_functions_10direct_eval(CYTHON_UNUSED PyObject *__pyx_self, __Pyx_memviewslice __pyx_v_q, __Pyx_memviewslice __pyx_v_dist, double __pyx_v_k, double __pyx_v_rho, double __pyx_v_c); /* proto */
+static PyObject *__pyx_pf_12interaction3_3bem_4core_13fma_functions_12ff_coeff(CYTHON_UNUSED PyObject *__pyx_self, __Pyx_memviewslice __pyx_v_q, __Pyx_memviewslice __pyx_v_exp_part); /* proto */
+static PyObject *__pyx_pf_12interaction3_3bem_4core_13fma_functions_14calc_exp_part(CYTHON_UNUSED PyObject *__pyx_self, __Pyx_memviewslice __pyx_v_nodes, __Pyx_memviewslice __pyx_v_center, __Pyx_memviewslice __pyx_v_kcoord, double __pyx_v_k); /* proto */
+static PyObject *__pyx_pf_12interaction3_3bem_4core_13fma_functions_16nf_eval(CYTHON_UNUSED PyObject *__pyx_self, __Pyx_memviewslice __pyx_v_coeff, __Pyx_memviewslice __pyx_v_exp_part, double __pyx_v_k, double __pyx_v_rho, double __pyx_v_c); /* proto */
+static PyObject *__pyx_pf_12interaction3_3bem_4core_13fma_functions_18ff2nf_op(CYTHON_UNUSED PyObject *__pyx_self, double __pyx_v_r, __Pyx_memviewslice __pyx_v_cos_angle, double __pyx_v_k, int __pyx_v_trans_order); /* proto */
+static PyObject *__pyx_pf_12interaction3_3bem_4core_13fma_functions_20ff2nf_op2(CYTHON_UNUSED PyObject *__pyx_self, double __pyx_v_r, __Pyx_memviewslice __pyx_v_cos_angle, double __pyx_v_k, int __pyx_v_trans_order); /* proto */
+static PyObject *__pyx_pf_12interaction3_3bem_4core_13fma_functions_22mod_ff2nf_op(CYTHON_UNUSED PyObject *__pyx_self, double __pyx_v_r, __Pyx_memviewslice __pyx_v_cos_angle, double __pyx_v_k, int __pyx_v_trans_order); /* proto */
+static PyObject *__pyx_pf_12interaction3_3bem_4core_13fma_functions_24bandlimited_abs_sin(CYTHON_UNUSED PyObject *__pyx_self, int __pyx_v_deg); /* proto */
+static PyObject *__pyx_pf_12interaction3_3bem_4core_13fma_functions_26ff2ff_op(CYTHON_UNUSED PyObject *__pyx_self, double __pyx_v_r, __Pyx_memviewslice __pyx_v_cos_angle, double __pyx_v_k); /* proto */
+static PyObject *__pyx_pf_12interaction3_3bem_4core_13fma_functions_28half_fft2(CYTHON_UNUSED PyObject *__pyx_self, PyArrayObject *__pyx_v_x); /* proto */
+static PyObject *__pyx_pf_12interaction3_3bem_4core_13fma_functions_30half_ifft2(CYTHON_UNUSED PyObject *__pyx_self, PyArrayObject *__pyx_v_x); /* proto */
+static PyObject *__pyx_pf_12interaction3_3bem_4core_13fma_functions_32fft_interpolate(CYTHON_UNUSED PyObject *__pyx_self, PyArrayObject *__pyx_v_coeff, int __pyx_v_kdir_dim1, int __pyx_v_kdir_dim2); /* proto */
+static PyObject *__pyx_pf_12interaction3_3bem_4core_13fma_functions_34fft_interpolate_theta(CYTHON_UNUSED PyObject *__pyx_self, PyArrayObject *__pyx_v_coeff, int __pyx_v_new_order); /* proto */
+static PyObject *__pyx_pf_12interaction3_3bem_4core_13fma_functions_36fft_filter(CYTHON_UNUSED PyObject *__pyx_self, __Pyx_memviewslice __pyx_v_coeff, int __pyx_v_kdir_dim1, int __pyx_v_kdir_dim2); /* proto */
+static PyObject *__pyx_pf_12interaction3_3bem_4core_13fma_functions_38fft_quadrule(CYTHON_UNUSED PyObject *__pyx_self, int __pyx_v_theta_order, int __pyx_v_phi_order); /* proto */
+static PyObject *__pyx_pf_12interaction3_3bem_4core_13fma_functions_40get_unique_coords(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_dims); /* proto */
 static int __pyx_pf_5numpy_7ndarray___getbuffer__(PyArrayObject *__pyx_v_self, Py_buffer *__pyx_v_info, int __pyx_v_flags); /* proto */
 static void __pyx_pf_5numpy_7ndarray_2__releasebuffer__(PyArrayObject *__pyx_v_self, Py_buffer *__pyx_v_info); /* proto */
 static int __pyx_array___pyx_pf_15View_dot_MemoryView_5array___cinit__(struct __pyx_array_obj *__pyx_v_self, PyObject *__pyx_v_shape, Py_ssize_t __pyx_v_itemsize, PyObject *__pyx_v_format, PyObject *__pyx_v_mode, int __pyx_v_allocate_buffer); /* proto */
@@ -2471,6 +2504,7 @@ static PyObject *__pyx_float_0_5;
 static PyObject *__pyx_int_0;
 static PyObject *__pyx_int_1;
 static PyObject *__pyx_int_2;
+static PyObject *__pyx_int_3;
 static PyObject *__pyx_int_4;
 static PyObject *__pyx_int_16;
 static PyObject *__pyx_int_184977713;
@@ -2497,9 +2531,13 @@ static PyObject *__pyx_slice__23;
 static PyObject *__pyx_slice__25;
 static PyObject *__pyx_slice__29;
 static PyObject *__pyx_slice__30;
-static PyObject *__pyx_slice__53;
-static PyObject *__pyx_slice__54;
-static PyObject *__pyx_slice__55;
+static PyObject *__pyx_slice__33;
+static PyObject *__pyx_slice__34;
+static PyObject *__pyx_slice__35;
+static PyObject *__pyx_slice__36;
+static PyObject *__pyx_slice__60;
+static PyObject *__pyx_slice__61;
+static PyObject *__pyx_slice__62;
 static PyObject *__pyx_tuple__10;
 static PyObject *__pyx_tuple__18;
 static PyObject *__pyx_tuple__19;
@@ -2510,10 +2548,6 @@ static PyObject *__pyx_tuple__27;
 static PyObject *__pyx_tuple__28;
 static PyObject *__pyx_tuple__31;
 static PyObject *__pyx_tuple__32;
-static PyObject *__pyx_tuple__33;
-static PyObject *__pyx_tuple__34;
-static PyObject *__pyx_tuple__35;
-static PyObject *__pyx_tuple__36;
 static PyObject *__pyx_tuple__37;
 static PyObject *__pyx_tuple__38;
 static PyObject *__pyx_tuple__39;
@@ -2530,20 +2564,29 @@ static PyObject *__pyx_tuple__49;
 static PyObject *__pyx_tuple__50;
 static PyObject *__pyx_tuple__51;
 static PyObject *__pyx_tuple__52;
+static PyObject *__pyx_tuple__53;
+static PyObject *__pyx_tuple__54;
+static PyObject *__pyx_tuple__55;
 static PyObject *__pyx_tuple__56;
 static PyObject *__pyx_tuple__57;
 static PyObject *__pyx_tuple__58;
 static PyObject *__pyx_tuple__59;
-static PyObject *__pyx_tuple__61;
-static PyObject *__pyx_tuple__62;
 static PyObject *__pyx_tuple__63;
 static PyObject *__pyx_tuple__64;
 static PyObject *__pyx_tuple__65;
 static PyObject *__pyx_tuple__66;
-static PyObject *__pyx_codeobj__60;
+static PyObject *__pyx_tuple__68;
+static PyObject *__pyx_tuple__70;
+static PyObject *__pyx_tuple__71;
+static PyObject *__pyx_tuple__72;
+static PyObject *__pyx_tuple__73;
+static PyObject *__pyx_tuple__74;
+static PyObject *__pyx_tuple__75;
 static PyObject *__pyx_codeobj__67;
+static PyObject *__pyx_codeobj__69;
+static PyObject *__pyx_codeobj__76;
 
-/* "bem/core/fma_functions.pyx":26
+/* "interaction3/bem/core/fma_functions.pyx":26
  * @cython.boundscheck(False)
  * @cython.wraparound(False)
  * cpdef double mag(double[:] r):             # <<<<<<<<<<<<<<
@@ -2551,8 +2594,8 @@ static PyObject *__pyx_codeobj__67;
  *     Computes the magnitude of a vector.
  */
 
-static PyObject *__pyx_pw_3bem_4core_13fma_functions_1mag(PyObject *__pyx_self, PyObject *__pyx_arg_r); /*proto*/
-static double __pyx_f_3bem_4core_13fma_functions_mag(__Pyx_memviewslice __pyx_v_r, CYTHON_UNUSED int __pyx_skip_dispatch) {
+static PyObject *__pyx_pw_12interaction3_3bem_4core_13fma_functions_1mag(PyObject *__pyx_self, PyObject *__pyx_arg_r); /*proto*/
+static double __pyx_f_12interaction3_3bem_4core_13fma_functions_mag(__Pyx_memviewslice __pyx_v_r, CYTHON_UNUSED int __pyx_skip_dispatch) {
   double __pyx_r;
   __Pyx_RefNannyDeclarations
   Py_ssize_t __pyx_t_1;
@@ -2563,7 +2606,7 @@ static double __pyx_f_3bem_4core_13fma_functions_mag(__Pyx_memviewslice __pyx_v_
   Py_ssize_t __pyx_t_6;
   __Pyx_RefNannySetupContext("mag", 0);
 
-  /* "bem/core/fma_functions.pyx":30
+  /* "interaction3/bem/core/fma_functions.pyx":30
  *     Computes the magnitude of a vector.
  *     '''
  *     return sqrt(r[0]*r[0] + r[1]*r[1] + r[2]*r[2])             # <<<<<<<<<<<<<<
@@ -2579,7 +2622,7 @@ static double __pyx_f_3bem_4core_13fma_functions_mag(__Pyx_memviewslice __pyx_v_
   __pyx_r = sqrt(((((*((double *) ( /* dim=0 */ (__pyx_v_r.data + __pyx_t_1 * __pyx_v_r.strides[0]) ))) * (*((double *) ( /* dim=0 */ (__pyx_v_r.data + __pyx_t_2 * __pyx_v_r.strides[0]) )))) + ((*((double *) ( /* dim=0 */ (__pyx_v_r.data + __pyx_t_3 * __pyx_v_r.strides[0]) ))) * (*((double *) ( /* dim=0 */ (__pyx_v_r.data + __pyx_t_4 * __pyx_v_r.strides[0]) ))))) + ((*((double *) ( /* dim=0 */ (__pyx_v_r.data + __pyx_t_5 * __pyx_v_r.strides[0]) ))) * (*((double *) ( /* dim=0 */ (__pyx_v_r.data + __pyx_t_6 * __pyx_v_r.strides[0]) ))))));
   goto __pyx_L0;
 
-  /* "bem/core/fma_functions.pyx":26
+  /* "interaction3/bem/core/fma_functions.pyx":26
  * @cython.boundscheck(False)
  * @cython.wraparound(False)
  * cpdef double mag(double[:] r):             # <<<<<<<<<<<<<<
@@ -2594,9 +2637,9 @@ static double __pyx_f_3bem_4core_13fma_functions_mag(__Pyx_memviewslice __pyx_v_
 }
 
 /* Python wrapper */
-static PyObject *__pyx_pw_3bem_4core_13fma_functions_1mag(PyObject *__pyx_self, PyObject *__pyx_arg_r); /*proto*/
-static char __pyx_doc_3bem_4core_13fma_functions_mag[] = "\n    Computes the magnitude of a vector.\n    ";
-static PyObject *__pyx_pw_3bem_4core_13fma_functions_1mag(PyObject *__pyx_self, PyObject *__pyx_arg_r) {
+static PyObject *__pyx_pw_12interaction3_3bem_4core_13fma_functions_1mag(PyObject *__pyx_self, PyObject *__pyx_arg_r); /*proto*/
+static char __pyx_doc_12interaction3_3bem_4core_13fma_functions_mag[] = "\n    Computes the magnitude of a vector.\n    ";
+static PyObject *__pyx_pw_12interaction3_3bem_4core_13fma_functions_1mag(PyObject *__pyx_self, PyObject *__pyx_arg_r) {
   __Pyx_memviewslice __pyx_v_r = { 0, 0, { 0 }, { 0 }, { 0 } };
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
@@ -2606,25 +2649,25 @@ static PyObject *__pyx_pw_3bem_4core_13fma_functions_1mag(PyObject *__pyx_self, 
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L3_error:;
-  __Pyx_AddTraceback("bem.core.fma_functions.mag", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("interaction3.bem.core.fma_functions.mag", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  __pyx_r = __pyx_pf_3bem_4core_13fma_functions_mag(__pyx_self, __pyx_v_r);
+  __pyx_r = __pyx_pf_12interaction3_3bem_4core_13fma_functions_mag(__pyx_self, __pyx_v_r);
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_3bem_4core_13fma_functions_mag(CYTHON_UNUSED PyObject *__pyx_self, __Pyx_memviewslice __pyx_v_r) {
+static PyObject *__pyx_pf_12interaction3_3bem_4core_13fma_functions_mag(CYTHON_UNUSED PyObject *__pyx_self, __Pyx_memviewslice __pyx_v_r) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   __Pyx_RefNannySetupContext("mag", 0);
   __Pyx_XDECREF(__pyx_r);
   if (unlikely(!__pyx_v_r.memview)) { __Pyx_RaiseUnboundLocalError("r"); __PYX_ERR(0, 26, __pyx_L1_error) }
-  __pyx_t_1 = PyFloat_FromDouble(__pyx_f_3bem_4core_13fma_functions_mag(__pyx_v_r, 0)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 26, __pyx_L1_error)
+  __pyx_t_1 = PyFloat_FromDouble(__pyx_f_12interaction3_3bem_4core_13fma_functions_mag(__pyx_v_r, 0)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 26, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -2633,7 +2676,7 @@ static PyObject *__pyx_pf_3bem_4core_13fma_functions_mag(CYTHON_UNUSED PyObject 
   /* function exit code */
   __pyx_L1_error:;
   __Pyx_XDECREF(__pyx_t_1);
-  __Pyx_AddTraceback("bem.core.fma_functions.mag", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("interaction3.bem.core.fma_functions.mag", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
   __PYX_XDEC_MEMVIEW(&__pyx_v_r, 1);
@@ -2642,7 +2685,7 @@ static PyObject *__pyx_pf_3bem_4core_13fma_functions_mag(CYTHON_UNUSED PyObject 
   return __pyx_r;
 }
 
-/* "bem/core/fma_functions.pyx":35
+/* "interaction3/bem/core/fma_functions.pyx":35
  * @cython.boundscheck(False)
  * @cython.wraparound(False)
  * cpdef np.ndarray distance(double[:,:] a, double[:,:] b):             # <<<<<<<<<<<<<<
@@ -2650,8 +2693,8 @@ static PyObject *__pyx_pf_3bem_4core_13fma_functions_mag(CYTHON_UNUSED PyObject 
  *     Calculates the pair-wise distance between two sets of points.
  */
 
-static PyObject *__pyx_pw_3bem_4core_13fma_functions_3distance(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_distance(__Pyx_memviewslice __pyx_v_a, __Pyx_memviewslice __pyx_v_b, CYTHON_UNUSED int __pyx_skip_dispatch) {
+static PyObject *__pyx_pw_12interaction3_3bem_4core_13fma_functions_3distance(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static PyArrayObject *__pyx_f_12interaction3_3bem_4core_13fma_functions_distance(__Pyx_memviewslice __pyx_v_a, __Pyx_memviewslice __pyx_v_b, CYTHON_UNUSED int __pyx_skip_dispatch) {
   int __pyx_v_M1;
   int __pyx_v_N1;
   int __pyx_v_M2;
@@ -2684,7 +2727,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_distance(__Pyx_memviews
   Py_ssize_t __pyx_t_18;
   __Pyx_RefNannySetupContext("distance", 0);
 
-  /* "bem/core/fma_functions.pyx":39
+  /* "interaction3/bem/core/fma_functions.pyx":39
  *     Calculates the pair-wise distance between two sets of points.
  *     '''
  *     cdef int M1 = a.shape[0]             # <<<<<<<<<<<<<<
@@ -2693,7 +2736,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_distance(__Pyx_memviews
  */
   __pyx_v_M1 = (__pyx_v_a.shape[0]);
 
-  /* "bem/core/fma_functions.pyx":40
+  /* "interaction3/bem/core/fma_functions.pyx":40
  *     '''
  *     cdef int M1 = a.shape[0]
  *     cdef int N1 = a.shape[1]             # <<<<<<<<<<<<<<
@@ -2702,7 +2745,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_distance(__Pyx_memviews
  */
   __pyx_v_N1 = (__pyx_v_a.shape[1]);
 
-  /* "bem/core/fma_functions.pyx":41
+  /* "interaction3/bem/core/fma_functions.pyx":41
  *     cdef int M1 = a.shape[0]
  *     cdef int N1 = a.shape[1]
  *     cdef int M2 = b.shape[0]             # <<<<<<<<<<<<<<
@@ -2711,7 +2754,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_distance(__Pyx_memviews
  */
   __pyx_v_M2 = (__pyx_v_b.shape[0]);
 
-  /* "bem/core/fma_functions.pyx":42
+  /* "interaction3/bem/core/fma_functions.pyx":42
  *     cdef int N1 = a.shape[1]
  *     cdef int M2 = b.shape[0]
  *     cdef int N2 = b.shape[1]             # <<<<<<<<<<<<<<
@@ -2720,7 +2763,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_distance(__Pyx_memviews
  */
   __pyx_v_N2 = (__pyx_v_b.shape[1]);
 
-  /* "bem/core/fma_functions.pyx":43
+  /* "interaction3/bem/core/fma_functions.pyx":43
  *     cdef int M2 = b.shape[0]
  *     cdef int N2 = b.shape[1]
  *     cdef double[:,:] ret = np.zeros((M1, M2), dtype=np.double)             # <<<<<<<<<<<<<<
@@ -2770,7 +2813,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_distance(__Pyx_memviews
   __pyx_t_6.memview = NULL;
   __pyx_t_6.data = NULL;
 
-  /* "bem/core/fma_functions.pyx":47
+  /* "interaction3/bem/core/fma_functions.pyx":47
  *     cdef int i, j, k
  * 
  *     for i in range(M1):             # <<<<<<<<<<<<<<
@@ -2781,7 +2824,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_distance(__Pyx_memviews
   for (__pyx_t_8 = 0; __pyx_t_8 < __pyx_t_7; __pyx_t_8+=1) {
     __pyx_v_i = __pyx_t_8;
 
-    /* "bem/core/fma_functions.pyx":48
+    /* "interaction3/bem/core/fma_functions.pyx":48
  * 
  *     for i in range(M1):
  *         for j in range(M2):             # <<<<<<<<<<<<<<
@@ -2792,7 +2835,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_distance(__Pyx_memviews
     for (__pyx_t_10 = 0; __pyx_t_10 < __pyx_t_9; __pyx_t_10+=1) {
       __pyx_v_j = __pyx_t_10;
 
-      /* "bem/core/fma_functions.pyx":50
+      /* "interaction3/bem/core/fma_functions.pyx":50
  *         for j in range(M2):
  * 
  *             d = 0.0             # <<<<<<<<<<<<<<
@@ -2801,7 +2844,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_distance(__Pyx_memviews
  */
       __pyx_v_d = 0.0;
 
-      /* "bem/core/fma_functions.pyx":52
+      /* "interaction3/bem/core/fma_functions.pyx":52
  *             d = 0.0
  * 
  *             for k in range(N1):             # <<<<<<<<<<<<<<
@@ -2812,7 +2855,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_distance(__Pyx_memviews
       for (__pyx_t_12 = 0; __pyx_t_12 < __pyx_t_11; __pyx_t_12+=1) {
         __pyx_v_k = __pyx_t_12;
 
-        /* "bem/core/fma_functions.pyx":54
+        /* "interaction3/bem/core/fma_functions.pyx":54
  *             for k in range(N1):
  * 
  *                 tmp = a[i, k] - b[j, k]             # <<<<<<<<<<<<<<
@@ -2825,7 +2868,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_distance(__Pyx_memviews
         __pyx_t_16 = __pyx_v_k;
         __pyx_v_tmp = ((*((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_a.data + __pyx_t_13 * __pyx_v_a.strides[0]) ) + __pyx_t_14 * __pyx_v_a.strides[1]) ))) - (*((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_b.data + __pyx_t_15 * __pyx_v_b.strides[0]) ) + __pyx_t_16 * __pyx_v_b.strides[1]) ))));
 
-        /* "bem/core/fma_functions.pyx":55
+        /* "interaction3/bem/core/fma_functions.pyx":55
  * 
  *                 tmp = a[i, k] - b[j, k]
  *                 d += tmp * tmp             # <<<<<<<<<<<<<<
@@ -2835,7 +2878,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_distance(__Pyx_memviews
         __pyx_v_d = (__pyx_v_d + (__pyx_v_tmp * __pyx_v_tmp));
       }
 
-      /* "bem/core/fma_functions.pyx":57
+      /* "interaction3/bem/core/fma_functions.pyx":57
  *                 d += tmp * tmp
  * 
  *             ret[i, j] = sqrt(d)             # <<<<<<<<<<<<<<
@@ -2848,7 +2891,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_distance(__Pyx_memviews
     }
   }
 
-  /* "bem/core/fma_functions.pyx":59
+  /* "interaction3/bem/core/fma_functions.pyx":59
  *             ret[i, j] = sqrt(d)
  * 
  *     return np.asarray(ret)             # <<<<<<<<<<<<<<
@@ -2914,7 +2957,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_distance(__Pyx_memviews
   __pyx_t_5 = 0;
   goto __pyx_L0;
 
-  /* "bem/core/fma_functions.pyx":35
+  /* "interaction3/bem/core/fma_functions.pyx":35
  * @cython.boundscheck(False)
  * @cython.wraparound(False)
  * cpdef np.ndarray distance(double[:,:] a, double[:,:] b):             # <<<<<<<<<<<<<<
@@ -2930,7 +2973,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_distance(__Pyx_memviews
   __Pyx_XDECREF(__pyx_t_4);
   __Pyx_XDECREF(__pyx_t_5);
   __PYX_XDEC_MEMVIEW(&__pyx_t_6, 1);
-  __Pyx_AddTraceback("bem.core.fma_functions.distance", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("interaction3.bem.core.fma_functions.distance", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = 0;
   __pyx_L0:;
   __PYX_XDEC_MEMVIEW(&__pyx_v_ret, 1);
@@ -2940,9 +2983,9 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_distance(__Pyx_memviews
 }
 
 /* Python wrapper */
-static PyObject *__pyx_pw_3bem_4core_13fma_functions_3distance(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static char __pyx_doc_3bem_4core_13fma_functions_2distance[] = "\n    Calculates the pair-wise distance between two sets of points.\n    ";
-static PyObject *__pyx_pw_3bem_4core_13fma_functions_3distance(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
+static PyObject *__pyx_pw_12interaction3_3bem_4core_13fma_functions_3distance(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static char __pyx_doc_12interaction3_3bem_4core_13fma_functions_2distance[] = "\n    Calculates the pair-wise distance between two sets of points.\n    ";
+static PyObject *__pyx_pw_12interaction3_3bem_4core_13fma_functions_3distance(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
   __Pyx_memviewslice __pyx_v_a = { 0, 0, { 0 }, { 0 }, { 0 } };
   __Pyx_memviewslice __pyx_v_b = { 0, 0, { 0 }, { 0 }, { 0 } };
   PyObject *__pyx_r = 0;
@@ -2990,18 +3033,18 @@ static PyObject *__pyx_pw_3bem_4core_13fma_functions_3distance(PyObject *__pyx_s
   __pyx_L5_argtuple_error:;
   __Pyx_RaiseArgtupleInvalid("distance", 1, 2, 2, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 35, __pyx_L3_error)
   __pyx_L3_error:;
-  __Pyx_AddTraceback("bem.core.fma_functions.distance", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("interaction3.bem.core.fma_functions.distance", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  __pyx_r = __pyx_pf_3bem_4core_13fma_functions_2distance(__pyx_self, __pyx_v_a, __pyx_v_b);
+  __pyx_r = __pyx_pf_12interaction3_3bem_4core_13fma_functions_2distance(__pyx_self, __pyx_v_a, __pyx_v_b);
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_3bem_4core_13fma_functions_2distance(CYTHON_UNUSED PyObject *__pyx_self, __Pyx_memviewslice __pyx_v_a, __Pyx_memviewslice __pyx_v_b) {
+static PyObject *__pyx_pf_12interaction3_3bem_4core_13fma_functions_2distance(CYTHON_UNUSED PyObject *__pyx_self, __Pyx_memviewslice __pyx_v_a, __Pyx_memviewslice __pyx_v_b) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
@@ -3009,7 +3052,7 @@ static PyObject *__pyx_pf_3bem_4core_13fma_functions_2distance(CYTHON_UNUSED PyO
   __Pyx_XDECREF(__pyx_r);
   if (unlikely(!__pyx_v_a.memview)) { __Pyx_RaiseUnboundLocalError("a"); __PYX_ERR(0, 35, __pyx_L1_error) }
   if (unlikely(!__pyx_v_b.memview)) { __Pyx_RaiseUnboundLocalError("b"); __PYX_ERR(0, 35, __pyx_L1_error) }
-  __pyx_t_1 = ((PyObject *)__pyx_f_3bem_4core_13fma_functions_distance(__pyx_v_a, __pyx_v_b, 0)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 35, __pyx_L1_error)
+  __pyx_t_1 = ((PyObject *)__pyx_f_12interaction3_3bem_4core_13fma_functions_distance(__pyx_v_a, __pyx_v_b, 0)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 35, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -3018,7 +3061,7 @@ static PyObject *__pyx_pf_3bem_4core_13fma_functions_2distance(CYTHON_UNUSED PyO
   /* function exit code */
   __pyx_L1_error:;
   __Pyx_XDECREF(__pyx_t_1);
-  __Pyx_AddTraceback("bem.core.fma_functions.distance", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("interaction3.bem.core.fma_functions.distance", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
   __PYX_XDEC_MEMVIEW(&__pyx_v_a, 1);
@@ -3028,7 +3071,7 @@ static PyObject *__pyx_pf_3bem_4core_13fma_functions_2distance(CYTHON_UNUSED PyO
   return __pyx_r;
 }
 
-/* "bem/core/fma_functions.pyx":64
+/* "interaction3/bem/core/fma_functions.pyx":64
  * @cython.boundscheck(False)
  * @cython.wraparound(False)
  * cpdef np.ndarray dir2coord(kdir):             # <<<<<<<<<<<<<<
@@ -3036,8 +3079,8 @@ static PyObject *__pyx_pf_3bem_4core_13fma_functions_2distance(CYTHON_UNUSED PyO
  *     Transforms angular directions from spherical to cartesian.
  */
 
-static PyObject *__pyx_pw_3bem_4core_13fma_functions_5dir2coord(PyObject *__pyx_self, PyObject *__pyx_v_kdir); /*proto*/
-static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_dir2coord(PyObject *__pyx_v_kdir, CYTHON_UNUSED int __pyx_skip_dispatch) {
+static PyObject *__pyx_pw_12interaction3_3bem_4core_13fma_functions_5dir2coord(PyObject *__pyx_self, PyObject *__pyx_v_kdir); /*proto*/
+static PyArrayObject *__pyx_f_12interaction3_3bem_4core_13fma_functions_dir2coord(PyObject *__pyx_v_kdir, CYTHON_UNUSED int __pyx_skip_dispatch) {
   PyObject *__pyx_v_theta = NULL;
   PyObject *__pyx_v_phi = NULL;
   PyObject *__pyx_v_x = NULL;
@@ -3053,7 +3096,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_dir2coord(PyObject *__p
   PyObject *__pyx_t_5 = NULL;
   __Pyx_RefNannySetupContext("dir2coord", 0);
 
-  /* "bem/core/fma_functions.pyx":68
+  /* "interaction3/bem/core/fma_functions.pyx":68
  *     Transforms angular directions from spherical to cartesian.
  *     '''
  *     theta = kdir[:, :, 0]             # <<<<<<<<<<<<<<
@@ -3065,7 +3108,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_dir2coord(PyObject *__p
   __pyx_v_theta = __pyx_t_1;
   __pyx_t_1 = 0;
 
-  /* "bem/core/fma_functions.pyx":69
+  /* "interaction3/bem/core/fma_functions.pyx":69
  *     '''
  *     theta = kdir[:, :, 0]
  *     phi = kdir[:, :, 1]             # <<<<<<<<<<<<<<
@@ -3077,7 +3120,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_dir2coord(PyObject *__p
   __pyx_v_phi = __pyx_t_1;
   __pyx_t_1 = 0;
 
-  /* "bem/core/fma_functions.pyx":71
+  /* "interaction3/bem/core/fma_functions.pyx":71
  *     phi = kdir[:, :, 1]
  * 
  *     x = np.cos(phi) * np.sin(theta)             # <<<<<<<<<<<<<<
@@ -3187,7 +3230,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_dir2coord(PyObject *__p
   __pyx_v_x = __pyx_t_2;
   __pyx_t_2 = 0;
 
-  /* "bem/core/fma_functions.pyx":72
+  /* "interaction3/bem/core/fma_functions.pyx":72
  * 
  *     x = np.cos(phi) * np.sin(theta)
  *     y = np.sin(phi) * np.sin(theta)             # <<<<<<<<<<<<<<
@@ -3297,7 +3340,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_dir2coord(PyObject *__p
   __pyx_v_y = __pyx_t_3;
   __pyx_t_3 = 0;
 
-  /* "bem/core/fma_functions.pyx":73
+  /* "interaction3/bem/core/fma_functions.pyx":73
  *     x = np.cos(phi) * np.sin(theta)
  *     y = np.sin(phi) * np.sin(theta)
  *     z = np.cos(theta)             # <<<<<<<<<<<<<<
@@ -3355,7 +3398,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_dir2coord(PyObject *__p
   __pyx_v_z = __pyx_t_3;
   __pyx_t_3 = 0;
 
-  /* "bem/core/fma_functions.pyx":75
+  /* "interaction3/bem/core/fma_functions.pyx":75
  *     z = np.cos(theta)
  * 
  *     kcoord = np.concatenate((x[..., None], y[..., None], z[..., None]), axis=2)             # <<<<<<<<<<<<<<
@@ -3400,7 +3443,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_dir2coord(PyObject *__p
   __pyx_v_kcoord = __pyx_t_4;
   __pyx_t_4 = 0;
 
-  /* "bem/core/fma_functions.pyx":77
+  /* "interaction3/bem/core/fma_functions.pyx":77
  *     kcoord = np.concatenate((x[..., None], y[..., None], z[..., None]), axis=2)
  * 
  *     return kcoord             # <<<<<<<<<<<<<<
@@ -3413,7 +3456,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_dir2coord(PyObject *__p
   __pyx_r = ((PyArrayObject *)__pyx_v_kcoord);
   goto __pyx_L0;
 
-  /* "bem/core/fma_functions.pyx":64
+  /* "interaction3/bem/core/fma_functions.pyx":64
  * @cython.boundscheck(False)
  * @cython.wraparound(False)
  * cpdef np.ndarray dir2coord(kdir):             # <<<<<<<<<<<<<<
@@ -3428,7 +3471,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_dir2coord(PyObject *__p
   __Pyx_XDECREF(__pyx_t_3);
   __Pyx_XDECREF(__pyx_t_4);
   __Pyx_XDECREF(__pyx_t_5);
-  __Pyx_AddTraceback("bem.core.fma_functions.dir2coord", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("interaction3.bem.core.fma_functions.dir2coord", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = 0;
   __pyx_L0:;
   __Pyx_XDECREF(__pyx_v_theta);
@@ -3443,26 +3486,26 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_dir2coord(PyObject *__p
 }
 
 /* Python wrapper */
-static PyObject *__pyx_pw_3bem_4core_13fma_functions_5dir2coord(PyObject *__pyx_self, PyObject *__pyx_v_kdir); /*proto*/
-static char __pyx_doc_3bem_4core_13fma_functions_4dir2coord[] = "\n    Transforms angular directions from spherical to cartesian.\n    ";
-static PyObject *__pyx_pw_3bem_4core_13fma_functions_5dir2coord(PyObject *__pyx_self, PyObject *__pyx_v_kdir) {
+static PyObject *__pyx_pw_12interaction3_3bem_4core_13fma_functions_5dir2coord(PyObject *__pyx_self, PyObject *__pyx_v_kdir); /*proto*/
+static char __pyx_doc_12interaction3_3bem_4core_13fma_functions_4dir2coord[] = "\n    Transforms angular directions from spherical to cartesian.\n    ";
+static PyObject *__pyx_pw_12interaction3_3bem_4core_13fma_functions_5dir2coord(PyObject *__pyx_self, PyObject *__pyx_v_kdir) {
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("dir2coord (wrapper)", 0);
-  __pyx_r = __pyx_pf_3bem_4core_13fma_functions_4dir2coord(__pyx_self, ((PyObject *)__pyx_v_kdir));
+  __pyx_r = __pyx_pf_12interaction3_3bem_4core_13fma_functions_4dir2coord(__pyx_self, ((PyObject *)__pyx_v_kdir));
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_3bem_4core_13fma_functions_4dir2coord(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_kdir) {
+static PyObject *__pyx_pf_12interaction3_3bem_4core_13fma_functions_4dir2coord(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_kdir) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   __Pyx_RefNannySetupContext("dir2coord", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = ((PyObject *)__pyx_f_3bem_4core_13fma_functions_dir2coord(__pyx_v_kdir, 0)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 64, __pyx_L1_error)
+  __pyx_t_1 = ((PyObject *)__pyx_f_12interaction3_3bem_4core_13fma_functions_dir2coord(__pyx_v_kdir, 0)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 64, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -3471,7 +3514,7 @@ static PyObject *__pyx_pf_3bem_4core_13fma_functions_4dir2coord(CYTHON_UNUSED Py
   /* function exit code */
   __pyx_L1_error:;
   __Pyx_XDECREF(__pyx_t_1);
-  __Pyx_AddTraceback("bem.core.fma_functions.dir2coord", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("interaction3.bem.core.fma_functions.dir2coord", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
@@ -3479,7 +3522,7 @@ static PyObject *__pyx_pf_3bem_4core_13fma_functions_4dir2coord(CYTHON_UNUSED Py
   return __pyx_r;
 }
 
-/* "bem/core/fma_functions.pyx":82
+/* "interaction3/bem/core/fma_functions.pyx":82
  * @cython.boundscheck(False)
  * @cython.wraparound(False)
  * cpdef double complex sph_hankel2(int l, double z):             # <<<<<<<<<<<<<<
@@ -3487,8 +3530,8 @@ static PyObject *__pyx_pf_3bem_4core_13fma_functions_4dir2coord(CYTHON_UNUSED Py
  *     Spherical Hankel function of the second kind of order l and argument z
  */
 
-static PyObject *__pyx_pw_3bem_4core_13fma_functions_7sph_hankel2(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static __pyx_t_double_complex __pyx_f_3bem_4core_13fma_functions_sph_hankel2(int __pyx_v_l, double __pyx_v_z, CYTHON_UNUSED int __pyx_skip_dispatch) {
+static PyObject *__pyx_pw_12interaction3_3bem_4core_13fma_functions_7sph_hankel2(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static __pyx_t_double_complex __pyx_f_12interaction3_3bem_4core_13fma_functions_sph_hankel2(int __pyx_v_l, double __pyx_v_z, CYTHON_UNUSED int __pyx_skip_dispatch) {
   __pyx_t_double_complex __pyx_r;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
@@ -3503,7 +3546,7 @@ static __pyx_t_double_complex __pyx_f_3bem_4core_13fma_functions_sph_hankel2(int
   __pyx_t_double_complex __pyx_t_10;
   __Pyx_RefNannySetupContext("sph_hankel2", 0);
 
-  /* "bem/core/fma_functions.pyx":87
+  /* "interaction3/bem/core/fma_functions.pyx":87
  *     calculated from Hankel function (does not handle z=0 case).
  *     '''
  *     return sqrt(pi / (2 * z)) * hankel2(l + 0.5, z)             # <<<<<<<<<<<<<<
@@ -3586,7 +3629,7 @@ static __pyx_t_double_complex __pyx_f_3bem_4core_13fma_functions_sph_hankel2(int
   __pyx_r = __pyx_t_10;
   goto __pyx_L0;
 
-  /* "bem/core/fma_functions.pyx":82
+  /* "interaction3/bem/core/fma_functions.pyx":82
  * @cython.boundscheck(False)
  * @cython.wraparound(False)
  * cpdef double complex sph_hankel2(int l, double z):             # <<<<<<<<<<<<<<
@@ -3603,7 +3646,7 @@ static __pyx_t_double_complex __pyx_f_3bem_4core_13fma_functions_sph_hankel2(int
   __Pyx_XDECREF(__pyx_t_6);
   __Pyx_XDECREF(__pyx_t_7);
   __Pyx_XDECREF(__pyx_t_9);
-  __Pyx_WriteUnraisable("bem.core.fma_functions.sph_hankel2", __pyx_clineno, __pyx_lineno, __pyx_filename, 1, 0);
+  __Pyx_WriteUnraisable("interaction3.bem.core.fma_functions.sph_hankel2", __pyx_clineno, __pyx_lineno, __pyx_filename, 1, 0);
   __pyx_r = __pyx_t_double_complex_from_parts(0, 0);
   __pyx_L0:;
   __Pyx_RefNannyFinishContext();
@@ -3611,9 +3654,9 @@ static __pyx_t_double_complex __pyx_f_3bem_4core_13fma_functions_sph_hankel2(int
 }
 
 /* Python wrapper */
-static PyObject *__pyx_pw_3bem_4core_13fma_functions_7sph_hankel2(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static char __pyx_doc_3bem_4core_13fma_functions_6sph_hankel2[] = "\n    Spherical Hankel function of the second kind of order l and argument z\n    calculated from Hankel function (does not handle z=0 case).\n    ";
-static PyObject *__pyx_pw_3bem_4core_13fma_functions_7sph_hankel2(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
+static PyObject *__pyx_pw_12interaction3_3bem_4core_13fma_functions_7sph_hankel2(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static char __pyx_doc_12interaction3_3bem_4core_13fma_functions_6sph_hankel2[] = "\n    Spherical Hankel function of the second kind of order l and argument z\n    calculated from Hankel function (does not handle z=0 case).\n    ";
+static PyObject *__pyx_pw_12interaction3_3bem_4core_13fma_functions_7sph_hankel2(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
   int __pyx_v_l;
   double __pyx_v_z;
   PyObject *__pyx_r = 0;
@@ -3661,25 +3704,25 @@ static PyObject *__pyx_pw_3bem_4core_13fma_functions_7sph_hankel2(PyObject *__py
   __pyx_L5_argtuple_error:;
   __Pyx_RaiseArgtupleInvalid("sph_hankel2", 1, 2, 2, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 82, __pyx_L3_error)
   __pyx_L3_error:;
-  __Pyx_AddTraceback("bem.core.fma_functions.sph_hankel2", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("interaction3.bem.core.fma_functions.sph_hankel2", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  __pyx_r = __pyx_pf_3bem_4core_13fma_functions_6sph_hankel2(__pyx_self, __pyx_v_l, __pyx_v_z);
+  __pyx_r = __pyx_pf_12interaction3_3bem_4core_13fma_functions_6sph_hankel2(__pyx_self, __pyx_v_l, __pyx_v_z);
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_3bem_4core_13fma_functions_6sph_hankel2(CYTHON_UNUSED PyObject *__pyx_self, int __pyx_v_l, double __pyx_v_z) {
+static PyObject *__pyx_pf_12interaction3_3bem_4core_13fma_functions_6sph_hankel2(CYTHON_UNUSED PyObject *__pyx_self, int __pyx_v_l, double __pyx_v_z) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   __pyx_t_double_complex __pyx_t_1;
   PyObject *__pyx_t_2 = NULL;
   __Pyx_RefNannySetupContext("sph_hankel2", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __pyx_f_3bem_4core_13fma_functions_sph_hankel2(__pyx_v_l, __pyx_v_z, 0);
+  __pyx_t_1 = __pyx_f_12interaction3_3bem_4core_13fma_functions_sph_hankel2(__pyx_v_l, __pyx_v_z, 0);
   __pyx_t_2 = __pyx_PyComplex_FromComplex(__pyx_t_1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 82, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __pyx_r = __pyx_t_2;
@@ -3689,7 +3732,7 @@ static PyObject *__pyx_pf_3bem_4core_13fma_functions_6sph_hankel2(CYTHON_UNUSED 
   /* function exit code */
   __pyx_L1_error:;
   __Pyx_XDECREF(__pyx_t_2);
-  __Pyx_AddTraceback("bem.core.fma_functions.sph_hankel2", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("interaction3.bem.core.fma_functions.sph_hankel2", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
@@ -3697,7 +3740,7 @@ static PyObject *__pyx_pf_3bem_4core_13fma_functions_6sph_hankel2(CYTHON_UNUSED 
   return __pyx_r;
 }
 
-/* "bem/core/fma_functions.pyx":92
+/* "interaction3/bem/core/fma_functions.pyx":92
  * @cython.boundscheck(False)
  * @cython.wraparound(False)
  * def sph_hankel2_np(l, z):             # <<<<<<<<<<<<<<
@@ -3706,10 +3749,10 @@ static PyObject *__pyx_pf_3bem_4core_13fma_functions_6sph_hankel2(CYTHON_UNUSED 
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_3bem_4core_13fma_functions_9sph_hankel2_np(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static char __pyx_doc_3bem_4core_13fma_functions_8sph_hankel2_np[] = "\n    Spherical Hankel function of the second kind of order l and argument z\n    calculated from Hankel function (does not handle z=0 case) (numpy version).\n    ";
-static PyMethodDef __pyx_mdef_3bem_4core_13fma_functions_9sph_hankel2_np = {"sph_hankel2_np", (PyCFunction)__pyx_pw_3bem_4core_13fma_functions_9sph_hankel2_np, METH_VARARGS|METH_KEYWORDS, __pyx_doc_3bem_4core_13fma_functions_8sph_hankel2_np};
-static PyObject *__pyx_pw_3bem_4core_13fma_functions_9sph_hankel2_np(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
+static PyObject *__pyx_pw_12interaction3_3bem_4core_13fma_functions_9sph_hankel2_np(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static char __pyx_doc_12interaction3_3bem_4core_13fma_functions_8sph_hankel2_np[] = "\n    Spherical Hankel function of the second kind of order l and argument z\n    calculated from Hankel function (does not handle z=0 case) (numpy version).\n    ";
+static PyMethodDef __pyx_mdef_12interaction3_3bem_4core_13fma_functions_9sph_hankel2_np = {"sph_hankel2_np", (PyCFunction)__pyx_pw_12interaction3_3bem_4core_13fma_functions_9sph_hankel2_np, METH_VARARGS|METH_KEYWORDS, __pyx_doc_12interaction3_3bem_4core_13fma_functions_8sph_hankel2_np};
+static PyObject *__pyx_pw_12interaction3_3bem_4core_13fma_functions_9sph_hankel2_np(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
   PyObject *__pyx_v_l = 0;
   PyObject *__pyx_v_z = 0;
   PyObject *__pyx_r = 0;
@@ -3757,18 +3800,18 @@ static PyObject *__pyx_pw_3bem_4core_13fma_functions_9sph_hankel2_np(PyObject *_
   __pyx_L5_argtuple_error:;
   __Pyx_RaiseArgtupleInvalid("sph_hankel2_np", 1, 2, 2, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 92, __pyx_L3_error)
   __pyx_L3_error:;
-  __Pyx_AddTraceback("bem.core.fma_functions.sph_hankel2_np", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("interaction3.bem.core.fma_functions.sph_hankel2_np", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  __pyx_r = __pyx_pf_3bem_4core_13fma_functions_8sph_hankel2_np(__pyx_self, __pyx_v_l, __pyx_v_z);
+  __pyx_r = __pyx_pf_12interaction3_3bem_4core_13fma_functions_8sph_hankel2_np(__pyx_self, __pyx_v_l, __pyx_v_z);
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_3bem_4core_13fma_functions_8sph_hankel2_np(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_l, PyObject *__pyx_v_z) {
+static PyObject *__pyx_pf_12interaction3_3bem_4core_13fma_functions_8sph_hankel2_np(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_l, PyObject *__pyx_v_z) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
@@ -3781,7 +3824,7 @@ static PyObject *__pyx_pf_3bem_4core_13fma_functions_8sph_hankel2_np(CYTHON_UNUS
   PyObject *__pyx_t_8 = NULL;
   __Pyx_RefNannySetupContext("sph_hankel2_np", 0);
 
-  /* "bem/core/fma_functions.pyx":97
+  /* "interaction3/bem/core/fma_functions.pyx":97
  *     calculated from Hankel function (does not handle z=0 case) (numpy version).
  *     '''
  *     return sqrt(pi / (2 * z)) * hankel2(l + 0.5, z)             # <<<<<<<<<<<<<<
@@ -3860,7 +3903,7 @@ static PyObject *__pyx_pf_3bem_4core_13fma_functions_8sph_hankel2_np(CYTHON_UNUS
   __pyx_t_1 = 0;
   goto __pyx_L0;
 
-  /* "bem/core/fma_functions.pyx":92
+  /* "interaction3/bem/core/fma_functions.pyx":92
  * @cython.boundscheck(False)
  * @cython.wraparound(False)
  * def sph_hankel2_np(l, z):             # <<<<<<<<<<<<<<
@@ -3876,7 +3919,7 @@ static PyObject *__pyx_pf_3bem_4core_13fma_functions_8sph_hankel2_np(CYTHON_UNUS
   __Pyx_XDECREF(__pyx_t_5);
   __Pyx_XDECREF(__pyx_t_6);
   __Pyx_XDECREF(__pyx_t_8);
-  __Pyx_AddTraceback("bem.core.fma_functions.sph_hankel2_np", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("interaction3.bem.core.fma_functions.sph_hankel2_np", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
@@ -3884,7 +3927,7 @@ static PyObject *__pyx_pf_3bem_4core_13fma_functions_8sph_hankel2_np(CYTHON_UNUS
   return __pyx_r;
 }
 
-/* "bem/core/fma_functions.pyx":102
+/* "interaction3/bem/core/fma_functions.pyx":102
  * @cython.boundscheck(False)
  * @cython.wraparound(False)
  * cpdef np.ndarray direct_eval(double complex[:] q, double[:, :] dist, double k, double rho, double c):             # <<<<<<<<<<<<<<
@@ -3892,8 +3935,8 @@ static PyObject *__pyx_pf_3bem_4core_13fma_functions_8sph_hankel2_np(CYTHON_UNUS
  *     Evaluates the field pressure directly using the exact method.
  */
 
-static PyObject *__pyx_pw_3bem_4core_13fma_functions_11direct_eval(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_direct_eval(__Pyx_memviewslice __pyx_v_q, __Pyx_memviewslice __pyx_v_dist, double __pyx_v_k, double __pyx_v_rho, double __pyx_v_c, CYTHON_UNUSED int __pyx_skip_dispatch) {
+static PyObject *__pyx_pw_12interaction3_3bem_4core_13fma_functions_11direct_eval(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static PyArrayObject *__pyx_f_12interaction3_3bem_4core_13fma_functions_direct_eval(__Pyx_memviewslice __pyx_v_q, __Pyx_memviewslice __pyx_v_dist, double __pyx_v_k, double __pyx_v_rho, double __pyx_v_c, CYTHON_UNUSED int __pyx_skip_dispatch) {
   PyObject *__pyx_v_M = 0;
   PyObject *__pyx_v_N = 0;
   __Pyx_memviewslice __pyx_v_ret = { 0, 0, { 0 }, { 0 }, { 0 } };
@@ -3922,7 +3965,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_direct_eval(__Pyx_memvi
   Py_ssize_t __pyx_t_17;
   __Pyx_RefNannySetupContext("direct_eval", 0);
 
-  /* "bem/core/fma_functions.pyx":106
+  /* "interaction3/bem/core/fma_functions.pyx":106
  *     Evaluates the field pressure directly using the exact method.
  *     '''
  *     cdef M = dist.shape[0]             # <<<<<<<<<<<<<<
@@ -3934,7 +3977,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_direct_eval(__Pyx_memvi
   __pyx_v_M = __pyx_t_1;
   __pyx_t_1 = 0;
 
-  /* "bem/core/fma_functions.pyx":107
+  /* "interaction3/bem/core/fma_functions.pyx":107
  *     '''
  *     cdef M = dist.shape[0]
  *     cdef N = dist.shape[1]             # <<<<<<<<<<<<<<
@@ -3946,7 +3989,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_direct_eval(__Pyx_memvi
   __pyx_v_N = __pyx_t_1;
   __pyx_t_1 = 0;
 
-  /* "bem/core/fma_functions.pyx":108
+  /* "interaction3/bem/core/fma_functions.pyx":108
  *     cdef M = dist.shape[0]
  *     cdef N = dist.shape[1]
  *     cdef double complex[:] ret = np.zeros(M, dtype=np.complex128)             # <<<<<<<<<<<<<<
@@ -3984,7 +4027,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_direct_eval(__Pyx_memvi
   __pyx_t_6.memview = NULL;
   __pyx_t_6.data = NULL;
 
-  /* "bem/core/fma_functions.pyx":113
+  /* "interaction3/bem/core/fma_functions.pyx":113
  *     cdef double r
  * 
  *     for i in range(M):             # <<<<<<<<<<<<<<
@@ -3995,7 +4038,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_direct_eval(__Pyx_memvi
   for (__pyx_t_8 = 0; __pyx_t_8 < __pyx_t_7; __pyx_t_8+=1) {
     __pyx_v_i = __pyx_t_8;
 
-    /* "bem/core/fma_functions.pyx":115
+    /* "interaction3/bem/core/fma_functions.pyx":115
  *     for i in range(M):
  * 
  *         tmp = 0.0j             # <<<<<<<<<<<<<<
@@ -4004,7 +4047,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_direct_eval(__Pyx_memvi
  */
     __pyx_v_tmp = __pyx_t_double_complex_from_parts(0, 0.0);
 
-    /* "bem/core/fma_functions.pyx":117
+    /* "interaction3/bem/core/fma_functions.pyx":117
  *         tmp = 0.0j
  * 
  *         for j in range(N):             # <<<<<<<<<<<<<<
@@ -4015,7 +4058,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_direct_eval(__Pyx_memvi
     for (__pyx_t_10 = 0; __pyx_t_10 < __pyx_t_9; __pyx_t_10+=1) {
       __pyx_v_j = __pyx_t_10;
 
-      /* "bem/core/fma_functions.pyx":120
+      /* "interaction3/bem/core/fma_functions.pyx":120
  * 
  *             #if i == j: continue
  *             r = dist[i, j]             # <<<<<<<<<<<<<<
@@ -4026,7 +4069,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_direct_eval(__Pyx_memvi
       __pyx_t_12 = __pyx_v_j;
       __pyx_v_r = (*((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_dist.data + __pyx_t_11 * __pyx_v_dist.strides[0]) ) + __pyx_t_12 * __pyx_v_dist.strides[1]) )));
 
-      /* "bem/core/fma_functions.pyx":122
+      /* "interaction3/bem/core/fma_functions.pyx":122
  *             r = dist[i, j]
  * 
  *             if r == 0.0: continue             # <<<<<<<<<<<<<<
@@ -4038,7 +4081,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_direct_eval(__Pyx_memvi
         goto __pyx_L5_continue;
       }
 
-      /* "bem/core/fma_functions.pyx":125
+      /* "interaction3/bem/core/fma_functions.pyx":125
  * 
  *             #tmp += 1j*k*rho*c/(4*pi)*cexp(-1j*k*r)/r*q.pointer[j]
  *             tmp += cexp(-1j * k * r) / r * q[j]             # <<<<<<<<<<<<<<
@@ -4056,7 +4099,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_direct_eval(__Pyx_memvi
       __pyx_L5_continue:;
     }
 
-    /* "bem/core/fma_functions.pyx":128
+    /* "interaction3/bem/core/fma_functions.pyx":128
  * 
  *         #ret[i] =  tmp
  *         ret[i] = 1j * k * rho * c / (4 * pi) * tmp             # <<<<<<<<<<<<<<
@@ -4087,7 +4130,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_direct_eval(__Pyx_memvi
     *((__pyx_t_double_complex *) ( /* dim=0 */ (__pyx_v_ret.data + __pyx_t_17 * __pyx_v_ret.strides[0]) )) = __pyx_t_15;
   }
 
-  /* "bem/core/fma_functions.pyx":130
+  /* "interaction3/bem/core/fma_functions.pyx":130
  *         ret[i] = 1j * k * rho * c / (4 * pi) * tmp
  * 
  *     return np.asarray(ret)             # <<<<<<<<<<<<<<
@@ -4153,7 +4196,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_direct_eval(__Pyx_memvi
   __pyx_t_5 = 0;
   goto __pyx_L0;
 
-  /* "bem/core/fma_functions.pyx":102
+  /* "interaction3/bem/core/fma_functions.pyx":102
  * @cython.boundscheck(False)
  * @cython.wraparound(False)
  * cpdef np.ndarray direct_eval(double complex[:] q, double[:, :] dist, double k, double rho, double c):             # <<<<<<<<<<<<<<
@@ -4169,7 +4212,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_direct_eval(__Pyx_memvi
   __Pyx_XDECREF(__pyx_t_4);
   __Pyx_XDECREF(__pyx_t_5);
   __PYX_XDEC_MEMVIEW(&__pyx_t_6, 1);
-  __Pyx_AddTraceback("bem.core.fma_functions.direct_eval", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("interaction3.bem.core.fma_functions.direct_eval", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = 0;
   __pyx_L0:;
   __Pyx_XDECREF(__pyx_v_M);
@@ -4181,9 +4224,9 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_direct_eval(__Pyx_memvi
 }
 
 /* Python wrapper */
-static PyObject *__pyx_pw_3bem_4core_13fma_functions_11direct_eval(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static char __pyx_doc_3bem_4core_13fma_functions_10direct_eval[] = "\n    Evaluates the field pressure directly using the exact method.\n    ";
-static PyObject *__pyx_pw_3bem_4core_13fma_functions_11direct_eval(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
+static PyObject *__pyx_pw_12interaction3_3bem_4core_13fma_functions_11direct_eval(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static char __pyx_doc_12interaction3_3bem_4core_13fma_functions_10direct_eval[] = "\n    Evaluates the field pressure directly using the exact method.\n    ";
+static PyObject *__pyx_pw_12interaction3_3bem_4core_13fma_functions_11direct_eval(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
   __Pyx_memviewslice __pyx_v_q = { 0, 0, { 0 }, { 0 }, { 0 } };
   __Pyx_memviewslice __pyx_v_dist = { 0, 0, { 0 }, { 0 }, { 0 } };
   double __pyx_v_k;
@@ -4264,18 +4307,18 @@ static PyObject *__pyx_pw_3bem_4core_13fma_functions_11direct_eval(PyObject *__p
   __pyx_L5_argtuple_error:;
   __Pyx_RaiseArgtupleInvalid("direct_eval", 1, 5, 5, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 102, __pyx_L3_error)
   __pyx_L3_error:;
-  __Pyx_AddTraceback("bem.core.fma_functions.direct_eval", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("interaction3.bem.core.fma_functions.direct_eval", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  __pyx_r = __pyx_pf_3bem_4core_13fma_functions_10direct_eval(__pyx_self, __pyx_v_q, __pyx_v_dist, __pyx_v_k, __pyx_v_rho, __pyx_v_c);
+  __pyx_r = __pyx_pf_12interaction3_3bem_4core_13fma_functions_10direct_eval(__pyx_self, __pyx_v_q, __pyx_v_dist, __pyx_v_k, __pyx_v_rho, __pyx_v_c);
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_3bem_4core_13fma_functions_10direct_eval(CYTHON_UNUSED PyObject *__pyx_self, __Pyx_memviewslice __pyx_v_q, __Pyx_memviewslice __pyx_v_dist, double __pyx_v_k, double __pyx_v_rho, double __pyx_v_c) {
+static PyObject *__pyx_pf_12interaction3_3bem_4core_13fma_functions_10direct_eval(CYTHON_UNUSED PyObject *__pyx_self, __Pyx_memviewslice __pyx_v_q, __Pyx_memviewslice __pyx_v_dist, double __pyx_v_k, double __pyx_v_rho, double __pyx_v_c) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
@@ -4283,7 +4326,7 @@ static PyObject *__pyx_pf_3bem_4core_13fma_functions_10direct_eval(CYTHON_UNUSED
   __Pyx_XDECREF(__pyx_r);
   if (unlikely(!__pyx_v_q.memview)) { __Pyx_RaiseUnboundLocalError("q"); __PYX_ERR(0, 102, __pyx_L1_error) }
   if (unlikely(!__pyx_v_dist.memview)) { __Pyx_RaiseUnboundLocalError("dist"); __PYX_ERR(0, 102, __pyx_L1_error) }
-  __pyx_t_1 = ((PyObject *)__pyx_f_3bem_4core_13fma_functions_direct_eval(__pyx_v_q, __pyx_v_dist, __pyx_v_k, __pyx_v_rho, __pyx_v_c, 0)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 102, __pyx_L1_error)
+  __pyx_t_1 = ((PyObject *)__pyx_f_12interaction3_3bem_4core_13fma_functions_direct_eval(__pyx_v_q, __pyx_v_dist, __pyx_v_k, __pyx_v_rho, __pyx_v_c, 0)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 102, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -4292,7 +4335,7 @@ static PyObject *__pyx_pf_3bem_4core_13fma_functions_10direct_eval(CYTHON_UNUSED
   /* function exit code */
   __pyx_L1_error:;
   __Pyx_XDECREF(__pyx_t_1);
-  __Pyx_AddTraceback("bem.core.fma_functions.direct_eval", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("interaction3.bem.core.fma_functions.direct_eval", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
   __PYX_XDEC_MEMVIEW(&__pyx_v_q, 1);
@@ -4302,7 +4345,7 @@ static PyObject *__pyx_pf_3bem_4core_13fma_functions_10direct_eval(CYTHON_UNUSED
   return __pyx_r;
 }
 
-/* "bem/core/fma_functions.pyx":151
+/* "interaction3/bem/core/fma_functions.pyx":151
  * @cython.boundscheck(False)
  * @cython.wraparound(False)
  * cpdef np.ndarray ff_coeff(double complex[:] q, double complex[:, :, :] exp_part):             # <<<<<<<<<<<<<<
@@ -4310,8 +4353,8 @@ static PyObject *__pyx_pf_3bem_4core_13fma_functions_10direct_eval(CYTHON_UNUSED
  *     Far-field signature coefficients of a collection of sources in
  */
 
-static PyObject *__pyx_pw_3bem_4core_13fma_functions_13ff_coeff(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_ff_coeff(__Pyx_memviewslice __pyx_v_q, __Pyx_memviewslice __pyx_v_exp_part, CYTHON_UNUSED int __pyx_skip_dispatch) {
+static PyObject *__pyx_pw_12interaction3_3bem_4core_13fma_functions_13ff_coeff(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static PyArrayObject *__pyx_f_12interaction3_3bem_4core_13fma_functions_ff_coeff(__Pyx_memviewslice __pyx_v_q, __Pyx_memviewslice __pyx_v_exp_part, CYTHON_UNUSED int __pyx_skip_dispatch) {
   int __pyx_v_M1;
   int __pyx_v_M2;
   int __pyx_v_N2;
@@ -4342,7 +4385,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_ff_coeff(__Pyx_memviews
   Py_ssize_t __pyx_t_18;
   __Pyx_RefNannySetupContext("ff_coeff", 0);
 
-  /* "bem/core/fma_functions.pyx":156
+  /* "interaction3/bem/core/fma_functions.pyx":156
  *     the specified far-field directions.
  *     '''
  *     cdef int M1 = q.shape[0]             # <<<<<<<<<<<<<<
@@ -4351,7 +4394,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_ff_coeff(__Pyx_memviews
  */
   __pyx_v_M1 = (__pyx_v_q.shape[0]);
 
-  /* "bem/core/fma_functions.pyx":157
+  /* "interaction3/bem/core/fma_functions.pyx":157
  *     '''
  *     cdef int M1 = q.shape[0]
  *     cdef int M2 = exp_part.shape[1]             # <<<<<<<<<<<<<<
@@ -4360,7 +4403,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_ff_coeff(__Pyx_memviews
  */
   __pyx_v_M2 = (__pyx_v_exp_part.shape[1]);
 
-  /* "bem/core/fma_functions.pyx":158
+  /* "interaction3/bem/core/fma_functions.pyx":158
  *     cdef int M1 = q.shape[0]
  *     cdef int M2 = exp_part.shape[1]
  *     cdef int N2 = exp_part.shape[2]             # <<<<<<<<<<<<<<
@@ -4369,7 +4412,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_ff_coeff(__Pyx_memviews
  */
   __pyx_v_N2 = (__pyx_v_exp_part.shape[2]);
 
-  /* "bem/core/fma_functions.pyx":159
+  /* "interaction3/bem/core/fma_functions.pyx":159
  *     cdef int M2 = exp_part.shape[1]
  *     cdef int N2 = exp_part.shape[2]
  *     cdef double complex[:, :] coeff = np.zeros((M2, N2), dtype=np.complex128)             # <<<<<<<<<<<<<<
@@ -4419,7 +4462,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_ff_coeff(__Pyx_memviews
   __pyx_t_6.memview = NULL;
   __pyx_t_6.data = NULL;
 
-  /* "bem/core/fma_functions.pyx":163
+  /* "interaction3/bem/core/fma_functions.pyx":163
  *     cdef int i, j, l
  * 
  *     for i in range(M2):             # <<<<<<<<<<<<<<
@@ -4430,7 +4473,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_ff_coeff(__Pyx_memviews
   for (__pyx_t_8 = 0; __pyx_t_8 < __pyx_t_7; __pyx_t_8+=1) {
     __pyx_v_i = __pyx_t_8;
 
-    /* "bem/core/fma_functions.pyx":164
+    /* "interaction3/bem/core/fma_functions.pyx":164
  * 
  *     for i in range(M2):
  *         for j in range(N2):             # <<<<<<<<<<<<<<
@@ -4441,7 +4484,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_ff_coeff(__Pyx_memviews
     for (__pyx_t_10 = 0; __pyx_t_10 < __pyx_t_9; __pyx_t_10+=1) {
       __pyx_v_j = __pyx_t_10;
 
-      /* "bem/core/fma_functions.pyx":166
+      /* "interaction3/bem/core/fma_functions.pyx":166
  *         for j in range(N2):
  * 
  *             tmp1 = 0j             # <<<<<<<<<<<<<<
@@ -4450,7 +4493,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_ff_coeff(__Pyx_memviews
  */
       __pyx_v_tmp1 = __pyx_t_double_complex_from_parts(0, 0.0);
 
-      /* "bem/core/fma_functions.pyx":168
+      /* "interaction3/bem/core/fma_functions.pyx":168
  *             tmp1 = 0j
  * 
  *             for l in range(M1):             # <<<<<<<<<<<<<<
@@ -4461,7 +4504,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_ff_coeff(__Pyx_memviews
       for (__pyx_t_12 = 0; __pyx_t_12 < __pyx_t_11; __pyx_t_12+=1) {
         __pyx_v_l = __pyx_t_12;
 
-        /* "bem/core/fma_functions.pyx":169
+        /* "interaction3/bem/core/fma_functions.pyx":169
  * 
  *             for l in range(M1):
  *                 tmp1 += q[l] * conj(exp_part[l, i, j])             # <<<<<<<<<<<<<<
@@ -4475,7 +4518,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_ff_coeff(__Pyx_memviews
         __pyx_v_tmp1 = __Pyx_c_sum_double(__pyx_v_tmp1, __Pyx_c_prod_double((*((__pyx_t_double_complex *) ( /* dim=0 */ (__pyx_v_q.data + __pyx_t_13 * __pyx_v_q.strides[0]) ))), conj((*((__pyx_t_double_complex *) ( /* dim=2 */ (( /* dim=1 */ (( /* dim=0 */ (__pyx_v_exp_part.data + __pyx_t_14 * __pyx_v_exp_part.strides[0]) ) + __pyx_t_15 * __pyx_v_exp_part.strides[1]) ) + __pyx_t_16 * __pyx_v_exp_part.strides[2]) ))))));
       }
 
-      /* "bem/core/fma_functions.pyx":171
+      /* "interaction3/bem/core/fma_functions.pyx":171
  *                 tmp1 += q[l] * conj(exp_part[l, i, j])
  * 
  *             coeff[i, j] = tmp1             # <<<<<<<<<<<<<<
@@ -4488,7 +4531,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_ff_coeff(__Pyx_memviews
     }
   }
 
-  /* "bem/core/fma_functions.pyx":173
+  /* "interaction3/bem/core/fma_functions.pyx":173
  *             coeff[i, j] = tmp1
  * 
  *     return np.asarray(coeff)             # <<<<<<<<<<<<<<
@@ -4554,7 +4597,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_ff_coeff(__Pyx_memviews
   __pyx_t_5 = 0;
   goto __pyx_L0;
 
-  /* "bem/core/fma_functions.pyx":151
+  /* "interaction3/bem/core/fma_functions.pyx":151
  * @cython.boundscheck(False)
  * @cython.wraparound(False)
  * cpdef np.ndarray ff_coeff(double complex[:] q, double complex[:, :, :] exp_part):             # <<<<<<<<<<<<<<
@@ -4570,7 +4613,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_ff_coeff(__Pyx_memviews
   __Pyx_XDECREF(__pyx_t_4);
   __Pyx_XDECREF(__pyx_t_5);
   __PYX_XDEC_MEMVIEW(&__pyx_t_6, 1);
-  __Pyx_AddTraceback("bem.core.fma_functions.ff_coeff", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("interaction3.bem.core.fma_functions.ff_coeff", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = 0;
   __pyx_L0:;
   __PYX_XDEC_MEMVIEW(&__pyx_v_coeff, 1);
@@ -4580,9 +4623,9 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_ff_coeff(__Pyx_memviews
 }
 
 /* Python wrapper */
-static PyObject *__pyx_pw_3bem_4core_13fma_functions_13ff_coeff(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static char __pyx_doc_3bem_4core_13fma_functions_12ff_coeff[] = "\n    Far-field signature coefficients of a collection of sources in\n    the specified far-field directions.\n    ";
-static PyObject *__pyx_pw_3bem_4core_13fma_functions_13ff_coeff(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
+static PyObject *__pyx_pw_12interaction3_3bem_4core_13fma_functions_13ff_coeff(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static char __pyx_doc_12interaction3_3bem_4core_13fma_functions_12ff_coeff[] = "\n    Far-field signature coefficients of a collection of sources in\n    the specified far-field directions.\n    ";
+static PyObject *__pyx_pw_12interaction3_3bem_4core_13fma_functions_13ff_coeff(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
   __Pyx_memviewslice __pyx_v_q = { 0, 0, { 0 }, { 0 }, { 0 } };
   __Pyx_memviewslice __pyx_v_exp_part = { 0, 0, { 0 }, { 0 }, { 0 } };
   PyObject *__pyx_r = 0;
@@ -4630,18 +4673,18 @@ static PyObject *__pyx_pw_3bem_4core_13fma_functions_13ff_coeff(PyObject *__pyx_
   __pyx_L5_argtuple_error:;
   __Pyx_RaiseArgtupleInvalid("ff_coeff", 1, 2, 2, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 151, __pyx_L3_error)
   __pyx_L3_error:;
-  __Pyx_AddTraceback("bem.core.fma_functions.ff_coeff", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("interaction3.bem.core.fma_functions.ff_coeff", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  __pyx_r = __pyx_pf_3bem_4core_13fma_functions_12ff_coeff(__pyx_self, __pyx_v_q, __pyx_v_exp_part);
+  __pyx_r = __pyx_pf_12interaction3_3bem_4core_13fma_functions_12ff_coeff(__pyx_self, __pyx_v_q, __pyx_v_exp_part);
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_3bem_4core_13fma_functions_12ff_coeff(CYTHON_UNUSED PyObject *__pyx_self, __Pyx_memviewslice __pyx_v_q, __Pyx_memviewslice __pyx_v_exp_part) {
+static PyObject *__pyx_pf_12interaction3_3bem_4core_13fma_functions_12ff_coeff(CYTHON_UNUSED PyObject *__pyx_self, __Pyx_memviewslice __pyx_v_q, __Pyx_memviewslice __pyx_v_exp_part) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
@@ -4649,7 +4692,7 @@ static PyObject *__pyx_pf_3bem_4core_13fma_functions_12ff_coeff(CYTHON_UNUSED Py
   __Pyx_XDECREF(__pyx_r);
   if (unlikely(!__pyx_v_q.memview)) { __Pyx_RaiseUnboundLocalError("q"); __PYX_ERR(0, 151, __pyx_L1_error) }
   if (unlikely(!__pyx_v_exp_part.memview)) { __Pyx_RaiseUnboundLocalError("exp_part"); __PYX_ERR(0, 151, __pyx_L1_error) }
-  __pyx_t_1 = ((PyObject *)__pyx_f_3bem_4core_13fma_functions_ff_coeff(__pyx_v_q, __pyx_v_exp_part, 0)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 151, __pyx_L1_error)
+  __pyx_t_1 = ((PyObject *)__pyx_f_12interaction3_3bem_4core_13fma_functions_ff_coeff(__pyx_v_q, __pyx_v_exp_part, 0)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 151, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -4658,7 +4701,7 @@ static PyObject *__pyx_pf_3bem_4core_13fma_functions_12ff_coeff(CYTHON_UNUSED Py
   /* function exit code */
   __pyx_L1_error:;
   __Pyx_XDECREF(__pyx_t_1);
-  __Pyx_AddTraceback("bem.core.fma_functions.ff_coeff", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("interaction3.bem.core.fma_functions.ff_coeff", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
   __PYX_XDEC_MEMVIEW(&__pyx_v_q, 1);
@@ -4668,7 +4711,7 @@ static PyObject *__pyx_pf_3bem_4core_13fma_functions_12ff_coeff(CYTHON_UNUSED Py
   return __pyx_r;
 }
 
-/* "bem/core/fma_functions.pyx":178
+/* "interaction3/bem/core/fma_functions.pyx":178
  * @cython.boundscheck(False)
  * @cython.wraparound(False)
  * cpdef np.ndarray calc_exp_part(double[:, :] nodes, double[:] center, double[:, :, :] kcoord, double k):             # <<<<<<<<<<<<<<
@@ -4676,8 +4719,8 @@ static PyObject *__pyx_pf_3bem_4core_13fma_functions_12ff_coeff(CYTHON_UNUSED Py
  *     Calculates the exponential part of the evaluation equation (see nf_eval).
  */
 
-static PyObject *__pyx_pw_3bem_4core_13fma_functions_15calc_exp_part(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_calc_exp_part(__Pyx_memviewslice __pyx_v_nodes, __Pyx_memviewslice __pyx_v_center, __Pyx_memviewslice __pyx_v_kcoord, double __pyx_v_k, CYTHON_UNUSED int __pyx_skip_dispatch) {
+static PyObject *__pyx_pw_12interaction3_3bem_4core_13fma_functions_15calc_exp_part(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static PyArrayObject *__pyx_f_12interaction3_3bem_4core_13fma_functions_calc_exp_part(__Pyx_memviewslice __pyx_v_nodes, __Pyx_memviewslice __pyx_v_center, __Pyx_memviewslice __pyx_v_kcoord, double __pyx_v_k, CYTHON_UNUSED int __pyx_skip_dispatch) {
   int __pyx_v_M1;
   int __pyx_v_N1;
   int __pyx_v_M2;
@@ -4716,7 +4759,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_calc_exp_part(__Pyx_mem
   Py_ssize_t __pyx_t_23;
   __Pyx_RefNannySetupContext("calc_exp_part", 0);
 
-  /* "bem/core/fma_functions.pyx":182
+  /* "interaction3/bem/core/fma_functions.pyx":182
  *     Calculates the exponential part of the evaluation equation (see nf_eval).
  *     '''
  *     cdef int M1 = nodes.shape[0]             # <<<<<<<<<<<<<<
@@ -4725,7 +4768,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_calc_exp_part(__Pyx_mem
  */
   __pyx_v_M1 = (__pyx_v_nodes.shape[0]);
 
-  /* "bem/core/fma_functions.pyx":183
+  /* "interaction3/bem/core/fma_functions.pyx":183
  *     '''
  *     cdef int M1 = nodes.shape[0]
  *     cdef int N1 = nodes.shape[1]             # <<<<<<<<<<<<<<
@@ -4734,7 +4777,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_calc_exp_part(__Pyx_mem
  */
   __pyx_v_N1 = (__pyx_v_nodes.shape[1]);
 
-  /* "bem/core/fma_functions.pyx":184
+  /* "interaction3/bem/core/fma_functions.pyx":184
  *     cdef int M1 = nodes.shape[0]
  *     cdef int N1 = nodes.shape[1]
  *     cdef int M2 = kcoord.shape[0]             # <<<<<<<<<<<<<<
@@ -4743,7 +4786,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_calc_exp_part(__Pyx_mem
  */
   __pyx_v_M2 = (__pyx_v_kcoord.shape[0]);
 
-  /* "bem/core/fma_functions.pyx":185
+  /* "interaction3/bem/core/fma_functions.pyx":185
  *     cdef int N1 = nodes.shape[1]
  *     cdef int M2 = kcoord.shape[0]
  *     cdef int N2 = kcoord.shape[1]             # <<<<<<<<<<<<<<
@@ -4752,7 +4795,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_calc_exp_part(__Pyx_mem
  */
   __pyx_v_N2 = (__pyx_v_kcoord.shape[1]);
 
-  /* "bem/core/fma_functions.pyx":186
+  /* "interaction3/bem/core/fma_functions.pyx":186
  *     cdef int M2 = kcoord.shape[0]
  *     cdef int N2 = kcoord.shape[1]
  *     cdef int O2 = kcoord.shape[2]             # <<<<<<<<<<<<<<
@@ -4761,7 +4804,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_calc_exp_part(__Pyx_mem
  */
   __pyx_v_O2 = (__pyx_v_kcoord.shape[2]);
 
-  /* "bem/core/fma_functions.pyx":187
+  /* "interaction3/bem/core/fma_functions.pyx":187
  *     cdef int N2 = kcoord.shape[1]
  *     cdef int O2 = kcoord.shape[2]
  *     cdef double complex[:, :, :] exp_part = np.zeros((M1, M2, N2), dtype=np.complex128)             # <<<<<<<<<<<<<<
@@ -4816,7 +4859,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_calc_exp_part(__Pyx_mem
   __pyx_t_6.memview = NULL;
   __pyx_t_6.data = NULL;
 
-  /* "bem/core/fma_functions.pyx":191
+  /* "interaction3/bem/core/fma_functions.pyx":191
  *     cdef int i, j, l, m
  * 
  *     for i in range(M1):             # <<<<<<<<<<<<<<
@@ -4827,7 +4870,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_calc_exp_part(__Pyx_mem
   for (__pyx_t_8 = 0; __pyx_t_8 < __pyx_t_7; __pyx_t_8+=1) {
     __pyx_v_i = __pyx_t_8;
 
-    /* "bem/core/fma_functions.pyx":192
+    /* "interaction3/bem/core/fma_functions.pyx":192
  * 
  *     for i in range(M1):
  *         for j in range(M2):             # <<<<<<<<<<<<<<
@@ -4838,7 +4881,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_calc_exp_part(__Pyx_mem
     for (__pyx_t_10 = 0; __pyx_t_10 < __pyx_t_9; __pyx_t_10+=1) {
       __pyx_v_j = __pyx_t_10;
 
-      /* "bem/core/fma_functions.pyx":193
+      /* "interaction3/bem/core/fma_functions.pyx":193
  *     for i in range(M1):
  *         for j in range(M2):
  *             for l in range(N2):             # <<<<<<<<<<<<<<
@@ -4849,7 +4892,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_calc_exp_part(__Pyx_mem
       for (__pyx_t_12 = 0; __pyx_t_12 < __pyx_t_11; __pyx_t_12+=1) {
         __pyx_v_l = __pyx_t_12;
 
-        /* "bem/core/fma_functions.pyx":195
+        /* "interaction3/bem/core/fma_functions.pyx":195
  *             for l in range(N2):
  * 
  *                 tmp1 = 0.0             # <<<<<<<<<<<<<<
@@ -4858,7 +4901,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_calc_exp_part(__Pyx_mem
  */
         __pyx_v_tmp1 = 0.0;
 
-        /* "bem/core/fma_functions.pyx":197
+        /* "interaction3/bem/core/fma_functions.pyx":197
  *                 tmp1 = 0.0
  * 
  *                 for m in range(N1):             # <<<<<<<<<<<<<<
@@ -4869,7 +4912,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_calc_exp_part(__Pyx_mem
         for (__pyx_t_14 = 0; __pyx_t_14 < __pyx_t_13; __pyx_t_14+=1) {
           __pyx_v_m = __pyx_t_14;
 
-          /* "bem/core/fma_functions.pyx":198
+          /* "interaction3/bem/core/fma_functions.pyx":198
  * 
  *                 for m in range(N1):
  *                     tmp1 += (nodes[i, m] - center[m]) * kcoord[j, l, m]             # <<<<<<<<<<<<<<
@@ -4885,7 +4928,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_calc_exp_part(__Pyx_mem
           __pyx_v_tmp1 = (__pyx_v_tmp1 + (((*((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_nodes.data + __pyx_t_15 * __pyx_v_nodes.strides[0]) ) + __pyx_t_16 * __pyx_v_nodes.strides[1]) ))) - (*((double *) ( /* dim=0 */ (__pyx_v_center.data + __pyx_t_17 * __pyx_v_center.strides[0]) )))) * (*((double *) ( /* dim=2 */ (( /* dim=1 */ (( /* dim=0 */ (__pyx_v_kcoord.data + __pyx_t_18 * __pyx_v_kcoord.strides[0]) ) + __pyx_t_19 * __pyx_v_kcoord.strides[1]) ) + __pyx_t_20 * __pyx_v_kcoord.strides[2]) )))));
         }
 
-        /* "bem/core/fma_functions.pyx":200
+        /* "interaction3/bem/core/fma_functions.pyx":200
  *                     tmp1 += (nodes[i, m] - center[m]) * kcoord[j, l, m]
  * 
  *                 exp_part[i, j, l] = cexp(1j * k * tmp1)             # <<<<<<<<<<<<<<
@@ -4900,7 +4943,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_calc_exp_part(__Pyx_mem
     }
   }
 
-  /* "bem/core/fma_functions.pyx":202
+  /* "interaction3/bem/core/fma_functions.pyx":202
  *                 exp_part[i, j, l] = cexp(1j * k * tmp1)
  * 
  *     return np.asarray(exp_part)             # <<<<<<<<<<<<<<
@@ -4966,7 +5009,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_calc_exp_part(__Pyx_mem
   __pyx_t_1 = 0;
   goto __pyx_L0;
 
-  /* "bem/core/fma_functions.pyx":178
+  /* "interaction3/bem/core/fma_functions.pyx":178
  * @cython.boundscheck(False)
  * @cython.wraparound(False)
  * cpdef np.ndarray calc_exp_part(double[:, :] nodes, double[:] center, double[:, :, :] kcoord, double k):             # <<<<<<<<<<<<<<
@@ -4982,7 +5025,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_calc_exp_part(__Pyx_mem
   __Pyx_XDECREF(__pyx_t_4);
   __Pyx_XDECREF(__pyx_t_5);
   __PYX_XDEC_MEMVIEW(&__pyx_t_6, 1);
-  __Pyx_AddTraceback("bem.core.fma_functions.calc_exp_part", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("interaction3.bem.core.fma_functions.calc_exp_part", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = 0;
   __pyx_L0:;
   __PYX_XDEC_MEMVIEW(&__pyx_v_exp_part, 1);
@@ -4992,9 +5035,9 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_calc_exp_part(__Pyx_mem
 }
 
 /* Python wrapper */
-static PyObject *__pyx_pw_3bem_4core_13fma_functions_15calc_exp_part(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static char __pyx_doc_3bem_4core_13fma_functions_14calc_exp_part[] = "\n    Calculates the exponential part of the evaluation equation (see nf_eval).\n    ";
-static PyObject *__pyx_pw_3bem_4core_13fma_functions_15calc_exp_part(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
+static PyObject *__pyx_pw_12interaction3_3bem_4core_13fma_functions_15calc_exp_part(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static char __pyx_doc_12interaction3_3bem_4core_13fma_functions_14calc_exp_part[] = "\n    Calculates the exponential part of the evaluation equation (see nf_eval).\n    ";
+static PyObject *__pyx_pw_12interaction3_3bem_4core_13fma_functions_15calc_exp_part(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
   __Pyx_memviewslice __pyx_v_nodes = { 0, 0, { 0 }, { 0 }, { 0 } };
   __Pyx_memviewslice __pyx_v_center = { 0, 0, { 0 }, { 0 }, { 0 } };
   __Pyx_memviewslice __pyx_v_kcoord = { 0, 0, { 0 }, { 0 }, { 0 } };
@@ -5064,18 +5107,18 @@ static PyObject *__pyx_pw_3bem_4core_13fma_functions_15calc_exp_part(PyObject *_
   __pyx_L5_argtuple_error:;
   __Pyx_RaiseArgtupleInvalid("calc_exp_part", 1, 4, 4, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 178, __pyx_L3_error)
   __pyx_L3_error:;
-  __Pyx_AddTraceback("bem.core.fma_functions.calc_exp_part", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("interaction3.bem.core.fma_functions.calc_exp_part", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  __pyx_r = __pyx_pf_3bem_4core_13fma_functions_14calc_exp_part(__pyx_self, __pyx_v_nodes, __pyx_v_center, __pyx_v_kcoord, __pyx_v_k);
+  __pyx_r = __pyx_pf_12interaction3_3bem_4core_13fma_functions_14calc_exp_part(__pyx_self, __pyx_v_nodes, __pyx_v_center, __pyx_v_kcoord, __pyx_v_k);
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_3bem_4core_13fma_functions_14calc_exp_part(CYTHON_UNUSED PyObject *__pyx_self, __Pyx_memviewslice __pyx_v_nodes, __Pyx_memviewslice __pyx_v_center, __Pyx_memviewslice __pyx_v_kcoord, double __pyx_v_k) {
+static PyObject *__pyx_pf_12interaction3_3bem_4core_13fma_functions_14calc_exp_part(CYTHON_UNUSED PyObject *__pyx_self, __Pyx_memviewslice __pyx_v_nodes, __Pyx_memviewslice __pyx_v_center, __Pyx_memviewslice __pyx_v_kcoord, double __pyx_v_k) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
@@ -5084,7 +5127,7 @@ static PyObject *__pyx_pf_3bem_4core_13fma_functions_14calc_exp_part(CYTHON_UNUS
   if (unlikely(!__pyx_v_nodes.memview)) { __Pyx_RaiseUnboundLocalError("nodes"); __PYX_ERR(0, 178, __pyx_L1_error) }
   if (unlikely(!__pyx_v_center.memview)) { __Pyx_RaiseUnboundLocalError("center"); __PYX_ERR(0, 178, __pyx_L1_error) }
   if (unlikely(!__pyx_v_kcoord.memview)) { __Pyx_RaiseUnboundLocalError("kcoord"); __PYX_ERR(0, 178, __pyx_L1_error) }
-  __pyx_t_1 = ((PyObject *)__pyx_f_3bem_4core_13fma_functions_calc_exp_part(__pyx_v_nodes, __pyx_v_center, __pyx_v_kcoord, __pyx_v_k, 0)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 178, __pyx_L1_error)
+  __pyx_t_1 = ((PyObject *)__pyx_f_12interaction3_3bem_4core_13fma_functions_calc_exp_part(__pyx_v_nodes, __pyx_v_center, __pyx_v_kcoord, __pyx_v_k, 0)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 178, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -5093,7 +5136,7 @@ static PyObject *__pyx_pf_3bem_4core_13fma_functions_14calc_exp_part(CYTHON_UNUS
   /* function exit code */
   __pyx_L1_error:;
   __Pyx_XDECREF(__pyx_t_1);
-  __Pyx_AddTraceback("bem.core.fma_functions.calc_exp_part", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("interaction3.bem.core.fma_functions.calc_exp_part", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
   __PYX_XDEC_MEMVIEW(&__pyx_v_nodes, 1);
@@ -5104,7 +5147,7 @@ static PyObject *__pyx_pf_3bem_4core_13fma_functions_14calc_exp_part(CYTHON_UNUS
   return __pyx_r;
 }
 
-/* "bem/core/fma_functions.pyx":207
+/* "interaction3/bem/core/fma_functions.pyx":207
  * @cython.boundscheck(False)
  * @cython.wraparound(False)
  * cpdef np.ndarray nf_eval(double complex[:, :] coeff, double complex[:, :, :] exp_part, double k, double rho, double c):             # <<<<<<<<<<<<<<
@@ -5112,8 +5155,8 @@ static PyObject *__pyx_pf_3bem_4core_13fma_functions_14calc_exp_part(CYTHON_UNUS
  *     Evaluate the pressure field at the specified field point(s) using
  */
 
-static PyObject *__pyx_pw_3bem_4core_13fma_functions_17nf_eval(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_nf_eval(__Pyx_memviewslice __pyx_v_coeff, __Pyx_memviewslice __pyx_v_exp_part, double __pyx_v_k, double __pyx_v_rho, double __pyx_v_c, CYTHON_UNUSED int __pyx_skip_dispatch) {
+static PyObject *__pyx_pw_12interaction3_3bem_4core_13fma_functions_17nf_eval(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static PyArrayObject *__pyx_f_12interaction3_3bem_4core_13fma_functions_nf_eval(__Pyx_memviewslice __pyx_v_coeff, __Pyx_memviewslice __pyx_v_exp_part, double __pyx_v_k, double __pyx_v_rho, double __pyx_v_c, CYTHON_UNUSED int __pyx_skip_dispatch) {
   int __pyx_v_M1;
   int __pyx_v_N1;
   int __pyx_v_nnodes;
@@ -5146,7 +5189,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_nf_eval(__Pyx_memviewsl
   Py_ssize_t __pyx_t_19;
   __Pyx_RefNannySetupContext("nf_eval", 0);
 
-  /* "bem/core/fma_functions.pyx":212
+  /* "interaction3/bem/core/fma_functions.pyx":212
  *     near-field signature coefficients.
  *     '''
  *     cdef int M1 = coeff.shape[0]             # <<<<<<<<<<<<<<
@@ -5155,7 +5198,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_nf_eval(__Pyx_memviewsl
  */
   __pyx_v_M1 = (__pyx_v_coeff.shape[0]);
 
-  /* "bem/core/fma_functions.pyx":213
+  /* "interaction3/bem/core/fma_functions.pyx":213
  *     '''
  *     cdef int M1 = coeff.shape[0]
  *     cdef int N1 = coeff.shape[1]             # <<<<<<<<<<<<<<
@@ -5164,7 +5207,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_nf_eval(__Pyx_memviewsl
  */
   __pyx_v_N1 = (__pyx_v_coeff.shape[1]);
 
-  /* "bem/core/fma_functions.pyx":214
+  /* "interaction3/bem/core/fma_functions.pyx":214
  *     cdef int M1 = coeff.shape[0]
  *     cdef int N1 = coeff.shape[1]
  *     cdef int nnodes = exp_part.shape[0]             # <<<<<<<<<<<<<<
@@ -5173,7 +5216,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_nf_eval(__Pyx_memviewsl
  */
   __pyx_v_nnodes = (__pyx_v_exp_part.shape[0]);
 
-  /* "bem/core/fma_functions.pyx":215
+  /* "interaction3/bem/core/fma_functions.pyx":215
  *     cdef int N1 = coeff.shape[1]
  *     cdef int nnodes = exp_part.shape[0]
  *     cdef double prefactor = k * k * rho * c / (16 * pi * pi)             # <<<<<<<<<<<<<<
@@ -5201,7 +5244,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_nf_eval(__Pyx_memviewsl
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   __pyx_v_prefactor = __pyx_t_5;
 
-  /* "bem/core/fma_functions.pyx":216
+  /* "interaction3/bem/core/fma_functions.pyx":216
  *     cdef int nnodes = exp_part.shape[0]
  *     cdef double prefactor = k * k * rho * c / (16 * pi * pi)
  *     cdef double complex[:] total = np.zeros(nnodes, dtype=np.complex128)             # <<<<<<<<<<<<<<
@@ -5241,7 +5284,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_nf_eval(__Pyx_memviewsl
   __pyx_t_7.memview = NULL;
   __pyx_t_7.data = NULL;
 
-  /* "bem/core/fma_functions.pyx":220
+  /* "interaction3/bem/core/fma_functions.pyx":220
  *     cdef double complex tmp1
  * 
  *     for i in range(nnodes):             # <<<<<<<<<<<<<<
@@ -5252,7 +5295,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_nf_eval(__Pyx_memviewsl
   for (__pyx_t_9 = 0; __pyx_t_9 < __pyx_t_8; __pyx_t_9+=1) {
     __pyx_v_i = __pyx_t_9;
 
-    /* "bem/core/fma_functions.pyx":222
+    /* "interaction3/bem/core/fma_functions.pyx":222
  *     for i in range(nnodes):
  * 
  *         tmp1 = 0j             # <<<<<<<<<<<<<<
@@ -5261,7 +5304,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_nf_eval(__Pyx_memviewsl
  */
     __pyx_v_tmp1 = __pyx_t_double_complex_from_parts(0, 0.0);
 
-    /* "bem/core/fma_functions.pyx":224
+    /* "interaction3/bem/core/fma_functions.pyx":224
  *         tmp1 = 0j
  * 
  *         for j in range(M1):             # <<<<<<<<<<<<<<
@@ -5272,7 +5315,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_nf_eval(__Pyx_memviewsl
     for (__pyx_t_11 = 0; __pyx_t_11 < __pyx_t_10; __pyx_t_11+=1) {
       __pyx_v_j = __pyx_t_11;
 
-      /* "bem/core/fma_functions.pyx":225
+      /* "interaction3/bem/core/fma_functions.pyx":225
  * 
  *         for j in range(M1):
  *             for l in range(N1):             # <<<<<<<<<<<<<<
@@ -5283,7 +5326,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_nf_eval(__Pyx_memviewsl
       for (__pyx_t_13 = 0; __pyx_t_13 < __pyx_t_12; __pyx_t_13+=1) {
         __pyx_v_l = __pyx_t_13;
 
-        /* "bem/core/fma_functions.pyx":227
+        /* "interaction3/bem/core/fma_functions.pyx":227
  *             for l in range(N1):
  * 
  *                 tmp1 += coeff[j,l]*exp_part[i,j,l]             # <<<<<<<<<<<<<<
@@ -5299,7 +5342,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_nf_eval(__Pyx_memviewsl
       }
     }
 
-    /* "bem/core/fma_functions.pyx":229
+    /* "interaction3/bem/core/fma_functions.pyx":229
  *                 tmp1 += coeff[j,l]*exp_part[i,j,l]
  * 
  *         total[i] = prefactor*tmp1             # <<<<<<<<<<<<<<
@@ -5310,7 +5353,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_nf_eval(__Pyx_memviewsl
     *((__pyx_t_double_complex *) ( /* dim=0 */ (__pyx_v_total.data + __pyx_t_19 * __pyx_v_total.strides[0]) )) = __Pyx_c_prod_double(__pyx_t_double_complex_from_parts(__pyx_v_prefactor, 0), __pyx_v_tmp1);
   }
 
-  /* "bem/core/fma_functions.pyx":231
+  /* "interaction3/bem/core/fma_functions.pyx":231
  *         total[i] = prefactor*tmp1
  * 
  *     return np.asarray(total)             # <<<<<<<<<<<<<<
@@ -5376,7 +5419,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_nf_eval(__Pyx_memviewsl
   __pyx_t_6 = 0;
   goto __pyx_L0;
 
-  /* "bem/core/fma_functions.pyx":207
+  /* "interaction3/bem/core/fma_functions.pyx":207
  * @cython.boundscheck(False)
  * @cython.wraparound(False)
  * cpdef np.ndarray nf_eval(double complex[:, :] coeff, double complex[:, :, :] exp_part, double k, double rho, double c):             # <<<<<<<<<<<<<<
@@ -5392,7 +5435,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_nf_eval(__Pyx_memviewsl
   __Pyx_XDECREF(__pyx_t_4);
   __Pyx_XDECREF(__pyx_t_6);
   __PYX_XDEC_MEMVIEW(&__pyx_t_7, 1);
-  __Pyx_AddTraceback("bem.core.fma_functions.nf_eval", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("interaction3.bem.core.fma_functions.nf_eval", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = 0;
   __pyx_L0:;
   __PYX_XDEC_MEMVIEW(&__pyx_v_total, 1);
@@ -5402,9 +5445,9 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_nf_eval(__Pyx_memviewsl
 }
 
 /* Python wrapper */
-static PyObject *__pyx_pw_3bem_4core_13fma_functions_17nf_eval(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static char __pyx_doc_3bem_4core_13fma_functions_16nf_eval[] = "\n    Evaluate the pressure field at the specified field point(s) using\n    near-field signature coefficients.\n    ";
-static PyObject *__pyx_pw_3bem_4core_13fma_functions_17nf_eval(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
+static PyObject *__pyx_pw_12interaction3_3bem_4core_13fma_functions_17nf_eval(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static char __pyx_doc_12interaction3_3bem_4core_13fma_functions_16nf_eval[] = "\n    Evaluate the pressure field at the specified field point(s) using\n    near-field signature coefficients.\n    ";
+static PyObject *__pyx_pw_12interaction3_3bem_4core_13fma_functions_17nf_eval(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
   __Pyx_memviewslice __pyx_v_coeff = { 0, 0, { 0 }, { 0 }, { 0 } };
   __Pyx_memviewslice __pyx_v_exp_part = { 0, 0, { 0 }, { 0 }, { 0 } };
   double __pyx_v_k;
@@ -5485,18 +5528,18 @@ static PyObject *__pyx_pw_3bem_4core_13fma_functions_17nf_eval(PyObject *__pyx_s
   __pyx_L5_argtuple_error:;
   __Pyx_RaiseArgtupleInvalid("nf_eval", 1, 5, 5, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 207, __pyx_L3_error)
   __pyx_L3_error:;
-  __Pyx_AddTraceback("bem.core.fma_functions.nf_eval", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("interaction3.bem.core.fma_functions.nf_eval", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  __pyx_r = __pyx_pf_3bem_4core_13fma_functions_16nf_eval(__pyx_self, __pyx_v_coeff, __pyx_v_exp_part, __pyx_v_k, __pyx_v_rho, __pyx_v_c);
+  __pyx_r = __pyx_pf_12interaction3_3bem_4core_13fma_functions_16nf_eval(__pyx_self, __pyx_v_coeff, __pyx_v_exp_part, __pyx_v_k, __pyx_v_rho, __pyx_v_c);
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_3bem_4core_13fma_functions_16nf_eval(CYTHON_UNUSED PyObject *__pyx_self, __Pyx_memviewslice __pyx_v_coeff, __Pyx_memviewslice __pyx_v_exp_part, double __pyx_v_k, double __pyx_v_rho, double __pyx_v_c) {
+static PyObject *__pyx_pf_12interaction3_3bem_4core_13fma_functions_16nf_eval(CYTHON_UNUSED PyObject *__pyx_self, __Pyx_memviewslice __pyx_v_coeff, __Pyx_memviewslice __pyx_v_exp_part, double __pyx_v_k, double __pyx_v_rho, double __pyx_v_c) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
@@ -5504,7 +5547,7 @@ static PyObject *__pyx_pf_3bem_4core_13fma_functions_16nf_eval(CYTHON_UNUSED PyO
   __Pyx_XDECREF(__pyx_r);
   if (unlikely(!__pyx_v_coeff.memview)) { __Pyx_RaiseUnboundLocalError("coeff"); __PYX_ERR(0, 207, __pyx_L1_error) }
   if (unlikely(!__pyx_v_exp_part.memview)) { __Pyx_RaiseUnboundLocalError("exp_part"); __PYX_ERR(0, 207, __pyx_L1_error) }
-  __pyx_t_1 = ((PyObject *)__pyx_f_3bem_4core_13fma_functions_nf_eval(__pyx_v_coeff, __pyx_v_exp_part, __pyx_v_k, __pyx_v_rho, __pyx_v_c, 0)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 207, __pyx_L1_error)
+  __pyx_t_1 = ((PyObject *)__pyx_f_12interaction3_3bem_4core_13fma_functions_nf_eval(__pyx_v_coeff, __pyx_v_exp_part, __pyx_v_k, __pyx_v_rho, __pyx_v_c, 0)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 207, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -5513,7 +5556,7 @@ static PyObject *__pyx_pf_3bem_4core_13fma_functions_16nf_eval(CYTHON_UNUSED PyO
   /* function exit code */
   __pyx_L1_error:;
   __Pyx_XDECREF(__pyx_t_1);
-  __Pyx_AddTraceback("bem.core.fma_functions.nf_eval", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("interaction3.bem.core.fma_functions.nf_eval", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
   __PYX_XDEC_MEMVIEW(&__pyx_v_coeff, 1);
@@ -5523,7 +5566,7 @@ static PyObject *__pyx_pf_3bem_4core_13fma_functions_16nf_eval(CYTHON_UNUSED PyO
   return __pyx_r;
 }
 
-/* "bem/core/fma_functions.pyx":236
+/* "interaction3/bem/core/fma_functions.pyx":236
  * @cython.boundscheck(False)
  * @cython.wraparound(False)
  * cpdef np.ndarray ff2nf_op(double r, double[:,:] cos_angle, double k, int trans_order):             # <<<<<<<<<<<<<<
@@ -5531,8 +5574,8 @@ static PyObject *__pyx_pf_3bem_4core_13fma_functions_16nf_eval(CYTHON_UNUSED PyO
  *     Standard far-field to near-field translation operator (faster version).
  */
 
-static PyObject *__pyx_pw_3bem_4core_13fma_functions_19ff2nf_op(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_ff2nf_op(double __pyx_v_r, __Pyx_memviewslice __pyx_v_cos_angle, double __pyx_v_k, int __pyx_v_trans_order, CYTHON_UNUSED int __pyx_skip_dispatch) {
+static PyObject *__pyx_pw_12interaction3_3bem_4core_13fma_functions_19ff2nf_op(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static PyArrayObject *__pyx_f_12interaction3_3bem_4core_13fma_functions_ff2nf_op(double __pyx_v_r, __Pyx_memviewslice __pyx_v_cos_angle, double __pyx_v_k, int __pyx_v_trans_order, CYTHON_UNUSED int __pyx_skip_dispatch) {
   int __pyx_v_M;
   int __pyx_v_N;
   __Pyx_memviewslice __pyx_v_ret = { 0, 0, { 0 }, { 0 }, { 0 } };
@@ -5569,7 +5612,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_ff2nf_op(double __pyx_v
   Py_ssize_t __pyx_t_22;
   __Pyx_RefNannySetupContext("ff2nf_op", 0);
 
-  /* "bem/core/fma_functions.pyx":240
+  /* "interaction3/bem/core/fma_functions.pyx":240
  *     Standard far-field to near-field translation operator (faster version).
  *     '''
  *     cdef int M = cos_angle.shape[0]             # <<<<<<<<<<<<<<
@@ -5578,7 +5621,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_ff2nf_op(double __pyx_v
  */
   __pyx_v_M = (__pyx_v_cos_angle.shape[0]);
 
-  /* "bem/core/fma_functions.pyx":241
+  /* "interaction3/bem/core/fma_functions.pyx":241
  *     '''
  *     cdef int M = cos_angle.shape[0]
  *     cdef int N = cos_angle.shape[1]             # <<<<<<<<<<<<<<
@@ -5587,7 +5630,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_ff2nf_op(double __pyx_v
  */
   __pyx_v_N = (__pyx_v_cos_angle.shape[1]);
 
-  /* "bem/core/fma_functions.pyx":242
+  /* "interaction3/bem/core/fma_functions.pyx":242
  *     cdef int M = cos_angle.shape[0]
  *     cdef int N = cos_angle.shape[1]
  *     cdef double complex[:, :] ret = np.zeros((M, N), dtype=np.complex128)             # <<<<<<<<<<<<<<
@@ -5637,7 +5680,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_ff2nf_op(double __pyx_v
   __pyx_t_6.memview = NULL;
   __pyx_t_6.data = NULL;
 
-  /* "bem/core/fma_functions.pyx":243
+  /* "interaction3/bem/core/fma_functions.pyx":243
  *     cdef int N = cos_angle.shape[1]
  *     cdef double complex[:, :] ret = np.zeros((M, N), dtype=np.complex128)
  *     cdef double z = k * r             # <<<<<<<<<<<<<<
@@ -5646,7 +5689,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_ff2nf_op(double __pyx_v
  */
   __pyx_v_z = (__pyx_v_k * __pyx_v_r);
 
-  /* "bem/core/fma_functions.pyx":246
+  /* "interaction3/bem/core/fma_functions.pyx":246
  *     cdef double complex tmp
  *     cdef int l, i, j
  *     cdef double[:] leg = np.zeros(trans_order + 1, dtype=np.float64)             # <<<<<<<<<<<<<<
@@ -5686,7 +5729,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_ff2nf_op(double __pyx_v
   __pyx_t_7.memview = NULL;
   __pyx_t_7.data = NULL;
 
-  /* "bem/core/fma_functions.pyx":247
+  /* "interaction3/bem/core/fma_functions.pyx":247
  *     cdef int l, i, j
  *     cdef double[:] leg = np.zeros(trans_order + 1, dtype=np.float64)
  *     cdef double complex[:] sphkl = np.zeros(trans_order + 1, dtype=np.complex128)             # <<<<<<<<<<<<<<
@@ -5726,7 +5769,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_ff2nf_op(double __pyx_v
   __pyx_t_8.memview = NULL;
   __pyx_t_8.data = NULL;
 
-  /* "bem/core/fma_functions.pyx":249
+  /* "interaction3/bem/core/fma_functions.pyx":249
  *     cdef double complex[:] sphkl = np.zeros(trans_order + 1, dtype=np.complex128)
  * 
  *     sphkl = sph_hankel2_np(np.arange(trans_order + 1), z)             # <<<<<<<<<<<<<<
@@ -5847,7 +5890,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_ff2nf_op(double __pyx_v
   __pyx_t_8.memview = NULL;
   __pyx_t_8.data = NULL;
 
-  /* "bem/core/fma_functions.pyx":251
+  /* "interaction3/bem/core/fma_functions.pyx":251
  *     sphkl = sph_hankel2_np(np.arange(trans_order + 1), z)
  * 
  *     for i in range(M):             # <<<<<<<<<<<<<<
@@ -5858,7 +5901,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_ff2nf_op(double __pyx_v
   for (__pyx_t_12 = 0; __pyx_t_12 < __pyx_t_11; __pyx_t_12+=1) {
     __pyx_v_i = __pyx_t_12;
 
-    /* "bem/core/fma_functions.pyx":252
+    /* "interaction3/bem/core/fma_functions.pyx":252
  * 
  *     for i in range(M):
  *         for j in range(N):             # <<<<<<<<<<<<<<
@@ -5869,7 +5912,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_ff2nf_op(double __pyx_v
     for (__pyx_t_14 = 0; __pyx_t_14 < __pyx_t_13; __pyx_t_14+=1) {
       __pyx_v_j = __pyx_t_14;
 
-      /* "bem/core/fma_functions.pyx":254
+      /* "interaction3/bem/core/fma_functions.pyx":254
  *         for j in range(N):
  * 
  *             tmp = 0j             # <<<<<<<<<<<<<<
@@ -5878,7 +5921,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_ff2nf_op(double __pyx_v
  */
       __pyx_v_tmp = __pyx_t_double_complex_from_parts(0, 0.0);
 
-      /* "bem/core/fma_functions.pyx":256
+      /* "interaction3/bem/core/fma_functions.pyx":256
  *             tmp = 0j
  * 
  *             leg = eval_legendre(np.arange(trans_order + 1), cos_angle[i, j])             # <<<<<<<<<<<<<<
@@ -6001,7 +6044,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_ff2nf_op(double __pyx_v
       __pyx_t_7.memview = NULL;
       __pyx_t_7.data = NULL;
 
-      /* "bem/core/fma_functions.pyx":258
+      /* "interaction3/bem/core/fma_functions.pyx":258
  *             leg = eval_legendre(np.arange(trans_order + 1), cos_angle[i, j])
  * 
  *             for l in range(trans_order + 1):             # <<<<<<<<<<<<<<
@@ -6012,7 +6055,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_ff2nf_op(double __pyx_v
       for (__pyx_t_17 = 0; __pyx_t_17 < __pyx_t_18; __pyx_t_17+=1) {
         __pyx_v_l = __pyx_t_17;
 
-        /* "bem/core/fma_functions.pyx":260
+        /* "interaction3/bem/core/fma_functions.pyx":260
  *             for l in range(trans_order + 1):
  * 
  *                 tmp += (2 * l + 1) * (1j ** l) * sphkl[l] * leg[l]             # <<<<<<<<<<<<<<
@@ -6024,7 +6067,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_ff2nf_op(double __pyx_v
         __pyx_v_tmp = __Pyx_c_sum_double(__pyx_v_tmp, __Pyx_c_prod_double(__Pyx_c_prod_double(__Pyx_c_prod_double(__pyx_t_double_complex_from_parts(((2 * __pyx_v_l) + 1), 0), __Pyx_c_pow_double(__pyx_t_double_complex_from_parts(0, 1.0), __pyx_t_double_complex_from_parts(__pyx_v_l, 0))), (*((__pyx_t_double_complex *) ( /* dim=0 */ (__pyx_v_sphkl.data + __pyx_t_19 * __pyx_v_sphkl.strides[0]) )))), __pyx_t_double_complex_from_parts((*((double *) ( /* dim=0 */ (__pyx_v_leg.data + __pyx_t_20 * __pyx_v_leg.strides[0]) ))), 0)));
       }
 
-      /* "bem/core/fma_functions.pyx":262
+      /* "interaction3/bem/core/fma_functions.pyx":262
  *                 tmp += (2 * l + 1) * (1j ** l) * sphkl[l] * leg[l]
  * 
  *             ret[i, j] = tmp             # <<<<<<<<<<<<<<
@@ -6037,7 +6080,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_ff2nf_op(double __pyx_v
     }
   }
 
-  /* "bem/core/fma_functions.pyx":264
+  /* "interaction3/bem/core/fma_functions.pyx":264
  *             ret[i, j] = tmp
  * 
  *     return np.asarray(ret)             # <<<<<<<<<<<<<<
@@ -6103,7 +6146,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_ff2nf_op(double __pyx_v
   __pyx_t_2 = 0;
   goto __pyx_L0;
 
-  /* "bem/core/fma_functions.pyx":236
+  /* "interaction3/bem/core/fma_functions.pyx":236
  * @cython.boundscheck(False)
  * @cython.wraparound(False)
  * cpdef np.ndarray ff2nf_op(double r, double[:,:] cos_angle, double k, int trans_order):             # <<<<<<<<<<<<<<
@@ -6123,7 +6166,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_ff2nf_op(double __pyx_v
   __PYX_XDEC_MEMVIEW(&__pyx_t_8, 1);
   __Pyx_XDECREF(__pyx_t_9);
   __Pyx_XDECREF(__pyx_t_10);
-  __Pyx_AddTraceback("bem.core.fma_functions.ff2nf_op", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("interaction3.bem.core.fma_functions.ff2nf_op", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = 0;
   __pyx_L0:;
   __PYX_XDEC_MEMVIEW(&__pyx_v_ret, 1);
@@ -6135,9 +6178,9 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_ff2nf_op(double __pyx_v
 }
 
 /* Python wrapper */
-static PyObject *__pyx_pw_3bem_4core_13fma_functions_19ff2nf_op(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static char __pyx_doc_3bem_4core_13fma_functions_18ff2nf_op[] = "\n    Standard far-field to near-field translation operator (faster version).\n    ";
-static PyObject *__pyx_pw_3bem_4core_13fma_functions_19ff2nf_op(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
+static PyObject *__pyx_pw_12interaction3_3bem_4core_13fma_functions_19ff2nf_op(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static char __pyx_doc_12interaction3_3bem_4core_13fma_functions_18ff2nf_op[] = "\n    Standard far-field to near-field translation operator (faster version).\n    ";
+static PyObject *__pyx_pw_12interaction3_3bem_4core_13fma_functions_19ff2nf_op(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
   double __pyx_v_r;
   __Pyx_memviewslice __pyx_v_cos_angle = { 0, 0, { 0 }, { 0 }, { 0 } };
   double __pyx_v_k;
@@ -6207,25 +6250,25 @@ static PyObject *__pyx_pw_3bem_4core_13fma_functions_19ff2nf_op(PyObject *__pyx_
   __pyx_L5_argtuple_error:;
   __Pyx_RaiseArgtupleInvalid("ff2nf_op", 1, 4, 4, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 236, __pyx_L3_error)
   __pyx_L3_error:;
-  __Pyx_AddTraceback("bem.core.fma_functions.ff2nf_op", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("interaction3.bem.core.fma_functions.ff2nf_op", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  __pyx_r = __pyx_pf_3bem_4core_13fma_functions_18ff2nf_op(__pyx_self, __pyx_v_r, __pyx_v_cos_angle, __pyx_v_k, __pyx_v_trans_order);
+  __pyx_r = __pyx_pf_12interaction3_3bem_4core_13fma_functions_18ff2nf_op(__pyx_self, __pyx_v_r, __pyx_v_cos_angle, __pyx_v_k, __pyx_v_trans_order);
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_3bem_4core_13fma_functions_18ff2nf_op(CYTHON_UNUSED PyObject *__pyx_self, double __pyx_v_r, __Pyx_memviewslice __pyx_v_cos_angle, double __pyx_v_k, int __pyx_v_trans_order) {
+static PyObject *__pyx_pf_12interaction3_3bem_4core_13fma_functions_18ff2nf_op(CYTHON_UNUSED PyObject *__pyx_self, double __pyx_v_r, __Pyx_memviewslice __pyx_v_cos_angle, double __pyx_v_k, int __pyx_v_trans_order) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   __Pyx_RefNannySetupContext("ff2nf_op", 0);
   __Pyx_XDECREF(__pyx_r);
   if (unlikely(!__pyx_v_cos_angle.memview)) { __Pyx_RaiseUnboundLocalError("cos_angle"); __PYX_ERR(0, 236, __pyx_L1_error) }
-  __pyx_t_1 = ((PyObject *)__pyx_f_3bem_4core_13fma_functions_ff2nf_op(__pyx_v_r, __pyx_v_cos_angle, __pyx_v_k, __pyx_v_trans_order, 0)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 236, __pyx_L1_error)
+  __pyx_t_1 = ((PyObject *)__pyx_f_12interaction3_3bem_4core_13fma_functions_ff2nf_op(__pyx_v_r, __pyx_v_cos_angle, __pyx_v_k, __pyx_v_trans_order, 0)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 236, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -6234,7 +6277,7 @@ static PyObject *__pyx_pf_3bem_4core_13fma_functions_18ff2nf_op(CYTHON_UNUSED Py
   /* function exit code */
   __pyx_L1_error:;
   __Pyx_XDECREF(__pyx_t_1);
-  __Pyx_AddTraceback("bem.core.fma_functions.ff2nf_op", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("interaction3.bem.core.fma_functions.ff2nf_op", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
   __PYX_XDEC_MEMVIEW(&__pyx_v_cos_angle, 1);
@@ -6243,7 +6286,7 @@ static PyObject *__pyx_pf_3bem_4core_13fma_functions_18ff2nf_op(CYTHON_UNUSED Py
   return __pyx_r;
 }
 
-/* "bem/core/fma_functions.pyx":269
+/* "interaction3/bem/core/fma_functions.pyx":269
  * @cython.boundscheck(False)
  * @cython.wraparound(False)
  * cpdef np.ndarray ff2nf_op2(double r, double[:,:] cos_angle, double k, int trans_order):             # <<<<<<<<<<<<<<
@@ -6251,8 +6294,8 @@ static PyObject *__pyx_pf_3bem_4core_13fma_functions_18ff2nf_op(CYTHON_UNUSED Py
  *     Standard far-field to near-field translation operator (slower version).
  */
 
-static PyObject *__pyx_pw_3bem_4core_13fma_functions_21ff2nf_op2(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_ff2nf_op2(double __pyx_v_r, __Pyx_memviewslice __pyx_v_cos_angle, double __pyx_v_k, int __pyx_v_trans_order, CYTHON_UNUSED int __pyx_skip_dispatch) {
+static PyObject *__pyx_pw_12interaction3_3bem_4core_13fma_functions_21ff2nf_op2(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static PyArrayObject *__pyx_f_12interaction3_3bem_4core_13fma_functions_ff2nf_op2(double __pyx_v_r, __Pyx_memviewslice __pyx_v_cos_angle, double __pyx_v_k, int __pyx_v_trans_order, CYTHON_UNUSED int __pyx_skip_dispatch) {
   int __pyx_v_M;
   int __pyx_v_N;
   __Pyx_memviewslice __pyx_v_ret = { 0, 0, { 0 }, { 0 }, { 0 } };
@@ -6286,7 +6329,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_ff2nf_op2(double __pyx_
   Py_ssize_t __pyx_t_21;
   __Pyx_RefNannySetupContext("ff2nf_op2", 0);
 
-  /* "bem/core/fma_functions.pyx":273
+  /* "interaction3/bem/core/fma_functions.pyx":273
  *     Standard far-field to near-field translation operator (slower version).
  *     '''
  *     cdef int M = cos_angle.shape[0]             # <<<<<<<<<<<<<<
@@ -6295,7 +6338,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_ff2nf_op2(double __pyx_
  */
   __pyx_v_M = (__pyx_v_cos_angle.shape[0]);
 
-  /* "bem/core/fma_functions.pyx":274
+  /* "interaction3/bem/core/fma_functions.pyx":274
  *     '''
  *     cdef int M = cos_angle.shape[0]
  *     cdef int N = cos_angle.shape[1]             # <<<<<<<<<<<<<<
@@ -6304,7 +6347,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_ff2nf_op2(double __pyx_
  */
   __pyx_v_N = (__pyx_v_cos_angle.shape[1]);
 
-  /* "bem/core/fma_functions.pyx":275
+  /* "interaction3/bem/core/fma_functions.pyx":275
  *     cdef int M = cos_angle.shape[0]
  *     cdef int N = cos_angle.shape[1]
  *     cdef double complex[:, :] ret = np.zeros((M, N), dtype=np.complex128)             # <<<<<<<<<<<<<<
@@ -6354,7 +6397,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_ff2nf_op2(double __pyx_
   __pyx_t_6.memview = NULL;
   __pyx_t_6.data = NULL;
 
-  /* "bem/core/fma_functions.pyx":276
+  /* "interaction3/bem/core/fma_functions.pyx":276
  *     cdef int N = cos_angle.shape[1]
  *     cdef double complex[:, :] ret = np.zeros((M, N), dtype=np.complex128)
  *     cdef double z = k * r             # <<<<<<<<<<<<<<
@@ -6363,7 +6406,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_ff2nf_op2(double __pyx_
  */
   __pyx_v_z = (__pyx_v_k * __pyx_v_r);
 
-  /* "bem/core/fma_functions.pyx":280
+  /* "interaction3/bem/core/fma_functions.pyx":280
  *     cdef int l, i, j
  * 
  *     for i in range(M):             # <<<<<<<<<<<<<<
@@ -6374,7 +6417,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_ff2nf_op2(double __pyx_
   for (__pyx_t_8 = 0; __pyx_t_8 < __pyx_t_7; __pyx_t_8+=1) {
     __pyx_v_i = __pyx_t_8;
 
-    /* "bem/core/fma_functions.pyx":281
+    /* "interaction3/bem/core/fma_functions.pyx":281
  * 
  *     for i in range(M):
  *         for j in range(N):             # <<<<<<<<<<<<<<
@@ -6385,7 +6428,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_ff2nf_op2(double __pyx_
     for (__pyx_t_10 = 0; __pyx_t_10 < __pyx_t_9; __pyx_t_10+=1) {
       __pyx_v_j = __pyx_t_10;
 
-      /* "bem/core/fma_functions.pyx":283
+      /* "interaction3/bem/core/fma_functions.pyx":283
  *         for j in range(N):
  * 
  *             tmp = 0j             # <<<<<<<<<<<<<<
@@ -6394,7 +6437,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_ff2nf_op2(double __pyx_
  */
       __pyx_v_tmp = __pyx_t_double_complex_from_parts(0, 0.0);
 
-      /* "bem/core/fma_functions.pyx":285
+      /* "interaction3/bem/core/fma_functions.pyx":285
  *             tmp = 0j
  * 
  *             for l in range(trans_order + 1):             # <<<<<<<<<<<<<<
@@ -6405,7 +6448,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_ff2nf_op2(double __pyx_
       for (__pyx_t_12 = 0; __pyx_t_12 < __pyx_t_11; __pyx_t_12+=1) {
         __pyx_v_l = __pyx_t_12;
 
-        /* "bem/core/fma_functions.pyx":287
+        /* "interaction3/bem/core/fma_functions.pyx":287
  *             for l in range(trans_order + 1):
  * 
  *                 tmp += (2 * l + 1) * (1j ** l) * sph_hankel2(l, z) * eval_legendre(l, cos_angle[i, j])             # <<<<<<<<<<<<<<
@@ -6414,7 +6457,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_ff2nf_op2(double __pyx_
  */
         __pyx_t_5 = __pyx_PyComplex_FromComplex(__pyx_v_tmp); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 287, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_5);
-        __pyx_t_13 = __Pyx_c_prod_double(__Pyx_c_prod_double(__pyx_t_double_complex_from_parts(((2 * __pyx_v_l) + 1), 0), __Pyx_c_pow_double(__pyx_t_double_complex_from_parts(0, 1.0), __pyx_t_double_complex_from_parts(__pyx_v_l, 0))), __pyx_f_3bem_4core_13fma_functions_sph_hankel2(__pyx_v_l, __pyx_v_z, 0));
+        __pyx_t_13 = __Pyx_c_prod_double(__Pyx_c_prod_double(__pyx_t_double_complex_from_parts(((2 * __pyx_v_l) + 1), 0), __Pyx_c_pow_double(__pyx_t_double_complex_from_parts(0, 1.0), __pyx_t_double_complex_from_parts(__pyx_v_l, 0))), __pyx_f_12interaction3_3bem_4core_13fma_functions_sph_hankel2(__pyx_v_l, __pyx_v_z, 0));
         __pyx_t_4 = __pyx_PyComplex_FromComplex(__pyx_t_13); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 287, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_4);
         __pyx_t_2 = __Pyx_GetModuleGlobalName(__pyx_n_s_eval_legendre); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 287, __pyx_L1_error)
@@ -6487,7 +6530,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_ff2nf_op2(double __pyx_
         __pyx_v_tmp = __pyx_t_13;
       }
 
-      /* "bem/core/fma_functions.pyx":289
+      /* "interaction3/bem/core/fma_functions.pyx":289
  *                 tmp += (2 * l + 1) * (1j ** l) * sph_hankel2(l, z) * eval_legendre(l, cos_angle[i, j])
  * 
  *             ret[i,j] = tmp             # <<<<<<<<<<<<<<
@@ -6500,7 +6543,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_ff2nf_op2(double __pyx_
     }
   }
 
-  /* "bem/core/fma_functions.pyx":291
+  /* "interaction3/bem/core/fma_functions.pyx":291
  *             ret[i,j] = tmp
  * 
  *     return np.asarray(ret)             # <<<<<<<<<<<<<<
@@ -6566,7 +6609,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_ff2nf_op2(double __pyx_
   __pyx_t_3 = 0;
   goto __pyx_L0;
 
-  /* "bem/core/fma_functions.pyx":269
+  /* "interaction3/bem/core/fma_functions.pyx":269
  * @cython.boundscheck(False)
  * @cython.wraparound(False)
  * cpdef np.ndarray ff2nf_op2(double r, double[:,:] cos_angle, double k, int trans_order):             # <<<<<<<<<<<<<<
@@ -6585,7 +6628,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_ff2nf_op2(double __pyx_
   __Pyx_XDECREF(__pyx_t_16);
   __Pyx_XDECREF(__pyx_t_17);
   __Pyx_XDECREF(__pyx_t_19);
-  __Pyx_AddTraceback("bem.core.fma_functions.ff2nf_op2", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("interaction3.bem.core.fma_functions.ff2nf_op2", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = 0;
   __pyx_L0:;
   __PYX_XDEC_MEMVIEW(&__pyx_v_ret, 1);
@@ -6595,9 +6638,9 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_ff2nf_op2(double __pyx_
 }
 
 /* Python wrapper */
-static PyObject *__pyx_pw_3bem_4core_13fma_functions_21ff2nf_op2(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static char __pyx_doc_3bem_4core_13fma_functions_20ff2nf_op2[] = "\n    Standard far-field to near-field translation operator (slower version).\n    ";
-static PyObject *__pyx_pw_3bem_4core_13fma_functions_21ff2nf_op2(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
+static PyObject *__pyx_pw_12interaction3_3bem_4core_13fma_functions_21ff2nf_op2(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static char __pyx_doc_12interaction3_3bem_4core_13fma_functions_20ff2nf_op2[] = "\n    Standard far-field to near-field translation operator (slower version).\n    ";
+static PyObject *__pyx_pw_12interaction3_3bem_4core_13fma_functions_21ff2nf_op2(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
   double __pyx_v_r;
   __Pyx_memviewslice __pyx_v_cos_angle = { 0, 0, { 0 }, { 0 }, { 0 } };
   double __pyx_v_k;
@@ -6667,25 +6710,25 @@ static PyObject *__pyx_pw_3bem_4core_13fma_functions_21ff2nf_op2(PyObject *__pyx
   __pyx_L5_argtuple_error:;
   __Pyx_RaiseArgtupleInvalid("ff2nf_op2", 1, 4, 4, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 269, __pyx_L3_error)
   __pyx_L3_error:;
-  __Pyx_AddTraceback("bem.core.fma_functions.ff2nf_op2", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("interaction3.bem.core.fma_functions.ff2nf_op2", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  __pyx_r = __pyx_pf_3bem_4core_13fma_functions_20ff2nf_op2(__pyx_self, __pyx_v_r, __pyx_v_cos_angle, __pyx_v_k, __pyx_v_trans_order);
+  __pyx_r = __pyx_pf_12interaction3_3bem_4core_13fma_functions_20ff2nf_op2(__pyx_self, __pyx_v_r, __pyx_v_cos_angle, __pyx_v_k, __pyx_v_trans_order);
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_3bem_4core_13fma_functions_20ff2nf_op2(CYTHON_UNUSED PyObject *__pyx_self, double __pyx_v_r, __Pyx_memviewslice __pyx_v_cos_angle, double __pyx_v_k, int __pyx_v_trans_order) {
+static PyObject *__pyx_pf_12interaction3_3bem_4core_13fma_functions_20ff2nf_op2(CYTHON_UNUSED PyObject *__pyx_self, double __pyx_v_r, __Pyx_memviewslice __pyx_v_cos_angle, double __pyx_v_k, int __pyx_v_trans_order) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   __Pyx_RefNannySetupContext("ff2nf_op2", 0);
   __Pyx_XDECREF(__pyx_r);
   if (unlikely(!__pyx_v_cos_angle.memview)) { __Pyx_RaiseUnboundLocalError("cos_angle"); __PYX_ERR(0, 269, __pyx_L1_error) }
-  __pyx_t_1 = ((PyObject *)__pyx_f_3bem_4core_13fma_functions_ff2nf_op2(__pyx_v_r, __pyx_v_cos_angle, __pyx_v_k, __pyx_v_trans_order, 0)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 269, __pyx_L1_error)
+  __pyx_t_1 = ((PyObject *)__pyx_f_12interaction3_3bem_4core_13fma_functions_ff2nf_op2(__pyx_v_r, __pyx_v_cos_angle, __pyx_v_k, __pyx_v_trans_order, 0)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 269, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -6694,7 +6737,7 @@ static PyObject *__pyx_pf_3bem_4core_13fma_functions_20ff2nf_op2(CYTHON_UNUSED P
   /* function exit code */
   __pyx_L1_error:;
   __Pyx_XDECREF(__pyx_t_1);
-  __Pyx_AddTraceback("bem.core.fma_functions.ff2nf_op2", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("interaction3.bem.core.fma_functions.ff2nf_op2", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
   __PYX_XDEC_MEMVIEW(&__pyx_v_cos_angle, 1);
@@ -6703,7 +6746,7 @@ static PyObject *__pyx_pf_3bem_4core_13fma_functions_20ff2nf_op2(CYTHON_UNUSED P
   return __pyx_r;
 }
 
-/* "bem/core/fma_functions.pyx":296
+/* "interaction3/bem/core/fma_functions.pyx":296
  * @cython.boundscheck(False)
  * @cython.wraparound(False)
  * cpdef np.ndarray mod_ff2nf_op(double r, double[:, :] cos_angle, double k, int trans_order):             # <<<<<<<<<<<<<<
@@ -6711,8 +6754,8 @@ static PyObject *__pyx_pf_3bem_4core_13fma_functions_20ff2nf_op2(CYTHON_UNUSED P
  *     Bandlimited modified far-field to near-field translation operator.
  */
 
-static PyObject *__pyx_pw_3bem_4core_13fma_functions_23mod_ff2nf_op(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_mod_ff2nf_op(double __pyx_v_r, __Pyx_memviewslice __pyx_v_cos_angle, double __pyx_v_k, int __pyx_v_trans_order, CYTHON_UNUSED int __pyx_skip_dispatch) {
+static PyObject *__pyx_pw_12interaction3_3bem_4core_13fma_functions_23mod_ff2nf_op(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static PyArrayObject *__pyx_f_12interaction3_3bem_4core_13fma_functions_mod_ff2nf_op(double __pyx_v_r, __Pyx_memviewslice __pyx_v_cos_angle, double __pyx_v_k, int __pyx_v_trans_order, CYTHON_UNUSED int __pyx_skip_dispatch) {
   int __pyx_v_kdir_dim1;
   int __pyx_v_kdir_dim2;
   int __pyx_v_theta_order;
@@ -6729,7 +6772,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_mod_ff2nf_op(double __p
   __Pyx_memviewslice __pyx_t_4 = { 0, 0, { 0 }, { 0 }, { 0 } };
   __Pyx_RefNannySetupContext("mod_ff2nf_op", 0);
 
-  /* "bem/core/fma_functions.pyx":300
+  /* "interaction3/bem/core/fma_functions.pyx":300
  *     Bandlimited modified far-field to near-field translation operator.
  *     '''
  *     cdef int kdir_dim1 = cos_angle.shape[0]             # <<<<<<<<<<<<<<
@@ -6738,7 +6781,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_mod_ff2nf_op(double __p
  */
   __pyx_v_kdir_dim1 = (__pyx_v_cos_angle.shape[0]);
 
-  /* "bem/core/fma_functions.pyx":301
+  /* "interaction3/bem/core/fma_functions.pyx":301
  *     '''
  *     cdef int kdir_dim1 = cos_angle.shape[0]
  *     cdef int kdir_dim2 = cos_angle.shape[1]             # <<<<<<<<<<<<<<
@@ -6747,7 +6790,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_mod_ff2nf_op(double __p
  */
   __pyx_v_kdir_dim2 = (__pyx_v_cos_angle.shape[1]);
 
-  /* "bem/core/fma_functions.pyx":302
+  /* "interaction3/bem/core/fma_functions.pyx":302
  *     cdef int kdir_dim1 = cos_angle.shape[0]
  *     cdef int kdir_dim2 = cos_angle.shape[1]
  *     cdef int theta_order = (kdir_dim1 - 1) // 2             # <<<<<<<<<<<<<<
@@ -6756,7 +6799,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_mod_ff2nf_op(double __p
  */
   __pyx_v_theta_order = __Pyx_div_long((__pyx_v_kdir_dim1 - 1), 2);
 
-  /* "bem/core/fma_functions.pyx":303
+  /* "interaction3/bem/core/fma_functions.pyx":303
  *     cdef int kdir_dim2 = cos_angle.shape[1]
  *     cdef int theta_order = (kdir_dim1 - 1) // 2
  *     cdef int phi_order = (kdir_dim2 - 1)             # <<<<<<<<<<<<<<
@@ -6765,31 +6808,31 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_mod_ff2nf_op(double __p
  */
   __pyx_v_phi_order = (__pyx_v_kdir_dim2 - 1);
 
-  /* "bem/core/fma_functions.pyx":306
+  /* "interaction3/bem/core/fma_functions.pyx":306
  *     cdef np.ndarray translation, sinabs, inter1, inter2
  * 
  *     translation = ff2nf_op(r, cos_angle, k, trans_order)             # <<<<<<<<<<<<<<
  *     sinabs = bandlimited_abs_sin(trans_order + theta_order)
  * 
  */
-  __pyx_t_1 = ((PyObject *)__pyx_f_3bem_4core_13fma_functions_ff2nf_op(__pyx_v_r, __pyx_v_cos_angle, __pyx_v_k, __pyx_v_trans_order, 0)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 306, __pyx_L1_error)
+  __pyx_t_1 = ((PyObject *)__pyx_f_12interaction3_3bem_4core_13fma_functions_ff2nf_op(__pyx_v_r, __pyx_v_cos_angle, __pyx_v_k, __pyx_v_trans_order, 0)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 306, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_v_translation = ((PyArrayObject *)__pyx_t_1);
   __pyx_t_1 = 0;
 
-  /* "bem/core/fma_functions.pyx":307
+  /* "interaction3/bem/core/fma_functions.pyx":307
  * 
  *     translation = ff2nf_op(r, cos_angle, k, trans_order)
  *     sinabs = bandlimited_abs_sin(trans_order + theta_order)             # <<<<<<<<<<<<<<
  * 
  *     if phi_order > trans_order:
  */
-  __pyx_t_1 = ((PyObject *)__pyx_f_3bem_4core_13fma_functions_bandlimited_abs_sin((__pyx_v_trans_order + __pyx_v_theta_order), 0)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 307, __pyx_L1_error)
+  __pyx_t_1 = ((PyObject *)__pyx_f_12interaction3_3bem_4core_13fma_functions_bandlimited_abs_sin((__pyx_v_trans_order + __pyx_v_theta_order), 0)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 307, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_v_sinabs = ((PyArrayObject *)__pyx_t_1);
   __pyx_t_1 = 0;
 
-  /* "bem/core/fma_functions.pyx":309
+  /* "interaction3/bem/core/fma_functions.pyx":309
  *     sinabs = bandlimited_abs_sin(trans_order + theta_order)
  * 
  *     if phi_order > trans_order:             # <<<<<<<<<<<<<<
@@ -6799,19 +6842,19 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_mod_ff2nf_op(double __p
   __pyx_t_2 = ((__pyx_v_phi_order > __pyx_v_trans_order) != 0);
   if (__pyx_t_2) {
 
-    /* "bem/core/fma_functions.pyx":310
+    /* "interaction3/bem/core/fma_functions.pyx":310
  * 
  *     if phi_order > trans_order:
  *         inter1 = fft_interpolate(translation, trans_order + theta_order,             # <<<<<<<<<<<<<<
  *             phi_order)
  *     else:
  */
-    __pyx_t_1 = ((PyObject *)__pyx_f_3bem_4core_13fma_functions_fft_interpolate(__pyx_v_translation, (__pyx_v_trans_order + __pyx_v_theta_order), __pyx_v_phi_order, 0)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 310, __pyx_L1_error)
+    __pyx_t_1 = ((PyObject *)__pyx_f_12interaction3_3bem_4core_13fma_functions_fft_interpolate(__pyx_v_translation, (__pyx_v_trans_order + __pyx_v_theta_order), __pyx_v_phi_order, 0)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 310, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     __pyx_v_inter1 = ((PyArrayObject *)__pyx_t_1);
     __pyx_t_1 = 0;
 
-    /* "bem/core/fma_functions.pyx":309
+    /* "interaction3/bem/core/fma_functions.pyx":309
  *     sinabs = bandlimited_abs_sin(trans_order + theta_order)
  * 
  *     if phi_order > trans_order:             # <<<<<<<<<<<<<<
@@ -6821,7 +6864,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_mod_ff2nf_op(double __p
     goto __pyx_L3;
   }
 
-  /* "bem/core/fma_functions.pyx":313
+  /* "interaction3/bem/core/fma_functions.pyx":313
  *             phi_order)
  *     else:
  *         inter1 = fft_interpolate_theta(translation, trans_order + theta_order)             # <<<<<<<<<<<<<<
@@ -6829,14 +6872,14 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_mod_ff2nf_op(double __p
  *     inter2 = inter1 * sinabs[...,None]
  */
   /*else*/ {
-    __pyx_t_1 = ((PyObject *)__pyx_f_3bem_4core_13fma_functions_fft_interpolate_theta(__pyx_v_translation, (__pyx_v_trans_order + __pyx_v_theta_order), 0)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 313, __pyx_L1_error)
+    __pyx_t_1 = ((PyObject *)__pyx_f_12interaction3_3bem_4core_13fma_functions_fft_interpolate_theta(__pyx_v_translation, (__pyx_v_trans_order + __pyx_v_theta_order), 0)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 313, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     __pyx_v_inter1 = ((PyArrayObject *)__pyx_t_1);
     __pyx_t_1 = 0;
   }
   __pyx_L3:;
 
-  /* "bem/core/fma_functions.pyx":315
+  /* "interaction3/bem/core/fma_functions.pyx":315
  *         inter1 = fft_interpolate_theta(translation, trans_order + theta_order)
  * 
  *     inter2 = inter1 * sinabs[...,None]             # <<<<<<<<<<<<<<
@@ -6852,7 +6895,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_mod_ff2nf_op(double __p
   __pyx_v_inter2 = ((PyArrayObject *)__pyx_t_3);
   __pyx_t_3 = 0;
 
-  /* "bem/core/fma_functions.pyx":317
+  /* "interaction3/bem/core/fma_functions.pyx":317
  *     inter2 = inter1 * sinabs[...,None]
  * 
  *     return fft_filter(0.5 * inter2, kdir_dim1, kdir_dim2)             # <<<<<<<<<<<<<<
@@ -6865,7 +6908,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_mod_ff2nf_op(double __p
   __pyx_t_4 = __Pyx_PyObject_to_MemoryviewSlice_dsds___pyx_t_double_complex(__pyx_t_3);
   if (unlikely(!__pyx_t_4.memview)) __PYX_ERR(0, 317, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-  __pyx_t_3 = ((PyObject *)__pyx_f_3bem_4core_13fma_functions_fft_filter(__pyx_t_4, __pyx_v_kdir_dim1, __pyx_v_kdir_dim2, 0)); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 317, __pyx_L1_error)
+  __pyx_t_3 = ((PyObject *)__pyx_f_12interaction3_3bem_4core_13fma_functions_fft_filter(__pyx_t_4, __pyx_v_kdir_dim1, __pyx_v_kdir_dim2, 0)); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 317, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __PYX_XDEC_MEMVIEW(&__pyx_t_4, 1);
   __pyx_t_4.memview = NULL;
@@ -6874,7 +6917,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_mod_ff2nf_op(double __p
   __pyx_t_3 = 0;
   goto __pyx_L0;
 
-  /* "bem/core/fma_functions.pyx":296
+  /* "interaction3/bem/core/fma_functions.pyx":296
  * @cython.boundscheck(False)
  * @cython.wraparound(False)
  * cpdef np.ndarray mod_ff2nf_op(double r, double[:, :] cos_angle, double k, int trans_order):             # <<<<<<<<<<<<<<
@@ -6887,7 +6930,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_mod_ff2nf_op(double __p
   __Pyx_XDECREF(__pyx_t_1);
   __Pyx_XDECREF(__pyx_t_3);
   __PYX_XDEC_MEMVIEW(&__pyx_t_4, 1);
-  __Pyx_AddTraceback("bem.core.fma_functions.mod_ff2nf_op", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("interaction3.bem.core.fma_functions.mod_ff2nf_op", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = 0;
   __pyx_L0:;
   __Pyx_XDECREF((PyObject *)__pyx_v_translation);
@@ -6900,9 +6943,9 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_mod_ff2nf_op(double __p
 }
 
 /* Python wrapper */
-static PyObject *__pyx_pw_3bem_4core_13fma_functions_23mod_ff2nf_op(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static char __pyx_doc_3bem_4core_13fma_functions_22mod_ff2nf_op[] = "\n    Bandlimited modified far-field to near-field translation operator.\n    ";
-static PyObject *__pyx_pw_3bem_4core_13fma_functions_23mod_ff2nf_op(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
+static PyObject *__pyx_pw_12interaction3_3bem_4core_13fma_functions_23mod_ff2nf_op(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static char __pyx_doc_12interaction3_3bem_4core_13fma_functions_22mod_ff2nf_op[] = "\n    Bandlimited modified far-field to near-field translation operator.\n    ";
+static PyObject *__pyx_pw_12interaction3_3bem_4core_13fma_functions_23mod_ff2nf_op(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
   double __pyx_v_r;
   __Pyx_memviewslice __pyx_v_cos_angle = { 0, 0, { 0 }, { 0 }, { 0 } };
   double __pyx_v_k;
@@ -6972,25 +7015,25 @@ static PyObject *__pyx_pw_3bem_4core_13fma_functions_23mod_ff2nf_op(PyObject *__
   __pyx_L5_argtuple_error:;
   __Pyx_RaiseArgtupleInvalid("mod_ff2nf_op", 1, 4, 4, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 296, __pyx_L3_error)
   __pyx_L3_error:;
-  __Pyx_AddTraceback("bem.core.fma_functions.mod_ff2nf_op", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("interaction3.bem.core.fma_functions.mod_ff2nf_op", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  __pyx_r = __pyx_pf_3bem_4core_13fma_functions_22mod_ff2nf_op(__pyx_self, __pyx_v_r, __pyx_v_cos_angle, __pyx_v_k, __pyx_v_trans_order);
+  __pyx_r = __pyx_pf_12interaction3_3bem_4core_13fma_functions_22mod_ff2nf_op(__pyx_self, __pyx_v_r, __pyx_v_cos_angle, __pyx_v_k, __pyx_v_trans_order);
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_3bem_4core_13fma_functions_22mod_ff2nf_op(CYTHON_UNUSED PyObject *__pyx_self, double __pyx_v_r, __Pyx_memviewslice __pyx_v_cos_angle, double __pyx_v_k, int __pyx_v_trans_order) {
+static PyObject *__pyx_pf_12interaction3_3bem_4core_13fma_functions_22mod_ff2nf_op(CYTHON_UNUSED PyObject *__pyx_self, double __pyx_v_r, __Pyx_memviewslice __pyx_v_cos_angle, double __pyx_v_k, int __pyx_v_trans_order) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   __Pyx_RefNannySetupContext("mod_ff2nf_op", 0);
   __Pyx_XDECREF(__pyx_r);
   if (unlikely(!__pyx_v_cos_angle.memview)) { __Pyx_RaiseUnboundLocalError("cos_angle"); __PYX_ERR(0, 296, __pyx_L1_error) }
-  __pyx_t_1 = ((PyObject *)__pyx_f_3bem_4core_13fma_functions_mod_ff2nf_op(__pyx_v_r, __pyx_v_cos_angle, __pyx_v_k, __pyx_v_trans_order, 0)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 296, __pyx_L1_error)
+  __pyx_t_1 = ((PyObject *)__pyx_f_12interaction3_3bem_4core_13fma_functions_mod_ff2nf_op(__pyx_v_r, __pyx_v_cos_angle, __pyx_v_k, __pyx_v_trans_order, 0)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 296, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -6999,7 +7042,7 @@ static PyObject *__pyx_pf_3bem_4core_13fma_functions_22mod_ff2nf_op(CYTHON_UNUSE
   /* function exit code */
   __pyx_L1_error:;
   __Pyx_XDECREF(__pyx_t_1);
-  __Pyx_AddTraceback("bem.core.fma_functions.mod_ff2nf_op", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("interaction3.bem.core.fma_functions.mod_ff2nf_op", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
   __PYX_XDEC_MEMVIEW(&__pyx_v_cos_angle, 1);
@@ -7008,7 +7051,7 @@ static PyObject *__pyx_pf_3bem_4core_13fma_functions_22mod_ff2nf_op(CYTHON_UNUSE
   return __pyx_r;
 }
 
-/* "bem/core/fma_functions.pyx":322
+/* "interaction3/bem/core/fma_functions.pyx":322
  * @cython.boundscheck(False)
  * @cython.wraparound(False)
  * cpdef np.ndarray bandlimited_abs_sin(int deg):             # <<<<<<<<<<<<<<
@@ -7016,8 +7059,8 @@ static PyObject *__pyx_pf_3bem_4core_13fma_functions_22mod_ff2nf_op(CYTHON_UNUSE
  *     Calculates a bandlimited |sin(theta)| based on its Fourier series.
  */
 
-static PyObject *__pyx_pw_3bem_4core_13fma_functions_25bandlimited_abs_sin(PyObject *__pyx_self, PyObject *__pyx_arg_deg); /*proto*/
-static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_bandlimited_abs_sin(int __pyx_v_deg, CYTHON_UNUSED int __pyx_skip_dispatch) {
+static PyObject *__pyx_pw_12interaction3_3bem_4core_13fma_functions_25bandlimited_abs_sin(PyObject *__pyx_self, PyObject *__pyx_arg_deg); /*proto*/
+static PyArrayObject *__pyx_f_12interaction3_3bem_4core_13fma_functions_bandlimited_abs_sin(int __pyx_v_deg, CYTHON_UNUSED int __pyx_skip_dispatch) {
   PyArrayObject *__pyx_v_res = 0;
   PyObject *__pyx_v_fseries = NULL;
   PyArrayObject *__pyx_v_n = 0;
@@ -7037,7 +7080,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_bandlimited_abs_sin(int
   PyObject *__pyx_t_12 = NULL;
   __Pyx_RefNannySetupContext("bandlimited_abs_sin", 0);
 
-  /* "bem/core/fma_functions.pyx":327
+  /* "interaction3/bem/core/fma_functions.pyx":327
  *     '''
  *     cdef np.ndarray res
  *     fseries = np.zeros(2 * deg +  1, dtype=np.complex128)             # <<<<<<<<<<<<<<
@@ -7073,7 +7116,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_bandlimited_abs_sin(int
   __pyx_v_fseries = __pyx_t_5;
   __pyx_t_5 = 0;
 
-  /* "bem/core/fma_functions.pyx":328
+  /* "interaction3/bem/core/fma_functions.pyx":328
  *     cdef np.ndarray res
  *     fseries = np.zeros(2 * deg +  1, dtype=np.complex128)
  *     cdef np.ndarray n = np.arange(-deg, deg + 1)             # <<<<<<<<<<<<<<
@@ -7142,7 +7185,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_bandlimited_abs_sin(int
   __pyx_v_n = ((PyArrayObject *)__pyx_t_5);
   __pyx_t_5 = 0;
 
-  /* "bem/core/fma_functions.pyx":330
+  /* "interaction3/bem/core/fma_functions.pyx":330
  *     cdef np.ndarray n = np.arange(-deg, deg + 1)
  * 
  *     if deg % 2 == 0:             # <<<<<<<<<<<<<<
@@ -7152,7 +7195,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_bandlimited_abs_sin(int
   __pyx_t_8 = ((__Pyx_mod_long(__pyx_v_deg, 2) == 0) != 0);
   if (__pyx_t_8) {
 
-    /* "bem/core/fma_functions.pyx":331
+    /* "interaction3/bem/core/fma_functions.pyx":331
  * 
  *     if deg % 2 == 0:
  *         fseries[::2] = 2 / pi / (1 - n[::2] ** 2)             # <<<<<<<<<<<<<<
@@ -7179,7 +7222,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_bandlimited_abs_sin(int
     if (unlikely(PyObject_SetItem(__pyx_v_fseries, __pyx_slice__12, __pyx_t_7) < 0)) __PYX_ERR(0, 331, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
 
-    /* "bem/core/fma_functions.pyx":330
+    /* "interaction3/bem/core/fma_functions.pyx":330
  *     cdef np.ndarray n = np.arange(-deg, deg + 1)
  * 
  *     if deg % 2 == 0:             # <<<<<<<<<<<<<<
@@ -7189,7 +7232,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_bandlimited_abs_sin(int
     goto __pyx_L3;
   }
 
-  /* "bem/core/fma_functions.pyx":333
+  /* "interaction3/bem/core/fma_functions.pyx":333
  *         fseries[::2] = 2 / pi / (1 - n[::2] ** 2)
  *     else:
  *         fseries[1::2] = 2 / pi / (1 - n[1::2] ** 2)             # <<<<<<<<<<<<<<
@@ -7219,7 +7262,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_bandlimited_abs_sin(int
   }
   __pyx_L3:;
 
-  /* "bem/core/fma_functions.pyx":335
+  /* "interaction3/bem/core/fma_functions.pyx":335
  *         fseries[1::2] = 2 / pi / (1 - n[1::2] ** 2)
  * 
  *     res = fftshift(ifft(ifftshift(np.asarray(fseries))))             # <<<<<<<<<<<<<<
@@ -7422,7 +7465,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_bandlimited_abs_sin(int
   __pyx_v_res = ((PyArrayObject *)__pyx_t_3);
   __pyx_t_3 = 0;
 
-  /* "bem/core/fma_functions.pyx":336
+  /* "interaction3/bem/core/fma_functions.pyx":336
  * 
  *     res = fftshift(ifft(ifftshift(np.asarray(fseries))))
  *     res *= res.size             # <<<<<<<<<<<<<<
@@ -7438,7 +7481,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_bandlimited_abs_sin(int
   __Pyx_DECREF_SET(__pyx_v_res, ((PyArrayObject *)__pyx_t_7));
   __pyx_t_7 = 0;
 
-  /* "bem/core/fma_functions.pyx":338
+  /* "interaction3/bem/core/fma_functions.pyx":338
  *     res *= res.size
  * 
  *     return res             # <<<<<<<<<<<<<<
@@ -7450,7 +7493,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_bandlimited_abs_sin(int
   __pyx_r = __pyx_v_res;
   goto __pyx_L0;
 
-  /* "bem/core/fma_functions.pyx":322
+  /* "interaction3/bem/core/fma_functions.pyx":322
  * @cython.boundscheck(False)
  * @cython.wraparound(False)
  * cpdef np.ndarray bandlimited_abs_sin(int deg):             # <<<<<<<<<<<<<<
@@ -7470,7 +7513,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_bandlimited_abs_sin(int
   __Pyx_XDECREF(__pyx_t_10);
   __Pyx_XDECREF(__pyx_t_11);
   __Pyx_XDECREF(__pyx_t_12);
-  __Pyx_AddTraceback("bem.core.fma_functions.bandlimited_abs_sin", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("interaction3.bem.core.fma_functions.bandlimited_abs_sin", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = 0;
   __pyx_L0:;
   __Pyx_XDECREF((PyObject *)__pyx_v_res);
@@ -7482,9 +7525,9 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_bandlimited_abs_sin(int
 }
 
 /* Python wrapper */
-static PyObject *__pyx_pw_3bem_4core_13fma_functions_25bandlimited_abs_sin(PyObject *__pyx_self, PyObject *__pyx_arg_deg); /*proto*/
-static char __pyx_doc_3bem_4core_13fma_functions_24bandlimited_abs_sin[] = "\n    Calculates a bandlimited |sin(theta)| based on its Fourier series.\n    ";
-static PyObject *__pyx_pw_3bem_4core_13fma_functions_25bandlimited_abs_sin(PyObject *__pyx_self, PyObject *__pyx_arg_deg) {
+static PyObject *__pyx_pw_12interaction3_3bem_4core_13fma_functions_25bandlimited_abs_sin(PyObject *__pyx_self, PyObject *__pyx_arg_deg); /*proto*/
+static char __pyx_doc_12interaction3_3bem_4core_13fma_functions_24bandlimited_abs_sin[] = "\n    Calculates a bandlimited |sin(theta)| based on its Fourier series.\n    ";
+static PyObject *__pyx_pw_12interaction3_3bem_4core_13fma_functions_25bandlimited_abs_sin(PyObject *__pyx_self, PyObject *__pyx_arg_deg) {
   int __pyx_v_deg;
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
@@ -7494,24 +7537,24 @@ static PyObject *__pyx_pw_3bem_4core_13fma_functions_25bandlimited_abs_sin(PyObj
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L3_error:;
-  __Pyx_AddTraceback("bem.core.fma_functions.bandlimited_abs_sin", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("interaction3.bem.core.fma_functions.bandlimited_abs_sin", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  __pyx_r = __pyx_pf_3bem_4core_13fma_functions_24bandlimited_abs_sin(__pyx_self, ((int)__pyx_v_deg));
+  __pyx_r = __pyx_pf_12interaction3_3bem_4core_13fma_functions_24bandlimited_abs_sin(__pyx_self, ((int)__pyx_v_deg));
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_3bem_4core_13fma_functions_24bandlimited_abs_sin(CYTHON_UNUSED PyObject *__pyx_self, int __pyx_v_deg) {
+static PyObject *__pyx_pf_12interaction3_3bem_4core_13fma_functions_24bandlimited_abs_sin(CYTHON_UNUSED PyObject *__pyx_self, int __pyx_v_deg) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   __Pyx_RefNannySetupContext("bandlimited_abs_sin", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = ((PyObject *)__pyx_f_3bem_4core_13fma_functions_bandlimited_abs_sin(__pyx_v_deg, 0)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 322, __pyx_L1_error)
+  __pyx_t_1 = ((PyObject *)__pyx_f_12interaction3_3bem_4core_13fma_functions_bandlimited_abs_sin(__pyx_v_deg, 0)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 322, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -7520,7 +7563,7 @@ static PyObject *__pyx_pf_3bem_4core_13fma_functions_24bandlimited_abs_sin(CYTHO
   /* function exit code */
   __pyx_L1_error:;
   __Pyx_XDECREF(__pyx_t_1);
-  __Pyx_AddTraceback("bem.core.fma_functions.bandlimited_abs_sin", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("interaction3.bem.core.fma_functions.bandlimited_abs_sin", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
@@ -7528,7 +7571,7 @@ static PyObject *__pyx_pf_3bem_4core_13fma_functions_24bandlimited_abs_sin(CYTHO
   return __pyx_r;
 }
 
-/* "bem/core/fma_functions.pyx":343
+/* "interaction3/bem/core/fma_functions.pyx":343
  * @cython.boundscheck(False)
  * @cython.wraparound(False)
  * cpdef np.ndarray ff2ff_op(double r, double[:, :] cos_angle, double k):             # <<<<<<<<<<<<<<
@@ -7536,8 +7579,8 @@ static PyObject *__pyx_pf_3bem_4core_13fma_functions_24bandlimited_abs_sin(CYTHO
  *     Far-field to far-field shift operator.
  */
 
-static PyObject *__pyx_pw_3bem_4core_13fma_functions_27ff2ff_op(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_ff2ff_op(double __pyx_v_r, __Pyx_memviewslice __pyx_v_cos_angle, double __pyx_v_k, CYTHON_UNUSED int __pyx_skip_dispatch) {
+static PyObject *__pyx_pw_12interaction3_3bem_4core_13fma_functions_27ff2ff_op(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static PyArrayObject *__pyx_f_12interaction3_3bem_4core_13fma_functions_ff2ff_op(double __pyx_v_r, __Pyx_memviewslice __pyx_v_cos_angle, double __pyx_v_k, CYTHON_UNUSED int __pyx_skip_dispatch) {
   int __pyx_v_M;
   int __pyx_v_N;
   __Pyx_memviewslice __pyx_v_shifter = { 0, 0, { 0 }, { 0 }, { 0 } };
@@ -7561,7 +7604,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_ff2ff_op(double __pyx_v
   Py_ssize_t __pyx_t_14;
   __Pyx_RefNannySetupContext("ff2ff_op", 0);
 
-  /* "bem/core/fma_functions.pyx":347
+  /* "interaction3/bem/core/fma_functions.pyx":347
  *     Far-field to far-field shift operator.
  *     '''
  *     cdef int M = cos_angle.shape[0]             # <<<<<<<<<<<<<<
@@ -7570,7 +7613,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_ff2ff_op(double __pyx_v
  */
   __pyx_v_M = (__pyx_v_cos_angle.shape[0]);
 
-  /* "bem/core/fma_functions.pyx":348
+  /* "interaction3/bem/core/fma_functions.pyx":348
  *     '''
  *     cdef int M = cos_angle.shape[0]
  *     cdef int N = cos_angle.shape[1]             # <<<<<<<<<<<<<<
@@ -7579,7 +7622,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_ff2ff_op(double __pyx_v
  */
   __pyx_v_N = (__pyx_v_cos_angle.shape[1]);
 
-  /* "bem/core/fma_functions.pyx":349
+  /* "interaction3/bem/core/fma_functions.pyx":349
  *     cdef int M = cos_angle.shape[0]
  *     cdef int N = cos_angle.shape[1]
  *     cdef double complex[:, :] shifter = np.zeros((M, N), dtype=np.complex128)             # <<<<<<<<<<<<<<
@@ -7629,7 +7672,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_ff2ff_op(double __pyx_v
   __pyx_t_6.memview = NULL;
   __pyx_t_6.data = NULL;
 
-  /* "bem/core/fma_functions.pyx":352
+  /* "interaction3/bem/core/fma_functions.pyx":352
  *     cdef int i, j
  * 
  *     for i in range(M):             # <<<<<<<<<<<<<<
@@ -7640,7 +7683,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_ff2ff_op(double __pyx_v
   for (__pyx_t_8 = 0; __pyx_t_8 < __pyx_t_7; __pyx_t_8+=1) {
     __pyx_v_i = __pyx_t_8;
 
-    /* "bem/core/fma_functions.pyx":353
+    /* "interaction3/bem/core/fma_functions.pyx":353
  * 
  *     for i in range(M):
  *         for j in range(N):             # <<<<<<<<<<<<<<
@@ -7651,7 +7694,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_ff2ff_op(double __pyx_v
     for (__pyx_t_10 = 0; __pyx_t_10 < __pyx_t_9; __pyx_t_10+=1) {
       __pyx_v_j = __pyx_t_10;
 
-      /* "bem/core/fma_functions.pyx":354
+      /* "interaction3/bem/core/fma_functions.pyx":354
  *     for i in range(M):
  *         for j in range(N):
  *             shifter[i, j] = cexp(1j * k * r * cos_angle[i, j])             # <<<<<<<<<<<<<<
@@ -7666,7 +7709,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_ff2ff_op(double __pyx_v
     }
   }
 
-  /* "bem/core/fma_functions.pyx":356
+  /* "interaction3/bem/core/fma_functions.pyx":356
  *             shifter[i, j] = cexp(1j * k * r * cos_angle[i, j])
  * 
  *     return np.asarray(shifter)             # <<<<<<<<<<<<<<
@@ -7732,7 +7775,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_ff2ff_op(double __pyx_v
   __pyx_t_5 = 0;
   goto __pyx_L0;
 
-  /* "bem/core/fma_functions.pyx":343
+  /* "interaction3/bem/core/fma_functions.pyx":343
  * @cython.boundscheck(False)
  * @cython.wraparound(False)
  * cpdef np.ndarray ff2ff_op(double r, double[:, :] cos_angle, double k):             # <<<<<<<<<<<<<<
@@ -7748,7 +7791,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_ff2ff_op(double __pyx_v
   __Pyx_XDECREF(__pyx_t_4);
   __Pyx_XDECREF(__pyx_t_5);
   __PYX_XDEC_MEMVIEW(&__pyx_t_6, 1);
-  __Pyx_AddTraceback("bem.core.fma_functions.ff2ff_op", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("interaction3.bem.core.fma_functions.ff2ff_op", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = 0;
   __pyx_L0:;
   __PYX_XDEC_MEMVIEW(&__pyx_v_shifter, 1);
@@ -7758,9 +7801,9 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_ff2ff_op(double __pyx_v
 }
 
 /* Python wrapper */
-static PyObject *__pyx_pw_3bem_4core_13fma_functions_27ff2ff_op(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static char __pyx_doc_3bem_4core_13fma_functions_26ff2ff_op[] = "\n    Far-field to far-field shift operator.\n    ";
-static PyObject *__pyx_pw_3bem_4core_13fma_functions_27ff2ff_op(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
+static PyObject *__pyx_pw_12interaction3_3bem_4core_13fma_functions_27ff2ff_op(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static char __pyx_doc_12interaction3_3bem_4core_13fma_functions_26ff2ff_op[] = "\n    Far-field to far-field shift operator.\n    ";
+static PyObject *__pyx_pw_12interaction3_3bem_4core_13fma_functions_27ff2ff_op(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
   double __pyx_v_r;
   __Pyx_memviewslice __pyx_v_cos_angle = { 0, 0, { 0 }, { 0 }, { 0 } };
   double __pyx_v_k;
@@ -7819,25 +7862,25 @@ static PyObject *__pyx_pw_3bem_4core_13fma_functions_27ff2ff_op(PyObject *__pyx_
   __pyx_L5_argtuple_error:;
   __Pyx_RaiseArgtupleInvalid("ff2ff_op", 1, 3, 3, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 343, __pyx_L3_error)
   __pyx_L3_error:;
-  __Pyx_AddTraceback("bem.core.fma_functions.ff2ff_op", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("interaction3.bem.core.fma_functions.ff2ff_op", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  __pyx_r = __pyx_pf_3bem_4core_13fma_functions_26ff2ff_op(__pyx_self, __pyx_v_r, __pyx_v_cos_angle, __pyx_v_k);
+  __pyx_r = __pyx_pf_12interaction3_3bem_4core_13fma_functions_26ff2ff_op(__pyx_self, __pyx_v_r, __pyx_v_cos_angle, __pyx_v_k);
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_3bem_4core_13fma_functions_26ff2ff_op(CYTHON_UNUSED PyObject *__pyx_self, double __pyx_v_r, __Pyx_memviewslice __pyx_v_cos_angle, double __pyx_v_k) {
+static PyObject *__pyx_pf_12interaction3_3bem_4core_13fma_functions_26ff2ff_op(CYTHON_UNUSED PyObject *__pyx_self, double __pyx_v_r, __Pyx_memviewslice __pyx_v_cos_angle, double __pyx_v_k) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   __Pyx_RefNannySetupContext("ff2ff_op", 0);
   __Pyx_XDECREF(__pyx_r);
   if (unlikely(!__pyx_v_cos_angle.memview)) { __Pyx_RaiseUnboundLocalError("cos_angle"); __PYX_ERR(0, 343, __pyx_L1_error) }
-  __pyx_t_1 = ((PyObject *)__pyx_f_3bem_4core_13fma_functions_ff2ff_op(__pyx_v_r, __pyx_v_cos_angle, __pyx_v_k, 0)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 343, __pyx_L1_error)
+  __pyx_t_1 = ((PyObject *)__pyx_f_12interaction3_3bem_4core_13fma_functions_ff2ff_op(__pyx_v_r, __pyx_v_cos_angle, __pyx_v_k, 0)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 343, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -7846,7 +7889,7 @@ static PyObject *__pyx_pf_3bem_4core_13fma_functions_26ff2ff_op(CYTHON_UNUSED Py
   /* function exit code */
   __pyx_L1_error:;
   __Pyx_XDECREF(__pyx_t_1);
-  __Pyx_AddTraceback("bem.core.fma_functions.ff2ff_op", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("interaction3.bem.core.fma_functions.ff2ff_op", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
   __PYX_XDEC_MEMVIEW(&__pyx_v_cos_angle, 1);
@@ -7855,7 +7898,7 @@ static PyObject *__pyx_pf_3bem_4core_13fma_functions_26ff2ff_op(CYTHON_UNUSED Py
   return __pyx_r;
 }
 
-/* "bem/core/fma_functions.pyx":373
+/* "interaction3/bem/core/fma_functions.pyx":373
  * #@cython.boundscheck(False)
  * #@cython.wraparound(False)
  * cpdef np.ndarray half_fft2(np.ndarray x):             # <<<<<<<<<<<<<<
@@ -7863,8 +7906,8 @@ static PyObject *__pyx_pf_3bem_4core_13fma_functions_26ff2ff_op(CYTHON_UNUSED Py
  *     Half FFT using spherical property.
  */
 
-static PyObject *__pyx_pw_3bem_4core_13fma_functions_29half_fft2(PyObject *__pyx_self, PyObject *__pyx_v_x); /*proto*/
-static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_half_fft2(PyArrayObject *__pyx_v_x, CYTHON_UNUSED int __pyx_skip_dispatch) {
+static PyObject *__pyx_pw_12interaction3_3bem_4core_13fma_functions_29half_fft2(PyObject *__pyx_self, PyObject *__pyx_v_x); /*proto*/
+static PyArrayObject *__pyx_f_12interaction3_3bem_4core_13fma_functions_half_fft2(PyArrayObject *__pyx_v_x, CYTHON_UNUSED int __pyx_skip_dispatch) {
   int __pyx_v_M;
   int __pyx_v_N;
   PyObject *__pyx_v_v = NULL;
@@ -7881,7 +7924,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_half_fft2(PyArrayObject
   PyObject *__pyx_t_6 = NULL;
   __Pyx_RefNannySetupContext("half_fft2", 0);
 
-  /* "bem/core/fma_functions.pyx":377
+  /* "interaction3/bem/core/fma_functions.pyx":377
  *     Half FFT using spherical property.
  *     '''
  *     cdef int M = x.shape[0]             # <<<<<<<<<<<<<<
@@ -7890,7 +7933,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_half_fft2(PyArrayObject
  */
   __pyx_v_M = (__pyx_v_x->dimensions[0]);
 
-  /* "bem/core/fma_functions.pyx":378
+  /* "interaction3/bem/core/fma_functions.pyx":378
  *     '''
  *     cdef int M = x.shape[0]
  *     cdef int N = x.shape[1]             # <<<<<<<<<<<<<<
@@ -7899,7 +7942,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_half_fft2(PyArrayObject
  */
   __pyx_v_N = (__pyx_v_x->dimensions[1]);
 
-  /* "bem/core/fma_functions.pyx":380
+  /* "interaction3/bem/core/fma_functions.pyx":380
  *     cdef int N = x.shape[1]
  * 
  *     v = fftshift(fft(x, axis=0), axes=0)             # <<<<<<<<<<<<<<
@@ -7939,7 +7982,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_half_fft2(PyArrayObject
   __pyx_v_v = __pyx_t_3;
   __pyx_t_3 = 0;
 
-  /* "bem/core/fma_functions.pyx":381
+  /* "interaction3/bem/core/fma_functions.pyx":381
  * 
  *     v = fftshift(fft(x, axis=0), axes=0)
  *     dummy = np.flipud(v).copy()             # <<<<<<<<<<<<<<
@@ -8018,7 +8061,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_half_fft2(PyArrayObject
   __pyx_v_dummy = __pyx_t_3;
   __pyx_t_3 = 0;
 
-  /* "bem/core/fma_functions.pyx":382
+  /* "interaction3/bem/core/fma_functions.pyx":382
  *     v = fftshift(fft(x, axis=0), axes=0)
  *     dummy = np.flipud(v).copy()
  *     v = np.concatenate((v, dummy), axis=1)             # <<<<<<<<<<<<<<
@@ -8054,7 +8097,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_half_fft2(PyArrayObject
   __Pyx_DECREF_SET(__pyx_v_v, __pyx_t_2);
   __pyx_t_2 = 0;
 
-  /* "bem/core/fma_functions.pyx":384
+  /* "interaction3/bem/core/fma_functions.pyx":384
  *     v = np.concatenate((v, dummy), axis=1)
  * 
  *     w = fftshift(fft(v[:(M - 1) / 2 + 1, :], axis=1), axes=1)             # <<<<<<<<<<<<<<
@@ -8110,7 +8153,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_half_fft2(PyArrayObject
   __pyx_v_w = __pyx_t_5;
   __pyx_t_5 = 0;
 
-  /* "bem/core/fma_functions.pyx":385
+  /* "interaction3/bem/core/fma_functions.pyx":385
  * 
  *     w = fftshift(fft(v[:(M - 1) / 2 + 1, :], axis=1), axes=1)
  *     dummy = np.flipud(w[:-1, :]).copy()             # <<<<<<<<<<<<<<
@@ -8194,7 +8237,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_half_fft2(PyArrayObject
   __Pyx_DECREF_SET(__pyx_v_dummy, __pyx_t_5);
   __pyx_t_5 = 0;
 
-  /* "bem/core/fma_functions.pyx":387
+  /* "interaction3/bem/core/fma_functions.pyx":387
  *     dummy = np.flipud(w[:-1, :]).copy()
  * 
  *     n = (-1) ** np.arange(-N, N, dtype=np.float64)             # <<<<<<<<<<<<<<
@@ -8238,7 +8281,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_half_fft2(PyArrayObject
   __pyx_v_n = __pyx_t_4;
   __pyx_t_4 = 0;
 
-  /* "bem/core/fma_functions.pyx":388
+  /* "interaction3/bem/core/fma_functions.pyx":388
  * 
  *     n = (-1) ** np.arange(-N, N, dtype=np.float64)
  *     dummy *= n[None, ...]             # <<<<<<<<<<<<<<
@@ -8253,7 +8296,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_half_fft2(PyArrayObject
   __Pyx_DECREF_SET(__pyx_v_dummy, __pyx_t_1);
   __pyx_t_1 = 0;
 
-  /* "bem/core/fma_functions.pyx":390
+  /* "interaction3/bem/core/fma_functions.pyx":390
  *     dummy *= n[None, ...]
  * 
  *     return np.concatenate((w, dummy), axis=0)             # <<<<<<<<<<<<<<
@@ -8292,7 +8335,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_half_fft2(PyArrayObject
   __pyx_t_2 = 0;
   goto __pyx_L0;
 
-  /* "bem/core/fma_functions.pyx":373
+  /* "interaction3/bem/core/fma_functions.pyx":373
  * #@cython.boundscheck(False)
  * #@cython.wraparound(False)
  * cpdef np.ndarray half_fft2(np.ndarray x):             # <<<<<<<<<<<<<<
@@ -8308,7 +8351,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_half_fft2(PyArrayObject
   __Pyx_XDECREF(__pyx_t_4);
   __Pyx_XDECREF(__pyx_t_5);
   __Pyx_XDECREF(__pyx_t_6);
-  __Pyx_AddTraceback("bem.core.fma_functions.half_fft2", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("interaction3.bem.core.fma_functions.half_fft2", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = 0;
   __pyx_L0:;
   __Pyx_XDECREF(__pyx_v_v);
@@ -8321,14 +8364,14 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_half_fft2(PyArrayObject
 }
 
 /* Python wrapper */
-static PyObject *__pyx_pw_3bem_4core_13fma_functions_29half_fft2(PyObject *__pyx_self, PyObject *__pyx_v_x); /*proto*/
-static char __pyx_doc_3bem_4core_13fma_functions_28half_fft2[] = "\n    Half FFT using spherical property.\n    ";
-static PyObject *__pyx_pw_3bem_4core_13fma_functions_29half_fft2(PyObject *__pyx_self, PyObject *__pyx_v_x) {
+static PyObject *__pyx_pw_12interaction3_3bem_4core_13fma_functions_29half_fft2(PyObject *__pyx_self, PyObject *__pyx_v_x); /*proto*/
+static char __pyx_doc_12interaction3_3bem_4core_13fma_functions_28half_fft2[] = "\n    Half FFT using spherical property.\n    ";
+static PyObject *__pyx_pw_12interaction3_3bem_4core_13fma_functions_29half_fft2(PyObject *__pyx_self, PyObject *__pyx_v_x) {
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("half_fft2 (wrapper)", 0);
   if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_x), __pyx_ptype_5numpy_ndarray, 1, "x", 0))) __PYX_ERR(0, 373, __pyx_L1_error)
-  __pyx_r = __pyx_pf_3bem_4core_13fma_functions_28half_fft2(__pyx_self, ((PyArrayObject *)__pyx_v_x));
+  __pyx_r = __pyx_pf_12interaction3_3bem_4core_13fma_functions_28half_fft2(__pyx_self, ((PyArrayObject *)__pyx_v_x));
 
   /* function exit code */
   goto __pyx_L0;
@@ -8339,13 +8382,13 @@ static PyObject *__pyx_pw_3bem_4core_13fma_functions_29half_fft2(PyObject *__pyx
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_3bem_4core_13fma_functions_28half_fft2(CYTHON_UNUSED PyObject *__pyx_self, PyArrayObject *__pyx_v_x) {
+static PyObject *__pyx_pf_12interaction3_3bem_4core_13fma_functions_28half_fft2(CYTHON_UNUSED PyObject *__pyx_self, PyArrayObject *__pyx_v_x) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   __Pyx_RefNannySetupContext("half_fft2", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = ((PyObject *)__pyx_f_3bem_4core_13fma_functions_half_fft2(__pyx_v_x, 0)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 373, __pyx_L1_error)
+  __pyx_t_1 = ((PyObject *)__pyx_f_12interaction3_3bem_4core_13fma_functions_half_fft2(__pyx_v_x, 0)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 373, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -8354,7 +8397,7 @@ static PyObject *__pyx_pf_3bem_4core_13fma_functions_28half_fft2(CYTHON_UNUSED P
   /* function exit code */
   __pyx_L1_error:;
   __Pyx_XDECREF(__pyx_t_1);
-  __Pyx_AddTraceback("bem.core.fma_functions.half_fft2", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("interaction3.bem.core.fma_functions.half_fft2", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
@@ -8362,7 +8405,7 @@ static PyObject *__pyx_pf_3bem_4core_13fma_functions_28half_fft2(CYTHON_UNUSED P
   return __pyx_r;
 }
 
-/* "bem/core/fma_functions.pyx":395
+/* "interaction3/bem/core/fma_functions.pyx":395
  * @cython.boundscheck(False)
  * @cython.wraparound(False)
  * cpdef np.ndarray half_ifft2(np.ndarray x):             # <<<<<<<<<<<<<<
@@ -8370,8 +8413,8 @@ static PyObject *__pyx_pf_3bem_4core_13fma_functions_28half_fft2(CYTHON_UNUSED P
  *     Half IFFT using spherical property.
  */
 
-static PyObject *__pyx_pw_3bem_4core_13fma_functions_31half_ifft2(PyObject *__pyx_self, PyObject *__pyx_v_x); /*proto*/
-static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_half_ifft2(PyArrayObject *__pyx_v_x, CYTHON_UNUSED int __pyx_skip_dispatch) {
+static PyObject *__pyx_pw_12interaction3_3bem_4core_13fma_functions_31half_ifft2(PyObject *__pyx_self, PyObject *__pyx_v_x); /*proto*/
+static PyArrayObject *__pyx_f_12interaction3_3bem_4core_13fma_functions_half_ifft2(PyArrayObject *__pyx_v_x, CYTHON_UNUSED int __pyx_skip_dispatch) {
   CYTHON_UNUSED int __pyx_v_M;
   int __pyx_v_N;
   PyArrayObject *__pyx_r = NULL;
@@ -8384,7 +8427,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_half_ifft2(PyArrayObjec
   PyObject *__pyx_t_6 = NULL;
   __Pyx_RefNannySetupContext("half_ifft2", 0);
 
-  /* "bem/core/fma_functions.pyx":399
+  /* "interaction3/bem/core/fma_functions.pyx":399
  *     Half IFFT using spherical property.
  *     '''
  *     cdef int M = x.shape[0]             # <<<<<<<<<<<<<<
@@ -8393,7 +8436,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_half_ifft2(PyArrayObjec
  */
   __pyx_v_M = (__pyx_v_x->dimensions[0]);
 
-  /* "bem/core/fma_functions.pyx":400
+  /* "interaction3/bem/core/fma_functions.pyx":400
  *     '''
  *     cdef int M = x.shape[0]
  *     cdef int N = x.shape[1]             # <<<<<<<<<<<<<<
@@ -8402,7 +8445,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_half_ifft2(PyArrayObjec
  */
   __pyx_v_N = (__pyx_v_x->dimensions[1]);
 
-  /* "bem/core/fma_functions.pyx":402
+  /* "interaction3/bem/core/fma_functions.pyx":402
  *     cdef int N = x.shape[1]
  * 
  *     return ifft2(ifftshift(x))[:,:N/2]             # <<<<<<<<<<<<<<
@@ -8525,7 +8568,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_half_ifft2(PyArrayObjec
   __pyx_t_6 = 0;
   goto __pyx_L0;
 
-  /* "bem/core/fma_functions.pyx":395
+  /* "interaction3/bem/core/fma_functions.pyx":395
  * @cython.boundscheck(False)
  * @cython.wraparound(False)
  * cpdef np.ndarray half_ifft2(np.ndarray x):             # <<<<<<<<<<<<<<
@@ -8541,7 +8584,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_half_ifft2(PyArrayObjec
   __Pyx_XDECREF(__pyx_t_4);
   __Pyx_XDECREF(__pyx_t_5);
   __Pyx_XDECREF(__pyx_t_6);
-  __Pyx_AddTraceback("bem.core.fma_functions.half_ifft2", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("interaction3.bem.core.fma_functions.half_ifft2", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = 0;
   __pyx_L0:;
   __Pyx_XGIVEREF((PyObject *)__pyx_r);
@@ -8550,14 +8593,14 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_half_ifft2(PyArrayObjec
 }
 
 /* Python wrapper */
-static PyObject *__pyx_pw_3bem_4core_13fma_functions_31half_ifft2(PyObject *__pyx_self, PyObject *__pyx_v_x); /*proto*/
-static char __pyx_doc_3bem_4core_13fma_functions_30half_ifft2[] = "\n    Half IFFT using spherical property.\n    ";
-static PyObject *__pyx_pw_3bem_4core_13fma_functions_31half_ifft2(PyObject *__pyx_self, PyObject *__pyx_v_x) {
+static PyObject *__pyx_pw_12interaction3_3bem_4core_13fma_functions_31half_ifft2(PyObject *__pyx_self, PyObject *__pyx_v_x); /*proto*/
+static char __pyx_doc_12interaction3_3bem_4core_13fma_functions_30half_ifft2[] = "\n    Half IFFT using spherical property.\n    ";
+static PyObject *__pyx_pw_12interaction3_3bem_4core_13fma_functions_31half_ifft2(PyObject *__pyx_self, PyObject *__pyx_v_x) {
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("half_ifft2 (wrapper)", 0);
   if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_x), __pyx_ptype_5numpy_ndarray, 1, "x", 0))) __PYX_ERR(0, 395, __pyx_L1_error)
-  __pyx_r = __pyx_pf_3bem_4core_13fma_functions_30half_ifft2(__pyx_self, ((PyArrayObject *)__pyx_v_x));
+  __pyx_r = __pyx_pf_12interaction3_3bem_4core_13fma_functions_30half_ifft2(__pyx_self, ((PyArrayObject *)__pyx_v_x));
 
   /* function exit code */
   goto __pyx_L0;
@@ -8568,13 +8611,13 @@ static PyObject *__pyx_pw_3bem_4core_13fma_functions_31half_ifft2(PyObject *__py
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_3bem_4core_13fma_functions_30half_ifft2(CYTHON_UNUSED PyObject *__pyx_self, PyArrayObject *__pyx_v_x) {
+static PyObject *__pyx_pf_12interaction3_3bem_4core_13fma_functions_30half_ifft2(CYTHON_UNUSED PyObject *__pyx_self, PyArrayObject *__pyx_v_x) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   __Pyx_RefNannySetupContext("half_ifft2", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = ((PyObject *)__pyx_f_3bem_4core_13fma_functions_half_ifft2(__pyx_v_x, 0)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 395, __pyx_L1_error)
+  __pyx_t_1 = ((PyObject *)__pyx_f_12interaction3_3bem_4core_13fma_functions_half_ifft2(__pyx_v_x, 0)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 395, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -8583,7 +8626,7 @@ static PyObject *__pyx_pf_3bem_4core_13fma_functions_30half_ifft2(CYTHON_UNUSED 
   /* function exit code */
   __pyx_L1_error:;
   __Pyx_XDECREF(__pyx_t_1);
-  __Pyx_AddTraceback("bem.core.fma_functions.half_ifft2", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("interaction3.bem.core.fma_functions.half_ifft2", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
@@ -8591,7 +8634,7 @@ static PyObject *__pyx_pf_3bem_4core_13fma_functions_30half_ifft2(CYTHON_UNUSED 
   return __pyx_r;
 }
 
-/* "bem/core/fma_functions.pyx":407
+/* "interaction3/bem/core/fma_functions.pyx":407
  * @cython.boundscheck(False)
  * @cython.wraparound(False)
  * cpdef np.ndarray fft_interpolate(np.ndarray coeff, int kdir_dim1, int kdir_dim2):             # <<<<<<<<<<<<<<
@@ -8599,8 +8642,8 @@ static PyObject *__pyx_pf_3bem_4core_13fma_functions_30half_ifft2(CYTHON_UNUSED 
  *     FFT-based interpolation (memory optimized version).
  */
 
-static PyObject *__pyx_pw_3bem_4core_13fma_functions_33fft_interpolate(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_fft_interpolate(PyArrayObject *__pyx_v_coeff, int __pyx_v_kdir_dim1, int __pyx_v_kdir_dim2, CYTHON_UNUSED int __pyx_skip_dispatch) {
+static PyObject *__pyx_pw_12interaction3_3bem_4core_13fma_functions_33fft_interpolate(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static PyArrayObject *__pyx_f_12interaction3_3bem_4core_13fma_functions_fft_interpolate(PyArrayObject *__pyx_v_coeff, int __pyx_v_kdir_dim1, int __pyx_v_kdir_dim2, CYTHON_UNUSED int __pyx_skip_dispatch) {
   int __pyx_v_M1;
   int __pyx_v_N1;
   int __pyx_v_M2;
@@ -8621,7 +8664,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_fft_interpolate(PyArray
   double __pyx_t_7;
   __Pyx_RefNannySetupContext("fft_interpolate", 0);
 
-  /* "bem/core/fma_functions.pyx":411
+  /* "interaction3/bem/core/fma_functions.pyx":411
  *     FFT-based interpolation (memory optimized version).
  *     '''
  *     cdef int M1 = coeff.shape[0]             # <<<<<<<<<<<<<<
@@ -8630,7 +8673,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_fft_interpolate(PyArray
  */
   __pyx_v_M1 = (__pyx_v_coeff->dimensions[0]);
 
-  /* "bem/core/fma_functions.pyx":412
+  /* "interaction3/bem/core/fma_functions.pyx":412
  *     '''
  *     cdef int M1 = coeff.shape[0]
  *     cdef int N1 = coeff.shape[1]             # <<<<<<<<<<<<<<
@@ -8639,7 +8682,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_fft_interpolate(PyArray
  */
   __pyx_v_N1 = (__pyx_v_coeff->dimensions[1]);
 
-  /* "bem/core/fma_functions.pyx":413
+  /* "interaction3/bem/core/fma_functions.pyx":413
  *     cdef int M1 = coeff.shape[0]
  *     cdef int N1 = coeff.shape[1]
  *     cdef int M2 = kdir_dim1             # <<<<<<<<<<<<<<
@@ -8648,7 +8691,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_fft_interpolate(PyArray
  */
   __pyx_v_M2 = __pyx_v_kdir_dim1;
 
-  /* "bem/core/fma_functions.pyx":414
+  /* "interaction3/bem/core/fma_functions.pyx":414
  *     cdef int N1 = coeff.shape[1]
  *     cdef int M2 = kdir_dim1
  *     cdef int N2 = kdir_dim2             # <<<<<<<<<<<<<<
@@ -8657,7 +8700,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_fft_interpolate(PyArray
  */
   __pyx_v_N2 = __pyx_v_kdir_dim2;
 
-  /* "bem/core/fma_functions.pyx":417
+  /* "interaction3/bem/core/fma_functions.pyx":417
  *     cdef int padM, padN
  * 
  *     padM = (M2 - M1) // 2             # <<<<<<<<<<<<<<
@@ -8666,7 +8709,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_fft_interpolate(PyArray
  */
   __pyx_v_padM = __Pyx_div_long((__pyx_v_M2 - __pyx_v_M1), 2);
 
-  /* "bem/core/fma_functions.pyx":418
+  /* "interaction3/bem/core/fma_functions.pyx":418
  * 
  *     padM = (M2 - M1) // 2
  *     padN = (N2 - N1)             # <<<<<<<<<<<<<<
@@ -8675,7 +8718,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_fft_interpolate(PyArray
  */
   __pyx_v_padN = (__pyx_v_N2 - __pyx_v_N1);
 
-  /* "bem/core/fma_functions.pyx":421
+  /* "interaction3/bem/core/fma_functions.pyx":421
  * 
  *     #spectrum1 = half_fft2(coeff)
  *     spectrum1 = half_fft2(ifftshift(coeff, axes=0))             # <<<<<<<<<<<<<<
@@ -8698,13 +8741,13 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_fft_interpolate(PyArray
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
   if (!(likely(((__pyx_t_4) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_4, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 421, __pyx_L1_error)
-  __pyx_t_3 = ((PyObject *)__pyx_f_3bem_4core_13fma_functions_half_fft2(((PyArrayObject *)__pyx_t_4), 0)); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 421, __pyx_L1_error)
+  __pyx_t_3 = ((PyObject *)__pyx_f_12interaction3_3bem_4core_13fma_functions_half_fft2(((PyArrayObject *)__pyx_t_4), 0)); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 421, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
   __pyx_v_spectrum1 = ((PyArrayObject *)__pyx_t_3);
   __pyx_t_3 = 0;
 
-  /* "bem/core/fma_functions.pyx":422
+  /* "interaction3/bem/core/fma_functions.pyx":422
  *     #spectrum1 = half_fft2(coeff)
  *     spectrum1 = half_fft2(ifftshift(coeff, axes=0))
  *     spectrum2 = np.pad(spectrum1, ((padM, padM),(padN, padN)),             # <<<<<<<<<<<<<<
@@ -8757,7 +8800,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_fft_interpolate(PyArray
   PyTuple_SET_ITEM(__pyx_t_5, 1, __pyx_t_3);
   __pyx_t_3 = 0;
 
-  /* "bem/core/fma_functions.pyx":423
+  /* "interaction3/bem/core/fma_functions.pyx":423
  *     spectrum1 = half_fft2(ifftshift(coeff, axes=0))
  *     spectrum2 = np.pad(spectrum1, ((padM, padM),(padN, padN)),
  *         mode='constant')             # <<<<<<<<<<<<<<
@@ -8768,7 +8811,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_fft_interpolate(PyArray
   __Pyx_GOTREF(__pyx_t_3);
   if (PyDict_SetItem(__pyx_t_3, __pyx_n_s_mode, __pyx_n_s_constant) < 0) __PYX_ERR(0, 423, __pyx_L1_error)
 
-  /* "bem/core/fma_functions.pyx":422
+  /* "interaction3/bem/core/fma_functions.pyx":422
  *     #spectrum1 = half_fft2(coeff)
  *     spectrum1 = half_fft2(ifftshift(coeff, axes=0))
  *     spectrum2 = np.pad(spectrum1, ((padM, padM),(padN, padN)),             # <<<<<<<<<<<<<<
@@ -8783,7 +8826,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_fft_interpolate(PyArray
   __pyx_v_spectrum2 = __pyx_t_1;
   __pyx_t_1 = 0;
 
-  /* "bem/core/fma_functions.pyx":425
+  /* "interaction3/bem/core/fma_functions.pyx":425
  *         mode='constant')
  * 
  *     newcoeff = M2 * N2 / (<double> M1 * N1) * half_ifft2(spectrum2)             # <<<<<<<<<<<<<<
@@ -8799,7 +8842,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_fft_interpolate(PyArray
   __pyx_t_1 = PyFloat_FromDouble((__pyx_t_6 / __pyx_t_7)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 425, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   if (!(likely(((__pyx_v_spectrum2) == Py_None) || likely(__Pyx_TypeTest(__pyx_v_spectrum2, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 425, __pyx_L1_error)
-  __pyx_t_3 = ((PyObject *)__pyx_f_3bem_4core_13fma_functions_half_ifft2(((PyArrayObject *)__pyx_v_spectrum2), 0)); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 425, __pyx_L1_error)
+  __pyx_t_3 = ((PyObject *)__pyx_f_12interaction3_3bem_4core_13fma_functions_half_ifft2(((PyArrayObject *)__pyx_v_spectrum2), 0)); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 425, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __pyx_t_5 = PyNumber_Multiply(__pyx_t_1, __pyx_t_3); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 425, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_5);
@@ -8808,7 +8851,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_fft_interpolate(PyArray
   __pyx_v_newcoeff = __pyx_t_5;
   __pyx_t_5 = 0;
 
-  /* "bem/core/fma_functions.pyx":426
+  /* "interaction3/bem/core/fma_functions.pyx":426
  * 
  *     newcoeff = M2 * N2 / (<double> M1 * N1) * half_ifft2(spectrum2)
  *     newcoeff = fftshift(newcoeff, axes=0)             # <<<<<<<<<<<<<<
@@ -8833,7 +8876,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_fft_interpolate(PyArray
   __Pyx_DECREF_SET(__pyx_v_newcoeff, __pyx_t_4);
   __pyx_t_4 = 0;
 
-  /* "bem/core/fma_functions.pyx":428
+  /* "interaction3/bem/core/fma_functions.pyx":428
  *     newcoeff = fftshift(newcoeff, axes=0)
  * 
  *     return newcoeff             # <<<<<<<<<<<<<<
@@ -8846,7 +8889,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_fft_interpolate(PyArray
   __pyx_r = ((PyArrayObject *)__pyx_v_newcoeff);
   goto __pyx_L0;
 
-  /* "bem/core/fma_functions.pyx":407
+  /* "interaction3/bem/core/fma_functions.pyx":407
  * @cython.boundscheck(False)
  * @cython.wraparound(False)
  * cpdef np.ndarray fft_interpolate(np.ndarray coeff, int kdir_dim1, int kdir_dim2):             # <<<<<<<<<<<<<<
@@ -8861,7 +8904,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_fft_interpolate(PyArray
   __Pyx_XDECREF(__pyx_t_3);
   __Pyx_XDECREF(__pyx_t_4);
   __Pyx_XDECREF(__pyx_t_5);
-  __Pyx_AddTraceback("bem.core.fma_functions.fft_interpolate", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("interaction3.bem.core.fma_functions.fft_interpolate", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = 0;
   __pyx_L0:;
   __Pyx_XDECREF((PyObject *)__pyx_v_spectrum1);
@@ -8873,9 +8916,9 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_fft_interpolate(PyArray
 }
 
 /* Python wrapper */
-static PyObject *__pyx_pw_3bem_4core_13fma_functions_33fft_interpolate(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static char __pyx_doc_3bem_4core_13fma_functions_32fft_interpolate[] = "\n    FFT-based interpolation (memory optimized version).\n    ";
-static PyObject *__pyx_pw_3bem_4core_13fma_functions_33fft_interpolate(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
+static PyObject *__pyx_pw_12interaction3_3bem_4core_13fma_functions_33fft_interpolate(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static char __pyx_doc_12interaction3_3bem_4core_13fma_functions_32fft_interpolate[] = "\n    FFT-based interpolation (memory optimized version).\n    ";
+static PyObject *__pyx_pw_12interaction3_3bem_4core_13fma_functions_33fft_interpolate(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
   PyArrayObject *__pyx_v_coeff = 0;
   int __pyx_v_kdir_dim1;
   int __pyx_v_kdir_dim2;
@@ -8934,12 +8977,12 @@ static PyObject *__pyx_pw_3bem_4core_13fma_functions_33fft_interpolate(PyObject 
   __pyx_L5_argtuple_error:;
   __Pyx_RaiseArgtupleInvalid("fft_interpolate", 1, 3, 3, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 407, __pyx_L3_error)
   __pyx_L3_error:;
-  __Pyx_AddTraceback("bem.core.fma_functions.fft_interpolate", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("interaction3.bem.core.fma_functions.fft_interpolate", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
   if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_coeff), __pyx_ptype_5numpy_ndarray, 1, "coeff", 0))) __PYX_ERR(0, 407, __pyx_L1_error)
-  __pyx_r = __pyx_pf_3bem_4core_13fma_functions_32fft_interpolate(__pyx_self, __pyx_v_coeff, __pyx_v_kdir_dim1, __pyx_v_kdir_dim2);
+  __pyx_r = __pyx_pf_12interaction3_3bem_4core_13fma_functions_32fft_interpolate(__pyx_self, __pyx_v_coeff, __pyx_v_kdir_dim1, __pyx_v_kdir_dim2);
 
   /* function exit code */
   goto __pyx_L0;
@@ -8950,13 +8993,13 @@ static PyObject *__pyx_pw_3bem_4core_13fma_functions_33fft_interpolate(PyObject 
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_3bem_4core_13fma_functions_32fft_interpolate(CYTHON_UNUSED PyObject *__pyx_self, PyArrayObject *__pyx_v_coeff, int __pyx_v_kdir_dim1, int __pyx_v_kdir_dim2) {
+static PyObject *__pyx_pf_12interaction3_3bem_4core_13fma_functions_32fft_interpolate(CYTHON_UNUSED PyObject *__pyx_self, PyArrayObject *__pyx_v_coeff, int __pyx_v_kdir_dim1, int __pyx_v_kdir_dim2) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   __Pyx_RefNannySetupContext("fft_interpolate", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = ((PyObject *)__pyx_f_3bem_4core_13fma_functions_fft_interpolate(__pyx_v_coeff, __pyx_v_kdir_dim1, __pyx_v_kdir_dim2, 0)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 407, __pyx_L1_error)
+  __pyx_t_1 = ((PyObject *)__pyx_f_12interaction3_3bem_4core_13fma_functions_fft_interpolate(__pyx_v_coeff, __pyx_v_kdir_dim1, __pyx_v_kdir_dim2, 0)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 407, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -8965,7 +9008,7 @@ static PyObject *__pyx_pf_3bem_4core_13fma_functions_32fft_interpolate(CYTHON_UN
   /* function exit code */
   __pyx_L1_error:;
   __Pyx_XDECREF(__pyx_t_1);
-  __Pyx_AddTraceback("bem.core.fma_functions.fft_interpolate", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("interaction3.bem.core.fma_functions.fft_interpolate", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
@@ -8973,7 +9016,7 @@ static PyObject *__pyx_pf_3bem_4core_13fma_functions_32fft_interpolate(CYTHON_UN
   return __pyx_r;
 }
 
-/* "bem/core/fma_functions.pyx":433
+/* "interaction3/bem/core/fma_functions.pyx":433
  * @cython.boundscheck(False)
  * @cython.wraparound(False)
  * cpdef np.ndarray fft_interpolate_theta(np.ndarray coeff, int new_order):             # <<<<<<<<<<<<<<
@@ -8981,8 +9024,8 @@ static PyObject *__pyx_pf_3bem_4core_13fma_functions_32fft_interpolate(CYTHON_UN
  *     FFT-based interpolation for theta direction only.
  */
 
-static PyObject *__pyx_pw_3bem_4core_13fma_functions_35fft_interpolate_theta(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_fft_interpolate_theta(PyArrayObject *__pyx_v_coeff, int __pyx_v_new_order, CYTHON_UNUSED int __pyx_skip_dispatch) {
+static PyObject *__pyx_pw_12interaction3_3bem_4core_13fma_functions_35fft_interpolate_theta(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static PyArrayObject *__pyx_f_12interaction3_3bem_4core_13fma_functions_fft_interpolate_theta(PyArrayObject *__pyx_v_coeff, int __pyx_v_new_order, CYTHON_UNUSED int __pyx_skip_dispatch) {
   int __pyx_v_M1;
   int __pyx_v_N1;
   int __pyx_v_M2;
@@ -9002,7 +9045,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_fft_interpolate_theta(P
   PyObject *__pyx_t_6 = NULL;
   __Pyx_RefNannySetupContext("fft_interpolate_theta", 0);
 
-  /* "bem/core/fma_functions.pyx":437
+  /* "interaction3/bem/core/fma_functions.pyx":437
  *     FFT-based interpolation for theta direction only.
  *     '''
  *     cdef int M1 = coeff.shape[0]             # <<<<<<<<<<<<<<
@@ -9011,7 +9054,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_fft_interpolate_theta(P
  */
   __pyx_v_M1 = (__pyx_v_coeff->dimensions[0]);
 
-  /* "bem/core/fma_functions.pyx":438
+  /* "interaction3/bem/core/fma_functions.pyx":438
  *     '''
  *     cdef int M1 = coeff.shape[0]
  *     cdef int N1 = coeff.shape[1]             # <<<<<<<<<<<<<<
@@ -9020,7 +9063,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_fft_interpolate_theta(P
  */
   __pyx_v_N1 = (__pyx_v_coeff->dimensions[1]);
 
-  /* "bem/core/fma_functions.pyx":439
+  /* "interaction3/bem/core/fma_functions.pyx":439
  *     cdef int M1 = coeff.shape[0]
  *     cdef int N1 = coeff.shape[1]
  *     cdef int M2 = 2 * (new_order) + 1             # <<<<<<<<<<<<<<
@@ -9029,7 +9072,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_fft_interpolate_theta(P
  */
   __pyx_v_M2 = ((2 * __pyx_v_new_order) + 1);
 
-  /* "bem/core/fma_functions.pyx":441
+  /* "interaction3/bem/core/fma_functions.pyx":441
  *     cdef int M2 = 2 * (new_order) + 1
  * 
  *     padM = (M2 - M1) // 2             # <<<<<<<<<<<<<<
@@ -9038,7 +9081,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_fft_interpolate_theta(P
  */
   __pyx_v_padM = __Pyx_div_long((__pyx_v_M2 - __pyx_v_M1), 2);
 
-  /* "bem/core/fma_functions.pyx":443
+  /* "interaction3/bem/core/fma_functions.pyx":443
  *     padM = (M2 - M1) // 2
  * 
  *     v = fftshift(fft(ifftshift(coeff, axes=0), axis=0), axes=0)             # <<<<<<<<<<<<<<
@@ -9093,7 +9136,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_fft_interpolate_theta(P
   __pyx_v_v = __pyx_t_5;
   __pyx_t_5 = 0;
 
-  /* "bem/core/fma_functions.pyx":444
+  /* "interaction3/bem/core/fma_functions.pyx":444
  * 
  *     v = fftshift(fft(ifftshift(coeff, axes=0), axis=0), axes=0)
  *     dummy = np.flipud(v).copy()             # <<<<<<<<<<<<<<
@@ -9172,7 +9215,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_fft_interpolate_theta(P
   __pyx_v_dummy = __pyx_t_5;
   __pyx_t_5 = 0;
 
-  /* "bem/core/fma_functions.pyx":446
+  /* "interaction3/bem/core/fma_functions.pyx":446
  *     dummy = np.flipud(v).copy()
  * 
  *     spectrum1 = np.concatenate((v, dummy), axis=1)             # <<<<<<<<<<<<<<
@@ -9208,7 +9251,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_fft_interpolate_theta(P
   __pyx_v_spectrum1 = __pyx_t_2;
   __pyx_t_2 = 0;
 
-  /* "bem/core/fma_functions.pyx":447
+  /* "interaction3/bem/core/fma_functions.pyx":447
  * 
  *     spectrum1 = np.concatenate((v, dummy), axis=1)
  *     spectrum2 = np.pad(spectrum1, ((padM, padM),(0, 0)), mode='constant')             # <<<<<<<<<<<<<<
@@ -9259,7 +9302,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_fft_interpolate_theta(P
   __pyx_v_spectrum2 = __pyx_t_2;
   __pyx_t_2 = 0;
 
-  /* "bem/core/fma_functions.pyx":449
+  /* "interaction3/bem/core/fma_functions.pyx":449
  *     spectrum2 = np.pad(spectrum1, ((padM, padM),(0, 0)), mode='constant')
  * 
  *     newcoeff = M2 / (<double> M1) * ifft(ifftshift(spectrum2, axes=0), axis=0)[:, :N1]             # <<<<<<<<<<<<<<
@@ -9326,7 +9369,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_fft_interpolate_theta(P
   __pyx_v_newcoeff = __pyx_t_3;
   __pyx_t_3 = 0;
 
-  /* "bem/core/fma_functions.pyx":450
+  /* "interaction3/bem/core/fma_functions.pyx":450
  * 
  *     newcoeff = M2 / (<double> M1) * ifft(ifftshift(spectrum2, axes=0), axis=0)[:, :N1]
  *     newcoeff = fftshift(newcoeff, axes=0)             # <<<<<<<<<<<<<<
@@ -9351,7 +9394,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_fft_interpolate_theta(P
   __Pyx_DECREF_SET(__pyx_v_newcoeff, __pyx_t_5);
   __pyx_t_5 = 0;
 
-  /* "bem/core/fma_functions.pyx":452
+  /* "interaction3/bem/core/fma_functions.pyx":452
  *     newcoeff = fftshift(newcoeff, axes=0)
  * 
  *     return newcoeff             # <<<<<<<<<<<<<<
@@ -9364,7 +9407,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_fft_interpolate_theta(P
   __pyx_r = ((PyArrayObject *)__pyx_v_newcoeff);
   goto __pyx_L0;
 
-  /* "bem/core/fma_functions.pyx":433
+  /* "interaction3/bem/core/fma_functions.pyx":433
  * @cython.boundscheck(False)
  * @cython.wraparound(False)
  * cpdef np.ndarray fft_interpolate_theta(np.ndarray coeff, int new_order):             # <<<<<<<<<<<<<<
@@ -9380,7 +9423,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_fft_interpolate_theta(P
   __Pyx_XDECREF(__pyx_t_4);
   __Pyx_XDECREF(__pyx_t_5);
   __Pyx_XDECREF(__pyx_t_6);
-  __Pyx_AddTraceback("bem.core.fma_functions.fft_interpolate_theta", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("interaction3.bem.core.fma_functions.fft_interpolate_theta", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = 0;
   __pyx_L0:;
   __Pyx_XDECREF(__pyx_v_v);
@@ -9394,9 +9437,9 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_fft_interpolate_theta(P
 }
 
 /* Python wrapper */
-static PyObject *__pyx_pw_3bem_4core_13fma_functions_35fft_interpolate_theta(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static char __pyx_doc_3bem_4core_13fma_functions_34fft_interpolate_theta[] = "\n    FFT-based interpolation for theta direction only.\n    ";
-static PyObject *__pyx_pw_3bem_4core_13fma_functions_35fft_interpolate_theta(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
+static PyObject *__pyx_pw_12interaction3_3bem_4core_13fma_functions_35fft_interpolate_theta(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static char __pyx_doc_12interaction3_3bem_4core_13fma_functions_34fft_interpolate_theta[] = "\n    FFT-based interpolation for theta direction only.\n    ";
+static PyObject *__pyx_pw_12interaction3_3bem_4core_13fma_functions_35fft_interpolate_theta(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
   PyArrayObject *__pyx_v_coeff = 0;
   int __pyx_v_new_order;
   PyObject *__pyx_r = 0;
@@ -9444,12 +9487,12 @@ static PyObject *__pyx_pw_3bem_4core_13fma_functions_35fft_interpolate_theta(PyO
   __pyx_L5_argtuple_error:;
   __Pyx_RaiseArgtupleInvalid("fft_interpolate_theta", 1, 2, 2, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 433, __pyx_L3_error)
   __pyx_L3_error:;
-  __Pyx_AddTraceback("bem.core.fma_functions.fft_interpolate_theta", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("interaction3.bem.core.fma_functions.fft_interpolate_theta", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
   if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_coeff), __pyx_ptype_5numpy_ndarray, 1, "coeff", 0))) __PYX_ERR(0, 433, __pyx_L1_error)
-  __pyx_r = __pyx_pf_3bem_4core_13fma_functions_34fft_interpolate_theta(__pyx_self, __pyx_v_coeff, __pyx_v_new_order);
+  __pyx_r = __pyx_pf_12interaction3_3bem_4core_13fma_functions_34fft_interpolate_theta(__pyx_self, __pyx_v_coeff, __pyx_v_new_order);
 
   /* function exit code */
   goto __pyx_L0;
@@ -9460,13 +9503,13 @@ static PyObject *__pyx_pw_3bem_4core_13fma_functions_35fft_interpolate_theta(PyO
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_3bem_4core_13fma_functions_34fft_interpolate_theta(CYTHON_UNUSED PyObject *__pyx_self, PyArrayObject *__pyx_v_coeff, int __pyx_v_new_order) {
+static PyObject *__pyx_pf_12interaction3_3bem_4core_13fma_functions_34fft_interpolate_theta(CYTHON_UNUSED PyObject *__pyx_self, PyArrayObject *__pyx_v_coeff, int __pyx_v_new_order) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   __Pyx_RefNannySetupContext("fft_interpolate_theta", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = ((PyObject *)__pyx_f_3bem_4core_13fma_functions_fft_interpolate_theta(__pyx_v_coeff, __pyx_v_new_order, 0)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 433, __pyx_L1_error)
+  __pyx_t_1 = ((PyObject *)__pyx_f_12interaction3_3bem_4core_13fma_functions_fft_interpolate_theta(__pyx_v_coeff, __pyx_v_new_order, 0)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 433, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -9475,7 +9518,7 @@ static PyObject *__pyx_pf_3bem_4core_13fma_functions_34fft_interpolate_theta(CYT
   /* function exit code */
   __pyx_L1_error:;
   __Pyx_XDECREF(__pyx_t_1);
-  __Pyx_AddTraceback("bem.core.fma_functions.fft_interpolate_theta", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("interaction3.bem.core.fma_functions.fft_interpolate_theta", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
@@ -9483,7 +9526,7 @@ static PyObject *__pyx_pf_3bem_4core_13fma_functions_34fft_interpolate_theta(CYT
   return __pyx_r;
 }
 
-/* "bem/core/fma_functions.pyx":457
+/* "interaction3/bem/core/fma_functions.pyx":457
  * @cython.boundscheck(False)
  * @cython.wraparound(False)
  * cpdef np.ndarray fft_filter(double complex[:,:] coeff, int kdir_dim1, int kdir_dim2):             # <<<<<<<<<<<<<<
@@ -9491,8 +9534,8 @@ static PyObject *__pyx_pf_3bem_4core_13fma_functions_34fft_interpolate_theta(CYT
  *     FFT-based filtering (memory optimized version).
  */
 
-static PyObject *__pyx_pw_3bem_4core_13fma_functions_37fft_filter(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_fft_filter(__Pyx_memviewslice __pyx_v_coeff, int __pyx_v_kdir_dim1, int __pyx_v_kdir_dim2, CYTHON_UNUSED int __pyx_skip_dispatch) {
+static PyObject *__pyx_pw_12interaction3_3bem_4core_13fma_functions_37fft_filter(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static PyArrayObject *__pyx_f_12interaction3_3bem_4core_13fma_functions_fft_filter(__Pyx_memviewslice __pyx_v_coeff, int __pyx_v_kdir_dim1, int __pyx_v_kdir_dim2, CYTHON_UNUSED int __pyx_skip_dispatch) {
   int __pyx_v_M1;
   int __pyx_v_N1;
   int __pyx_v_M2;
@@ -9514,7 +9557,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_fft_filter(__Pyx_memvie
   double __pyx_t_6;
   __Pyx_RefNannySetupContext("fft_filter", 0);
 
-  /* "bem/core/fma_functions.pyx":461
+  /* "interaction3/bem/core/fma_functions.pyx":461
  *     FFT-based filtering (memory optimized version).
  *     '''
  *     cdef int M1 = coeff.shape[0]             # <<<<<<<<<<<<<<
@@ -9523,7 +9566,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_fft_filter(__Pyx_memvie
  */
   __pyx_v_M1 = (__pyx_v_coeff.shape[0]);
 
-  /* "bem/core/fma_functions.pyx":462
+  /* "interaction3/bem/core/fma_functions.pyx":462
  *     '''
  *     cdef int M1 = coeff.shape[0]
  *     cdef int N1 = coeff.shape[1]             # <<<<<<<<<<<<<<
@@ -9532,7 +9575,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_fft_filter(__Pyx_memvie
  */
   __pyx_v_N1 = (__pyx_v_coeff.shape[1]);
 
-  /* "bem/core/fma_functions.pyx":463
+  /* "interaction3/bem/core/fma_functions.pyx":463
  *     cdef int M1 = coeff.shape[0]
  *     cdef int N1 = coeff.shape[1]
  *     cdef int M2 = kdir_dim1             # <<<<<<<<<<<<<<
@@ -9541,7 +9584,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_fft_filter(__Pyx_memvie
  */
   __pyx_v_M2 = __pyx_v_kdir_dim1;
 
-  /* "bem/core/fma_functions.pyx":464
+  /* "interaction3/bem/core/fma_functions.pyx":464
  *     cdef int N1 = coeff.shape[1]
  *     cdef int M2 = kdir_dim1
  *     cdef int N2 = kdir_dim2             # <<<<<<<<<<<<<<
@@ -9550,7 +9593,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_fft_filter(__Pyx_memvie
  */
   __pyx_v_N2 = __pyx_v_kdir_dim2;
 
-  /* "bem/core/fma_functions.pyx":467
+  /* "interaction3/bem/core/fma_functions.pyx":467
  *     cdef int Mstart, Mstop, Nstart, Nstop
  * 
  *     Mstart = (M1 - M2) / 2             # <<<<<<<<<<<<<<
@@ -9559,7 +9602,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_fft_filter(__Pyx_memvie
  */
   __pyx_v_Mstart = __Pyx_div_long((__pyx_v_M1 - __pyx_v_M2), 2);
 
-  /* "bem/core/fma_functions.pyx":468
+  /* "interaction3/bem/core/fma_functions.pyx":468
  * 
  *     Mstart = (M1 - M2) / 2
  *     Mstop = Mstart + M2             # <<<<<<<<<<<<<<
@@ -9568,7 +9611,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_fft_filter(__Pyx_memvie
  */
   __pyx_v_Mstop = (__pyx_v_Mstart + __pyx_v_M2);
 
-  /* "bem/core/fma_functions.pyx":469
+  /* "interaction3/bem/core/fma_functions.pyx":469
  *     Mstart = (M1 - M2) / 2
  *     Mstop = Mstart + M2
  *     Nstart = (N1 - N2)             # <<<<<<<<<<<<<<
@@ -9577,7 +9620,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_fft_filter(__Pyx_memvie
  */
   __pyx_v_Nstart = (__pyx_v_N1 - __pyx_v_N2);
 
-  /* "bem/core/fma_functions.pyx":470
+  /* "interaction3/bem/core/fma_functions.pyx":470
  *     Mstop = Mstart + M2
  *     Nstart = (N1 - N2)
  *     Nstop = Nstart + 2 * N2             # <<<<<<<<<<<<<<
@@ -9586,7 +9629,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_fft_filter(__Pyx_memvie
  */
   __pyx_v_Nstop = (__pyx_v_Nstart + (2 * __pyx_v_N2));
 
-  /* "bem/core/fma_functions.pyx":473
+  /* "interaction3/bem/core/fma_functions.pyx":473
  * 
  *     #spectrum1 = half_fft2(coeff)
  *     spectrum1 = half_fft2(ifftshift(coeff, axes=0))             # <<<<<<<<<<<<<<
@@ -9611,13 +9654,13 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_fft_filter(__Pyx_memvie
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   if (!(likely(((__pyx_t_4) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_4, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 473, __pyx_L1_error)
-  __pyx_t_2 = ((PyObject *)__pyx_f_3bem_4core_13fma_functions_half_fft2(((PyArrayObject *)__pyx_t_4), 0)); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 473, __pyx_L1_error)
+  __pyx_t_2 = ((PyObject *)__pyx_f_12interaction3_3bem_4core_13fma_functions_half_fft2(((PyArrayObject *)__pyx_t_4), 0)); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 473, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
   __pyx_v_spectrum1 = ((PyArrayObject *)__pyx_t_2);
   __pyx_t_2 = 0;
 
-  /* "bem/core/fma_functions.pyx":474
+  /* "interaction3/bem/core/fma_functions.pyx":474
  *     #spectrum1 = half_fft2(coeff)
  *     spectrum1 = half_fft2(ifftshift(coeff, axes=0))
  *     spectrum2 = spectrum1[Mstart:Mstop, Nstart:Nstop]             # <<<<<<<<<<<<<<
@@ -9654,7 +9697,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_fft_filter(__Pyx_memvie
   __pyx_v_spectrum2 = __pyx_t_1;
   __pyx_t_1 = 0;
 
-  /* "bem/core/fma_functions.pyx":476
+  /* "interaction3/bem/core/fma_functions.pyx":476
  *     spectrum2 = spectrum1[Mstart:Mstop, Nstart:Nstop]
  * 
  *     newcoeff = M2 * N2 / (<double> M1 * N1) * half_ifft2(spectrum2)             # <<<<<<<<<<<<<<
@@ -9670,7 +9713,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_fft_filter(__Pyx_memvie
   __pyx_t_1 = PyFloat_FromDouble((__pyx_t_5 / __pyx_t_6)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 476, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   if (!(likely(((__pyx_v_spectrum2) == Py_None) || likely(__Pyx_TypeTest(__pyx_v_spectrum2, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 476, __pyx_L1_error)
-  __pyx_t_2 = ((PyObject *)__pyx_f_3bem_4core_13fma_functions_half_ifft2(((PyArrayObject *)__pyx_v_spectrum2), 0)); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 476, __pyx_L1_error)
+  __pyx_t_2 = ((PyObject *)__pyx_f_12interaction3_3bem_4core_13fma_functions_half_ifft2(((PyArrayObject *)__pyx_v_spectrum2), 0)); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 476, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __pyx_t_3 = PyNumber_Multiply(__pyx_t_1, __pyx_t_2); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 476, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
@@ -9679,7 +9722,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_fft_filter(__Pyx_memvie
   __pyx_v_newcoeff = __pyx_t_3;
   __pyx_t_3 = 0;
 
-  /* "bem/core/fma_functions.pyx":477
+  /* "interaction3/bem/core/fma_functions.pyx":477
  * 
  *     newcoeff = M2 * N2 / (<double> M1 * N1) * half_ifft2(spectrum2)
  *     newcoeff = fftshift(newcoeff, axes=0)             # <<<<<<<<<<<<<<
@@ -9704,7 +9747,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_fft_filter(__Pyx_memvie
   __Pyx_DECREF_SET(__pyx_v_newcoeff, __pyx_t_4);
   __pyx_t_4 = 0;
 
-  /* "bem/core/fma_functions.pyx":479
+  /* "interaction3/bem/core/fma_functions.pyx":479
  *     newcoeff = fftshift(newcoeff, axes=0)
  * 
  *     return newcoeff             # <<<<<<<<<<<<<<
@@ -9717,7 +9760,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_fft_filter(__Pyx_memvie
   __pyx_r = ((PyArrayObject *)__pyx_v_newcoeff);
   goto __pyx_L0;
 
-  /* "bem/core/fma_functions.pyx":457
+  /* "interaction3/bem/core/fma_functions.pyx":457
  * @cython.boundscheck(False)
  * @cython.wraparound(False)
  * cpdef np.ndarray fft_filter(double complex[:,:] coeff, int kdir_dim1, int kdir_dim2):             # <<<<<<<<<<<<<<
@@ -9731,7 +9774,7 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_fft_filter(__Pyx_memvie
   __Pyx_XDECREF(__pyx_t_2);
   __Pyx_XDECREF(__pyx_t_3);
   __Pyx_XDECREF(__pyx_t_4);
-  __Pyx_AddTraceback("bem.core.fma_functions.fft_filter", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("interaction3.bem.core.fma_functions.fft_filter", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = 0;
   __pyx_L0:;
   __Pyx_XDECREF((PyObject *)__pyx_v_spectrum1);
@@ -9743,9 +9786,9 @@ static PyArrayObject *__pyx_f_3bem_4core_13fma_functions_fft_filter(__Pyx_memvie
 }
 
 /* Python wrapper */
-static PyObject *__pyx_pw_3bem_4core_13fma_functions_37fft_filter(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static char __pyx_doc_3bem_4core_13fma_functions_36fft_filter[] = "\n    FFT-based filtering (memory optimized version).\n    ";
-static PyObject *__pyx_pw_3bem_4core_13fma_functions_37fft_filter(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
+static PyObject *__pyx_pw_12interaction3_3bem_4core_13fma_functions_37fft_filter(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static char __pyx_doc_12interaction3_3bem_4core_13fma_functions_36fft_filter[] = "\n    FFT-based filtering (memory optimized version).\n    ";
+static PyObject *__pyx_pw_12interaction3_3bem_4core_13fma_functions_37fft_filter(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
   __Pyx_memviewslice __pyx_v_coeff = { 0, 0, { 0 }, { 0 }, { 0 } };
   int __pyx_v_kdir_dim1;
   int __pyx_v_kdir_dim2;
@@ -9804,25 +9847,25 @@ static PyObject *__pyx_pw_3bem_4core_13fma_functions_37fft_filter(PyObject *__py
   __pyx_L5_argtuple_error:;
   __Pyx_RaiseArgtupleInvalid("fft_filter", 1, 3, 3, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 457, __pyx_L3_error)
   __pyx_L3_error:;
-  __Pyx_AddTraceback("bem.core.fma_functions.fft_filter", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("interaction3.bem.core.fma_functions.fft_filter", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  __pyx_r = __pyx_pf_3bem_4core_13fma_functions_36fft_filter(__pyx_self, __pyx_v_coeff, __pyx_v_kdir_dim1, __pyx_v_kdir_dim2);
+  __pyx_r = __pyx_pf_12interaction3_3bem_4core_13fma_functions_36fft_filter(__pyx_self, __pyx_v_coeff, __pyx_v_kdir_dim1, __pyx_v_kdir_dim2);
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_3bem_4core_13fma_functions_36fft_filter(CYTHON_UNUSED PyObject *__pyx_self, __Pyx_memviewslice __pyx_v_coeff, int __pyx_v_kdir_dim1, int __pyx_v_kdir_dim2) {
+static PyObject *__pyx_pf_12interaction3_3bem_4core_13fma_functions_36fft_filter(CYTHON_UNUSED PyObject *__pyx_self, __Pyx_memviewslice __pyx_v_coeff, int __pyx_v_kdir_dim1, int __pyx_v_kdir_dim2) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   __Pyx_RefNannySetupContext("fft_filter", 0);
   __Pyx_XDECREF(__pyx_r);
   if (unlikely(!__pyx_v_coeff.memview)) { __Pyx_RaiseUnboundLocalError("coeff"); __PYX_ERR(0, 457, __pyx_L1_error) }
-  __pyx_t_1 = ((PyObject *)__pyx_f_3bem_4core_13fma_functions_fft_filter(__pyx_v_coeff, __pyx_v_kdir_dim1, __pyx_v_kdir_dim2, 0)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 457, __pyx_L1_error)
+  __pyx_t_1 = ((PyObject *)__pyx_f_12interaction3_3bem_4core_13fma_functions_fft_filter(__pyx_v_coeff, __pyx_v_kdir_dim1, __pyx_v_kdir_dim2, 0)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 457, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -9831,7 +9874,7 @@ static PyObject *__pyx_pf_3bem_4core_13fma_functions_36fft_filter(CYTHON_UNUSED 
   /* function exit code */
   __pyx_L1_error:;
   __Pyx_XDECREF(__pyx_t_1);
-  __Pyx_AddTraceback("bem.core.fma_functions.fft_filter", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("interaction3.bem.core.fma_functions.fft_filter", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
   __PYX_XDEC_MEMVIEW(&__pyx_v_coeff, 1);
@@ -9840,7 +9883,7 @@ static PyObject *__pyx_pf_3bem_4core_13fma_functions_36fft_filter(CYTHON_UNUSED 
   return __pyx_r;
 }
 
-/* "bem/core/fma_functions.pyx":484
+/* "interaction3/bem/core/fma_functions.pyx":484
  * @cython.boundscheck(False)
  * @cython.wraparound(False)
  * cpdef dict fft_quadrule(int theta_order, int phi_order):             # <<<<<<<<<<<<<<
@@ -9848,8 +9891,8 @@ static PyObject *__pyx_pf_3bem_4core_13fma_functions_36fft_filter(CYTHON_UNUSED 
  *     Trapezoidal quadrature rule in theta and phi for integration over a unit
  */
 
-static PyObject *__pyx_pw_3bem_4core_13fma_functions_39fft_quadrule(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static PyObject *__pyx_f_3bem_4core_13fma_functions_fft_quadrule(int __pyx_v_theta_order, int __pyx_v_phi_order, CYTHON_UNUSED int __pyx_skip_dispatch) {
+static PyObject *__pyx_pw_12interaction3_3bem_4core_13fma_functions_39fft_quadrule(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static PyObject *__pyx_f_12interaction3_3bem_4core_13fma_functions_fft_quadrule(int __pyx_v_theta_order, int __pyx_v_phi_order, CYTHON_UNUSED int __pyx_skip_dispatch) {
   int __pyx_v_M;
   int __pyx_v_N;
   int __pyx_v_ntheta;
@@ -9863,6 +9906,7 @@ static PyObject *__pyx_f_3bem_4core_13fma_functions_fft_quadrule(int __pyx_v_the
   PyObject *__pyx_v_kphi = NULL;
   PyObject *__pyx_v_kdir = NULL;
   PyArrayObject *__pyx_v_kcoord = NULL;
+  PyObject *__pyx_v_kcoordT = NULL;
   PyObject *__pyx_v_quadrule = NULL;
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
@@ -9877,7 +9921,7 @@ static PyObject *__pyx_f_3bem_4core_13fma_functions_fft_quadrule(int __pyx_v_the
   PyObject *(*__pyx_t_9)(PyObject *);
   __Pyx_RefNannySetupContext("fft_quadrule", 0);
 
-  /* "bem/core/fma_functions.pyx":493
+  /* "interaction3/bem/core/fma_functions.pyx":493
  * 
  *     # 1: theta/polar
  *     M = 2 * theta_order + 1             # <<<<<<<<<<<<<<
@@ -9886,7 +9930,7 @@ static PyObject *__pyx_f_3bem_4core_13fma_functions_fft_quadrule(int __pyx_v_the
  */
   __pyx_v_M = ((2 * __pyx_v_theta_order) + 1);
 
-  /* "bem/core/fma_functions.pyx":494
+  /* "interaction3/bem/core/fma_functions.pyx":494
  *     # 1: theta/polar
  *     M = 2 * theta_order + 1
  *     theta = np.linspace(-theta_order * 2 * pi / M, theta_order * 2 * pi / M, M)             # <<<<<<<<<<<<<<
@@ -9985,7 +10029,7 @@ static PyObject *__pyx_f_3bem_4core_13fma_functions_fft_quadrule(int __pyx_v_the
   __pyx_v_theta = __pyx_t_1;
   __pyx_t_1 = 0;
 
-  /* "bem/core/fma_functions.pyx":495
+  /* "interaction3/bem/core/fma_functions.pyx":495
  *     M = 2 * theta_order + 1
  *     theta = np.linspace(-theta_order * 2 * pi / M, theta_order * 2 * pi / M, M)
  *     thetaweights = np.ones(M) * 2 * pi / M             # <<<<<<<<<<<<<<
@@ -10063,7 +10107,7 @@ static PyObject *__pyx_f_3bem_4core_13fma_functions_fft_quadrule(int __pyx_v_the
   __pyx_v_thetaweights = __pyx_t_8;
   __pyx_t_8 = 0;
 
-  /* "bem/core/fma_functions.pyx":498
+  /* "interaction3/bem/core/fma_functions.pyx":498
  * 
  *     # 2: phi/azimuthal
  *     N = phi_order + 1             # <<<<<<<<<<<<<<
@@ -10072,7 +10116,7 @@ static PyObject *__pyx_f_3bem_4core_13fma_functions_fft_quadrule(int __pyx_v_the
  */
   __pyx_v_N = (__pyx_v_phi_order + 1);
 
-  /* "bem/core/fma_functions.pyx":499
+  /* "interaction3/bem/core/fma_functions.pyx":499
  *     # 2: phi/azimuthal
  *     N = phi_order + 1
  *     phi = np.linspace(-pi, 0, N, endpoint=False)             # <<<<<<<<<<<<<<
@@ -10113,7 +10157,7 @@ static PyObject *__pyx_f_3bem_4core_13fma_functions_fft_quadrule(int __pyx_v_the
   __pyx_v_phi = __pyx_t_4;
   __pyx_t_4 = 0;
 
-  /* "bem/core/fma_functions.pyx":500
+  /* "interaction3/bem/core/fma_functions.pyx":500
  *     N = phi_order + 1
  *     phi = np.linspace(-pi, 0, N, endpoint=False)
  *     phiweights = np.ones(N) * 2 * pi / N             # <<<<<<<<<<<<<<
@@ -10191,7 +10235,7 @@ static PyObject *__pyx_f_3bem_4core_13fma_functions_fft_quadrule(int __pyx_v_the
   __pyx_v_phiweights = __pyx_t_3;
   __pyx_t_3 = 0;
 
-  /* "bem/core/fma_functions.pyx":502
+  /* "interaction3/bem/core/fma_functions.pyx":502
  *     phiweights = np.ones(N) * 2 * pi / N
  * 
  *     weights = thetaweights[:, None].dot(phiweights[None, :])             # <<<<<<<<<<<<<<
@@ -10254,7 +10298,7 @@ static PyObject *__pyx_f_3bem_4core_13fma_functions_fft_quadrule(int __pyx_v_the
   __pyx_v_weights = __pyx_t_3;
   __pyx_t_3 = 0;
 
-  /* "bem/core/fma_functions.pyx":504
+  /* "interaction3/bem/core/fma_functions.pyx":504
  *     weights = thetaweights[:, None].dot(phiweights[None, :])
  * 
  *     ntheta = theta.shape[0]             # <<<<<<<<<<<<<<
@@ -10270,7 +10314,7 @@ static PyObject *__pyx_f_3bem_4core_13fma_functions_fft_quadrule(int __pyx_v_the
   __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
   __pyx_v_ntheta = __pyx_t_7;
 
-  /* "bem/core/fma_functions.pyx":505
+  /* "interaction3/bem/core/fma_functions.pyx":505
  * 
  *     ntheta = theta.shape[0]
  *     nphi = phi.shape[0]             # <<<<<<<<<<<<<<
@@ -10286,7 +10330,7 @@ static PyObject *__pyx_f_3bem_4core_13fma_functions_fft_quadrule(int __pyx_v_the
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
   __pyx_v_nphi = __pyx_t_7;
 
-  /* "bem/core/fma_functions.pyx":507
+  /* "interaction3/bem/core/fma_functions.pyx":507
  *     nphi = phi.shape[0]
  * 
  *     ktheta, kphi = np.meshgrid(theta, phi, indexing='ij')             # <<<<<<<<<<<<<<
@@ -10369,7 +10413,7 @@ static PyObject *__pyx_f_3bem_4core_13fma_functions_fft_quadrule(int __pyx_v_the
   __pyx_v_kphi = __pyx_t_3;
   __pyx_t_3 = 0;
 
-  /* "bem/core/fma_functions.pyx":508
+  /* "interaction3/bem/core/fma_functions.pyx":508
  * 
  *     ktheta, kphi = np.meshgrid(theta, phi, indexing='ij')
  *     kdir = np.concatenate((ktheta[..., None], kphi[..., None]), axis=2)             # <<<<<<<<<<<<<<
@@ -10409,7 +10453,7 @@ static PyObject *__pyx_f_3bem_4core_13fma_functions_fft_quadrule(int __pyx_v_the
   __pyx_v_kdir = __pyx_t_4;
   __pyx_t_4 = 0;
 
-  /* "bem/core/fma_functions.pyx":510
+  /* "interaction3/bem/core/fma_functions.pyx":510
  *     kdir = np.concatenate((ktheta[..., None], kphi[..., None]), axis=2)
  * 
  *     kdir[:(M - 1) / 2, :, 0] *= -1             # <<<<<<<<<<<<<<
@@ -10441,7 +10485,7 @@ static PyObject *__pyx_f_3bem_4core_13fma_functions_fft_quadrule(int __pyx_v_the
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
 
-  /* "bem/core/fma_functions.pyx":511
+  /* "interaction3/bem/core/fma_functions.pyx":511
  * 
  *     kdir[:(M - 1) / 2, :, 0] *= -1
  *     kdir[:(M - 1) / 2, :, 1] += pi             # <<<<<<<<<<<<<<
@@ -10476,152 +10520,178 @@ static PyObject *__pyx_f_3bem_4core_13fma_functions_fft_quadrule(int __pyx_v_the
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
 
-  /* "bem/core/fma_functions.pyx":513
+  /* "interaction3/bem/core/fma_functions.pyx":513
  *     kdir[:(M - 1) / 2, :, 1] += pi
  * 
  *     kcoord = dir2coord(kdir)             # <<<<<<<<<<<<<<
+ *     kcoordT = kcoord.transpose((0, 2, 1))
  * 
- *     quadrule = dict()
  */
-  __pyx_t_4 = ((PyObject *)__pyx_f_3bem_4core_13fma_functions_dir2coord(__pyx_v_kdir, 0)); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 513, __pyx_L1_error)
+  __pyx_t_4 = ((PyObject *)__pyx_f_12interaction3_3bem_4core_13fma_functions_dir2coord(__pyx_v_kdir, 0)); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 513, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
   __pyx_v_kcoord = ((PyArrayObject *)__pyx_t_4);
   __pyx_t_4 = 0;
 
-  /* "bem/core/fma_functions.pyx":515
+  /* "interaction3/bem/core/fma_functions.pyx":514
+ * 
  *     kcoord = dir2coord(kdir)
+ *     kcoordT = kcoord.transpose((0, 2, 1))             # <<<<<<<<<<<<<<
+ * 
+ *     quadrule = dict()
+ */
+  __pyx_t_4 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_kcoord), __pyx_n_s_transpose); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 514, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_4);
+  __pyx_t_3 = __Pyx_PyObject_Call(__pyx_t_4, __pyx_tuple__32, NULL); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 514, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_3);
+  __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
+  __pyx_v_kcoordT = __pyx_t_3;
+  __pyx_t_3 = 0;
+
+  /* "interaction3/bem/core/fma_functions.pyx":516
+ *     kcoordT = kcoord.transpose((0, 2, 1))
  * 
  *     quadrule = dict()             # <<<<<<<<<<<<<<
  *     quadrule['kdir'] = kdir
  *     quadrule['kcoord'] = kcoord
  */
-  __pyx_t_4 = PyDict_New(); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 515, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_4);
-  __pyx_v_quadrule = ((PyObject*)__pyx_t_4);
-  __pyx_t_4 = 0;
+  __pyx_t_3 = PyDict_New(); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 516, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_3);
+  __pyx_v_quadrule = ((PyObject*)__pyx_t_3);
+  __pyx_t_3 = 0;
 
-  /* "bem/core/fma_functions.pyx":516
+  /* "interaction3/bem/core/fma_functions.pyx":517
  * 
  *     quadrule = dict()
  *     quadrule['kdir'] = kdir             # <<<<<<<<<<<<<<
  *     quadrule['kcoord'] = kcoord
- *     quadrule['weights'] = weights
+ *     quadrule['kcoordT'] = kcoordT
  */
-  if (unlikely(PyDict_SetItem(__pyx_v_quadrule, __pyx_n_s_kdir, __pyx_v_kdir) < 0)) __PYX_ERR(0, 516, __pyx_L1_error)
+  if (unlikely(PyDict_SetItem(__pyx_v_quadrule, __pyx_n_s_kdir, __pyx_v_kdir) < 0)) __PYX_ERR(0, 517, __pyx_L1_error)
 
-  /* "bem/core/fma_functions.pyx":517
+  /* "interaction3/bem/core/fma_functions.pyx":518
  *     quadrule = dict()
  *     quadrule['kdir'] = kdir
  *     quadrule['kcoord'] = kcoord             # <<<<<<<<<<<<<<
+ *     quadrule['kcoordT'] = kcoordT
+ *     quadrule['weights'] = weights
+ */
+  if (unlikely(PyDict_SetItem(__pyx_v_quadrule, __pyx_n_s_kcoord, ((PyObject *)__pyx_v_kcoord)) < 0)) __PYX_ERR(0, 518, __pyx_L1_error)
+
+  /* "interaction3/bem/core/fma_functions.pyx":519
+ *     quadrule['kdir'] = kdir
+ *     quadrule['kcoord'] = kcoord
+ *     quadrule['kcoordT'] = kcoordT             # <<<<<<<<<<<<<<
  *     quadrule['weights'] = weights
  *     quadrule['theta'] = theta
  */
-  if (unlikely(PyDict_SetItem(__pyx_v_quadrule, __pyx_n_s_kcoord, ((PyObject *)__pyx_v_kcoord)) < 0)) __PYX_ERR(0, 517, __pyx_L1_error)
+  if (unlikely(PyDict_SetItem(__pyx_v_quadrule, __pyx_n_s_kcoordT, __pyx_v_kcoordT) < 0)) __PYX_ERR(0, 519, __pyx_L1_error)
 
-  /* "bem/core/fma_functions.pyx":518
- *     quadrule['kdir'] = kdir
+  /* "interaction3/bem/core/fma_functions.pyx":520
  *     quadrule['kcoord'] = kcoord
+ *     quadrule['kcoordT'] = kcoordT
  *     quadrule['weights'] = weights             # <<<<<<<<<<<<<<
  *     quadrule['theta'] = theta
  *     quadrule['phi'] = phi
  */
-  if (unlikely(PyDict_SetItem(__pyx_v_quadrule, __pyx_n_s_weights, __pyx_v_weights) < 0)) __PYX_ERR(0, 518, __pyx_L1_error)
+  if (unlikely(PyDict_SetItem(__pyx_v_quadrule, __pyx_n_s_weights, __pyx_v_weights) < 0)) __PYX_ERR(0, 520, __pyx_L1_error)
 
-  /* "bem/core/fma_functions.pyx":519
- *     quadrule['kcoord'] = kcoord
+  /* "interaction3/bem/core/fma_functions.pyx":521
+ *     quadrule['kcoordT'] = kcoordT
  *     quadrule['weights'] = weights
  *     quadrule['theta'] = theta             # <<<<<<<<<<<<<<
  *     quadrule['phi'] = phi
  *     quadrule['theta_order'] = theta_order
  */
-  if (unlikely(PyDict_SetItem(__pyx_v_quadrule, __pyx_n_s_theta, __pyx_v_theta) < 0)) __PYX_ERR(0, 519, __pyx_L1_error)
+  if (unlikely(PyDict_SetItem(__pyx_v_quadrule, __pyx_n_s_theta, __pyx_v_theta) < 0)) __PYX_ERR(0, 521, __pyx_L1_error)
 
-  /* "bem/core/fma_functions.pyx":520
+  /* "interaction3/bem/core/fma_functions.pyx":522
  *     quadrule['weights'] = weights
  *     quadrule['theta'] = theta
  *     quadrule['phi'] = phi             # <<<<<<<<<<<<<<
  *     quadrule['theta_order'] = theta_order
  *     quadrule['phi_order'] = phi_order
  */
-  if (unlikely(PyDict_SetItem(__pyx_v_quadrule, __pyx_n_s_phi, __pyx_v_phi) < 0)) __PYX_ERR(0, 520, __pyx_L1_error)
+  if (unlikely(PyDict_SetItem(__pyx_v_quadrule, __pyx_n_s_phi, __pyx_v_phi) < 0)) __PYX_ERR(0, 522, __pyx_L1_error)
 
-  /* "bem/core/fma_functions.pyx":521
+  /* "interaction3/bem/core/fma_functions.pyx":523
  *     quadrule['theta'] = theta
  *     quadrule['phi'] = phi
  *     quadrule['theta_order'] = theta_order             # <<<<<<<<<<<<<<
  *     quadrule['phi_order'] = phi_order
  *     quadrule['ntheta'] = ntheta
  */
-  __pyx_t_4 = __Pyx_PyInt_From_int(__pyx_v_theta_order); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 521, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_4);
-  if (unlikely(PyDict_SetItem(__pyx_v_quadrule, __pyx_n_s_theta_order, __pyx_t_4) < 0)) __PYX_ERR(0, 521, __pyx_L1_error)
-  __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
+  __pyx_t_3 = __Pyx_PyInt_From_int(__pyx_v_theta_order); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 523, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_3);
+  if (unlikely(PyDict_SetItem(__pyx_v_quadrule, __pyx_n_s_theta_order, __pyx_t_3) < 0)) __PYX_ERR(0, 523, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
 
-  /* "bem/core/fma_functions.pyx":522
+  /* "interaction3/bem/core/fma_functions.pyx":524
  *     quadrule['phi'] = phi
  *     quadrule['theta_order'] = theta_order
  *     quadrule['phi_order'] = phi_order             # <<<<<<<<<<<<<<
  *     quadrule['ntheta'] = ntheta
  *     quadrule['nphi'] = nphi
  */
-  __pyx_t_4 = __Pyx_PyInt_From_int(__pyx_v_phi_order); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 522, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_4);
-  if (unlikely(PyDict_SetItem(__pyx_v_quadrule, __pyx_n_s_phi_order, __pyx_t_4) < 0)) __PYX_ERR(0, 522, __pyx_L1_error)
-  __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
+  __pyx_t_3 = __Pyx_PyInt_From_int(__pyx_v_phi_order); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 524, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_3);
+  if (unlikely(PyDict_SetItem(__pyx_v_quadrule, __pyx_n_s_phi_order, __pyx_t_3) < 0)) __PYX_ERR(0, 524, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
 
-  /* "bem/core/fma_functions.pyx":523
+  /* "interaction3/bem/core/fma_functions.pyx":525
  *     quadrule['theta_order'] = theta_order
  *     quadrule['phi_order'] = phi_order
  *     quadrule['ntheta'] = ntheta             # <<<<<<<<<<<<<<
  *     quadrule['nphi'] = nphi
  *     quadrule['theta_weights'] = thetaweights
  */
-  __pyx_t_4 = __Pyx_PyInt_From_int(__pyx_v_ntheta); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 523, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_4);
-  if (unlikely(PyDict_SetItem(__pyx_v_quadrule, __pyx_n_s_ntheta, __pyx_t_4) < 0)) __PYX_ERR(0, 523, __pyx_L1_error)
-  __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
+  __pyx_t_3 = __Pyx_PyInt_From_int(__pyx_v_ntheta); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 525, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_3);
+  if (unlikely(PyDict_SetItem(__pyx_v_quadrule, __pyx_n_s_ntheta, __pyx_t_3) < 0)) __PYX_ERR(0, 525, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
 
-  /* "bem/core/fma_functions.pyx":524
+  /* "interaction3/bem/core/fma_functions.pyx":526
  *     quadrule['phi_order'] = phi_order
  *     quadrule['ntheta'] = ntheta
  *     quadrule['nphi'] = nphi             # <<<<<<<<<<<<<<
  *     quadrule['theta_weights'] = thetaweights
  *     quadrule['phi_weights'] = phiweights
  */
-  __pyx_t_4 = __Pyx_PyInt_From_int(__pyx_v_nphi); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 524, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_4);
-  if (unlikely(PyDict_SetItem(__pyx_v_quadrule, __pyx_n_s_nphi, __pyx_t_4) < 0)) __PYX_ERR(0, 524, __pyx_L1_error)
-  __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
+  __pyx_t_3 = __Pyx_PyInt_From_int(__pyx_v_nphi); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 526, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_3);
+  if (unlikely(PyDict_SetItem(__pyx_v_quadrule, __pyx_n_s_nphi, __pyx_t_3) < 0)) __PYX_ERR(0, 526, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
 
-  /* "bem/core/fma_functions.pyx":525
+  /* "interaction3/bem/core/fma_functions.pyx":527
  *     quadrule['ntheta'] = ntheta
  *     quadrule['nphi'] = nphi
  *     quadrule['theta_weights'] = thetaweights             # <<<<<<<<<<<<<<
  *     quadrule['phi_weights'] = phiweights
  * 
  */
-  if (unlikely(PyDict_SetItem(__pyx_v_quadrule, __pyx_n_s_theta_weights, __pyx_v_thetaweights) < 0)) __PYX_ERR(0, 525, __pyx_L1_error)
+  if (unlikely(PyDict_SetItem(__pyx_v_quadrule, __pyx_n_s_theta_weights, __pyx_v_thetaweights) < 0)) __PYX_ERR(0, 527, __pyx_L1_error)
 
-  /* "bem/core/fma_functions.pyx":526
+  /* "interaction3/bem/core/fma_functions.pyx":528
  *     quadrule['nphi'] = nphi
  *     quadrule['theta_weights'] = thetaweights
  *     quadrule['phi_weights'] = phiweights             # <<<<<<<<<<<<<<
  * 
  *     return quadrule
  */
-  if (unlikely(PyDict_SetItem(__pyx_v_quadrule, __pyx_n_s_phi_weights, __pyx_v_phiweights) < 0)) __PYX_ERR(0, 526, __pyx_L1_error)
+  if (unlikely(PyDict_SetItem(__pyx_v_quadrule, __pyx_n_s_phi_weights, __pyx_v_phiweights) < 0)) __PYX_ERR(0, 528, __pyx_L1_error)
 
-  /* "bem/core/fma_functions.pyx":528
+  /* "interaction3/bem/core/fma_functions.pyx":530
  *     quadrule['phi_weights'] = phiweights
  * 
  *     return quadrule             # <<<<<<<<<<<<<<
+ * 
+ * 
  */
   __Pyx_XDECREF(__pyx_r);
   __Pyx_INCREF(__pyx_v_quadrule);
   __pyx_r = __pyx_v_quadrule;
   goto __pyx_L0;
 
-  /* "bem/core/fma_functions.pyx":484
+  /* "interaction3/bem/core/fma_functions.pyx":484
  * @cython.boundscheck(False)
  * @cython.wraparound(False)
  * cpdef dict fft_quadrule(int theta_order, int phi_order):             # <<<<<<<<<<<<<<
@@ -10638,7 +10708,7 @@ static PyObject *__pyx_f_3bem_4core_13fma_functions_fft_quadrule(int __pyx_v_the
   __Pyx_XDECREF(__pyx_t_5);
   __Pyx_XDECREF(__pyx_t_6);
   __Pyx_XDECREF(__pyx_t_8);
-  __Pyx_AddTraceback("bem.core.fma_functions.fft_quadrule", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("interaction3.bem.core.fma_functions.fft_quadrule", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = 0;
   __pyx_L0:;
   __Pyx_XDECREF(__pyx_v_theta);
@@ -10650,6 +10720,7 @@ static PyObject *__pyx_f_3bem_4core_13fma_functions_fft_quadrule(int __pyx_v_the
   __Pyx_XDECREF(__pyx_v_kphi);
   __Pyx_XDECREF(__pyx_v_kdir);
   __Pyx_XDECREF((PyObject *)__pyx_v_kcoord);
+  __Pyx_XDECREF(__pyx_v_kcoordT);
   __Pyx_XDECREF(__pyx_v_quadrule);
   __Pyx_XGIVEREF(__pyx_r);
   __Pyx_RefNannyFinishContext();
@@ -10657,9 +10728,9 @@ static PyObject *__pyx_f_3bem_4core_13fma_functions_fft_quadrule(int __pyx_v_the
 }
 
 /* Python wrapper */
-static PyObject *__pyx_pw_3bem_4core_13fma_functions_39fft_quadrule(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static char __pyx_doc_3bem_4core_13fma_functions_38fft_quadrule[] = "\n    Trapezoidal quadrature rule in theta and phi for integration over a unit\n    sphere (memory optimized version).\n    ";
-static PyObject *__pyx_pw_3bem_4core_13fma_functions_39fft_quadrule(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
+static PyObject *__pyx_pw_12interaction3_3bem_4core_13fma_functions_39fft_quadrule(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static char __pyx_doc_12interaction3_3bem_4core_13fma_functions_38fft_quadrule[] = "\n    Trapezoidal quadrature rule in theta and phi for integration over a unit\n    sphere (memory optimized version).\n    ";
+static PyObject *__pyx_pw_12interaction3_3bem_4core_13fma_functions_39fft_quadrule(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
   int __pyx_v_theta_order;
   int __pyx_v_phi_order;
   PyObject *__pyx_r = 0;
@@ -10707,24 +10778,24 @@ static PyObject *__pyx_pw_3bem_4core_13fma_functions_39fft_quadrule(PyObject *__
   __pyx_L5_argtuple_error:;
   __Pyx_RaiseArgtupleInvalid("fft_quadrule", 1, 2, 2, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 484, __pyx_L3_error)
   __pyx_L3_error:;
-  __Pyx_AddTraceback("bem.core.fma_functions.fft_quadrule", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("interaction3.bem.core.fma_functions.fft_quadrule", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  __pyx_r = __pyx_pf_3bem_4core_13fma_functions_38fft_quadrule(__pyx_self, __pyx_v_theta_order, __pyx_v_phi_order);
+  __pyx_r = __pyx_pf_12interaction3_3bem_4core_13fma_functions_38fft_quadrule(__pyx_self, __pyx_v_theta_order, __pyx_v_phi_order);
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_3bem_4core_13fma_functions_38fft_quadrule(CYTHON_UNUSED PyObject *__pyx_self, int __pyx_v_theta_order, int __pyx_v_phi_order) {
+static PyObject *__pyx_pf_12interaction3_3bem_4core_13fma_functions_38fft_quadrule(CYTHON_UNUSED PyObject *__pyx_self, int __pyx_v_theta_order, int __pyx_v_phi_order) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   __Pyx_RefNannySetupContext("fft_quadrule", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __pyx_f_3bem_4core_13fma_functions_fft_quadrule(__pyx_v_theta_order, __pyx_v_phi_order, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 484, __pyx_L1_error)
+  __pyx_t_1 = __pyx_f_12interaction3_3bem_4core_13fma_functions_fft_quadrule(__pyx_v_theta_order, __pyx_v_phi_order, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 484, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -10733,9 +10804,453 @@ static PyObject *__pyx_pf_3bem_4core_13fma_functions_38fft_quadrule(CYTHON_UNUSE
   /* function exit code */
   __pyx_L1_error:;
   __Pyx_XDECREF(__pyx_t_1);
-  __Pyx_AddTraceback("bem.core.fma_functions.fft_quadrule", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("interaction3.bem.core.fma_functions.fft_quadrule", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
+  __Pyx_XGIVEREF(__pyx_r);
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+/* "interaction3/bem/core/fma_functions.pyx":535
+ * ## UTILITY FUNCTIONS ##
+ * 
+ * def get_unique_coords(dims=2):             # <<<<<<<<<<<<<<
+ * 
+ *     if dims == 2:
+ */
+
+/* Python wrapper */
+static PyObject *__pyx_pw_12interaction3_3bem_4core_13fma_functions_41get_unique_coords(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static PyMethodDef __pyx_mdef_12interaction3_3bem_4core_13fma_functions_41get_unique_coords = {"get_unique_coords", (PyCFunction)__pyx_pw_12interaction3_3bem_4core_13fma_functions_41get_unique_coords, METH_VARARGS|METH_KEYWORDS, 0};
+static PyObject *__pyx_pw_12interaction3_3bem_4core_13fma_functions_41get_unique_coords(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
+  PyObject *__pyx_v_dims = 0;
+  PyObject *__pyx_r = 0;
+  __Pyx_RefNannyDeclarations
+  __Pyx_RefNannySetupContext("get_unique_coords (wrapper)", 0);
+  {
+    static PyObject **__pyx_pyargnames[] = {&__pyx_n_s_dims,0};
+    PyObject* values[1] = {0};
+    values[0] = ((PyObject *)__pyx_int_2);
+    if (unlikely(__pyx_kwds)) {
+      Py_ssize_t kw_args;
+      const Py_ssize_t pos_args = PyTuple_GET_SIZE(__pyx_args);
+      switch (pos_args) {
+        case  1: values[0] = PyTuple_GET_ITEM(__pyx_args, 0);
+        CYTHON_FALLTHROUGH;
+        case  0: break;
+        default: goto __pyx_L5_argtuple_error;
+      }
+      kw_args = PyDict_Size(__pyx_kwds);
+      switch (pos_args) {
+        case  0:
+        if (kw_args > 0) {
+          PyObject* value = PyDict_GetItem(__pyx_kwds, __pyx_n_s_dims);
+          if (value) { values[0] = value; kw_args--; }
+        }
+      }
+      if (unlikely(kw_args > 0)) {
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "get_unique_coords") < 0)) __PYX_ERR(0, 535, __pyx_L3_error)
+      }
+    } else {
+      switch (PyTuple_GET_SIZE(__pyx_args)) {
+        case  1: values[0] = PyTuple_GET_ITEM(__pyx_args, 0);
+        CYTHON_FALLTHROUGH;
+        case  0: break;
+        default: goto __pyx_L5_argtuple_error;
+      }
+    }
+    __pyx_v_dims = values[0];
+  }
+  goto __pyx_L4_argument_unpacking_done;
+  __pyx_L5_argtuple_error:;
+  __Pyx_RaiseArgtupleInvalid("get_unique_coords", 0, 0, 1, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 535, __pyx_L3_error)
+  __pyx_L3_error:;
+  __Pyx_AddTraceback("interaction3.bem.core.fma_functions.get_unique_coords", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_RefNannyFinishContext();
+  return NULL;
+  __pyx_L4_argument_unpacking_done:;
+  __pyx_r = __pyx_pf_12interaction3_3bem_4core_13fma_functions_40get_unique_coords(__pyx_self, __pyx_v_dims);
+
+  /* function exit code */
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+static PyObject *__pyx_pf_12interaction3_3bem_4core_13fma_functions_40get_unique_coords(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_dims) {
+  PyObject *__pyx_v_x = NULL;
+  PyObject *__pyx_v_y = NULL;
+  PyObject *__pyx_v_z = NULL;
+  PyObject *__pyx_v_unique_coords = NULL;
+  PyObject *__pyx_r = NULL;
+  __Pyx_RefNannyDeclarations
+  PyObject *__pyx_t_1 = NULL;
+  int __pyx_t_2;
+  PyObject *__pyx_t_3 = NULL;
+  PyObject *__pyx_t_4 = NULL;
+  PyObject *__pyx_t_5 = NULL;
+  PyObject *__pyx_t_6 = NULL;
+  PyObject *(*__pyx_t_7)(PyObject *);
+  PyObject *__pyx_t_8 = NULL;
+  PyObject *__pyx_t_9 = NULL;
+  __Pyx_RefNannySetupContext("get_unique_coords", 0);
+
+  /* "interaction3/bem/core/fma_functions.pyx":537
+ * def get_unique_coords(dims=2):
+ * 
+ *     if dims == 2:             # <<<<<<<<<<<<<<
+ * 
+ *         x, y, z = np.mgrid[1:4, 0:4, 0:1:1j]
+ */
+  __pyx_t_1 = __Pyx_PyInt_EqObjC(__pyx_v_dims, __pyx_int_2, 2, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 537, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  __pyx_t_2 = __Pyx_PyObject_IsTrue(__pyx_t_1); if (unlikely(__pyx_t_2 < 0)) __PYX_ERR(0, 537, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+  if (__pyx_t_2) {
+
+    /* "interaction3/bem/core/fma_functions.pyx":539
+ *     if dims == 2:
+ * 
+ *         x, y, z = np.mgrid[1:4, 0:4, 0:1:1j]             # <<<<<<<<<<<<<<
+ *         unique_coords = np.c_[x.ravel(), y.ravel(), z.ravel()].astype(int)
+ *         unique_coords = unique_coords[2:, :].tolist()
+ */
+    __pyx_t_1 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 539, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_1);
+    __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_n_s_mgrid); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 539, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_3);
+    __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+    __pyx_t_1 = PyComplex_FromDoubles(0.0, 1.0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 539, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_1);
+    __pyx_t_4 = PySlice_New(__pyx_int_0, __pyx_int_1, __pyx_t_1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 539, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_4);
+    __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+    __pyx_t_1 = PyTuple_New(3); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 539, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_1);
+    __Pyx_INCREF(__pyx_slice__33);
+    __Pyx_GIVEREF(__pyx_slice__33);
+    PyTuple_SET_ITEM(__pyx_t_1, 0, __pyx_slice__33);
+    __Pyx_INCREF(__pyx_slice__34);
+    __Pyx_GIVEREF(__pyx_slice__34);
+    PyTuple_SET_ITEM(__pyx_t_1, 1, __pyx_slice__34);
+    __Pyx_GIVEREF(__pyx_t_4);
+    PyTuple_SET_ITEM(__pyx_t_1, 2, __pyx_t_4);
+    __pyx_t_4 = 0;
+    __pyx_t_4 = PyObject_GetItem(__pyx_t_3, __pyx_t_1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 539, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_4);
+    __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+    __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+    if ((likely(PyTuple_CheckExact(__pyx_t_4))) || (PyList_CheckExact(__pyx_t_4))) {
+      PyObject* sequence = __pyx_t_4;
+      #if !CYTHON_COMPILING_IN_PYPY
+      Py_ssize_t size = Py_SIZE(sequence);
+      #else
+      Py_ssize_t size = PySequence_Size(sequence);
+      #endif
+      if (unlikely(size != 3)) {
+        if (size > 3) __Pyx_RaiseTooManyValuesError(3);
+        else if (size >= 0) __Pyx_RaiseNeedMoreValuesError(size);
+        __PYX_ERR(0, 539, __pyx_L1_error)
+      }
+      #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
+      if (likely(PyTuple_CheckExact(sequence))) {
+        __pyx_t_1 = PyTuple_GET_ITEM(sequence, 0); 
+        __pyx_t_3 = PyTuple_GET_ITEM(sequence, 1); 
+        __pyx_t_5 = PyTuple_GET_ITEM(sequence, 2); 
+      } else {
+        __pyx_t_1 = PyList_GET_ITEM(sequence, 0); 
+        __pyx_t_3 = PyList_GET_ITEM(sequence, 1); 
+        __pyx_t_5 = PyList_GET_ITEM(sequence, 2); 
+      }
+      __Pyx_INCREF(__pyx_t_1);
+      __Pyx_INCREF(__pyx_t_3);
+      __Pyx_INCREF(__pyx_t_5);
+      #else
+      __pyx_t_1 = PySequence_ITEM(sequence, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 539, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_1);
+      __pyx_t_3 = PySequence_ITEM(sequence, 1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 539, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_3);
+      __pyx_t_5 = PySequence_ITEM(sequence, 2); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 539, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_5);
+      #endif
+      __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
+    } else {
+      Py_ssize_t index = -1;
+      __pyx_t_6 = PyObject_GetIter(__pyx_t_4); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 539, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_6);
+      __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
+      __pyx_t_7 = Py_TYPE(__pyx_t_6)->tp_iternext;
+      index = 0; __pyx_t_1 = __pyx_t_7(__pyx_t_6); if (unlikely(!__pyx_t_1)) goto __pyx_L4_unpacking_failed;
+      __Pyx_GOTREF(__pyx_t_1);
+      index = 1; __pyx_t_3 = __pyx_t_7(__pyx_t_6); if (unlikely(!__pyx_t_3)) goto __pyx_L4_unpacking_failed;
+      __Pyx_GOTREF(__pyx_t_3);
+      index = 2; __pyx_t_5 = __pyx_t_7(__pyx_t_6); if (unlikely(!__pyx_t_5)) goto __pyx_L4_unpacking_failed;
+      __Pyx_GOTREF(__pyx_t_5);
+      if (__Pyx_IternextUnpackEndCheck(__pyx_t_7(__pyx_t_6), 3) < 0) __PYX_ERR(0, 539, __pyx_L1_error)
+      __pyx_t_7 = NULL;
+      __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
+      goto __pyx_L5_unpacking_done;
+      __pyx_L4_unpacking_failed:;
+      __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
+      __pyx_t_7 = NULL;
+      if (__Pyx_IterFinish() == 0) __Pyx_RaiseNeedMoreValuesError(index);
+      __PYX_ERR(0, 539, __pyx_L1_error)
+      __pyx_L5_unpacking_done:;
+    }
+    __pyx_v_x = __pyx_t_1;
+    __pyx_t_1 = 0;
+    __pyx_v_y = __pyx_t_3;
+    __pyx_t_3 = 0;
+    __pyx_v_z = __pyx_t_5;
+    __pyx_t_5 = 0;
+
+    /* "interaction3/bem/core/fma_functions.pyx":540
+ * 
+ *         x, y, z = np.mgrid[1:4, 0:4, 0:1:1j]
+ *         unique_coords = np.c_[x.ravel(), y.ravel(), z.ravel()].astype(int)             # <<<<<<<<<<<<<<
+ *         unique_coords = unique_coords[2:, :].tolist()
+ * 
+ */
+    __pyx_t_5 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 540, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_5);
+    __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_5, __pyx_n_s_c_2); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 540, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_3);
+    __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
+    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_x, __pyx_n_s_ravel); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 540, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_1);
+    __pyx_t_6 = NULL;
+    if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_1))) {
+      __pyx_t_6 = PyMethod_GET_SELF(__pyx_t_1);
+      if (likely(__pyx_t_6)) {
+        PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_1);
+        __Pyx_INCREF(__pyx_t_6);
+        __Pyx_INCREF(function);
+        __Pyx_DECREF_SET(__pyx_t_1, function);
+      }
+    }
+    if (__pyx_t_6) {
+      __pyx_t_5 = __Pyx_PyObject_CallOneArg(__pyx_t_1, __pyx_t_6); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 540, __pyx_L1_error)
+      __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
+    } else {
+      __pyx_t_5 = __Pyx_PyObject_CallNoArg(__pyx_t_1); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 540, __pyx_L1_error)
+    }
+    __Pyx_GOTREF(__pyx_t_5);
+    __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+    __pyx_t_6 = __Pyx_PyObject_GetAttrStr(__pyx_v_y, __pyx_n_s_ravel); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 540, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_6);
+    __pyx_t_8 = NULL;
+    if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_6))) {
+      __pyx_t_8 = PyMethod_GET_SELF(__pyx_t_6);
+      if (likely(__pyx_t_8)) {
+        PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_6);
+        __Pyx_INCREF(__pyx_t_8);
+        __Pyx_INCREF(function);
+        __Pyx_DECREF_SET(__pyx_t_6, function);
+      }
+    }
+    if (__pyx_t_8) {
+      __pyx_t_1 = __Pyx_PyObject_CallOneArg(__pyx_t_6, __pyx_t_8); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 540, __pyx_L1_error)
+      __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
+    } else {
+      __pyx_t_1 = __Pyx_PyObject_CallNoArg(__pyx_t_6); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 540, __pyx_L1_error)
+    }
+    __Pyx_GOTREF(__pyx_t_1);
+    __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
+    __pyx_t_8 = __Pyx_PyObject_GetAttrStr(__pyx_v_z, __pyx_n_s_ravel); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 540, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_8);
+    __pyx_t_9 = NULL;
+    if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_8))) {
+      __pyx_t_9 = PyMethod_GET_SELF(__pyx_t_8);
+      if (likely(__pyx_t_9)) {
+        PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_8);
+        __Pyx_INCREF(__pyx_t_9);
+        __Pyx_INCREF(function);
+        __Pyx_DECREF_SET(__pyx_t_8, function);
+      }
+    }
+    if (__pyx_t_9) {
+      __pyx_t_6 = __Pyx_PyObject_CallOneArg(__pyx_t_8, __pyx_t_9); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 540, __pyx_L1_error)
+      __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
+    } else {
+      __pyx_t_6 = __Pyx_PyObject_CallNoArg(__pyx_t_8); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 540, __pyx_L1_error)
+    }
+    __Pyx_GOTREF(__pyx_t_6);
+    __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
+    __pyx_t_8 = PyTuple_New(3); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 540, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_8);
+    __Pyx_GIVEREF(__pyx_t_5);
+    PyTuple_SET_ITEM(__pyx_t_8, 0, __pyx_t_5);
+    __Pyx_GIVEREF(__pyx_t_1);
+    PyTuple_SET_ITEM(__pyx_t_8, 1, __pyx_t_1);
+    __Pyx_GIVEREF(__pyx_t_6);
+    PyTuple_SET_ITEM(__pyx_t_8, 2, __pyx_t_6);
+    __pyx_t_5 = 0;
+    __pyx_t_1 = 0;
+    __pyx_t_6 = 0;
+    __pyx_t_6 = PyObject_GetItem(__pyx_t_3, __pyx_t_8); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 540, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_6);
+    __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+    __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
+    __pyx_t_8 = __Pyx_PyObject_GetAttrStr(__pyx_t_6, __pyx_n_s_astype); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 540, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_8);
+    __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
+    __pyx_t_6 = NULL;
+    if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_8))) {
+      __pyx_t_6 = PyMethod_GET_SELF(__pyx_t_8);
+      if (likely(__pyx_t_6)) {
+        PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_8);
+        __Pyx_INCREF(__pyx_t_6);
+        __Pyx_INCREF(function);
+        __Pyx_DECREF_SET(__pyx_t_8, function);
+      }
+    }
+    if (!__pyx_t_6) {
+      __pyx_t_4 = __Pyx_PyObject_CallOneArg(__pyx_t_8, ((PyObject *)(&PyInt_Type))); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 540, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_4);
+    } else {
+      #if CYTHON_FAST_PYCALL
+      if (PyFunction_Check(__pyx_t_8)) {
+        PyObject *__pyx_temp[2] = {__pyx_t_6, ((PyObject *)(&PyInt_Type))};
+        __pyx_t_4 = __Pyx_PyFunction_FastCall(__pyx_t_8, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 540, __pyx_L1_error)
+        __Pyx_XDECREF(__pyx_t_6); __pyx_t_6 = 0;
+        __Pyx_GOTREF(__pyx_t_4);
+      } else
+      #endif
+      #if CYTHON_FAST_PYCCALL
+      if (__Pyx_PyFastCFunction_Check(__pyx_t_8)) {
+        PyObject *__pyx_temp[2] = {__pyx_t_6, ((PyObject *)(&PyInt_Type))};
+        __pyx_t_4 = __Pyx_PyCFunction_FastCall(__pyx_t_8, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 540, __pyx_L1_error)
+        __Pyx_XDECREF(__pyx_t_6); __pyx_t_6 = 0;
+        __Pyx_GOTREF(__pyx_t_4);
+      } else
+      #endif
+      {
+        __pyx_t_3 = PyTuple_New(1+1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 540, __pyx_L1_error)
+        __Pyx_GOTREF(__pyx_t_3);
+        __Pyx_GIVEREF(__pyx_t_6); PyTuple_SET_ITEM(__pyx_t_3, 0, __pyx_t_6); __pyx_t_6 = NULL;
+        __Pyx_INCREF(((PyObject *)(&PyInt_Type)));
+        __Pyx_GIVEREF(((PyObject *)(&PyInt_Type)));
+        PyTuple_SET_ITEM(__pyx_t_3, 0+1, ((PyObject *)(&PyInt_Type)));
+        __pyx_t_4 = __Pyx_PyObject_Call(__pyx_t_8, __pyx_t_3, NULL); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 540, __pyx_L1_error)
+        __Pyx_GOTREF(__pyx_t_4);
+        __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+      }
+    }
+    __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
+    __pyx_v_unique_coords = __pyx_t_4;
+    __pyx_t_4 = 0;
+
+    /* "interaction3/bem/core/fma_functions.pyx":541
+ *         x, y, z = np.mgrid[1:4, 0:4, 0:1:1j]
+ *         unique_coords = np.c_[x.ravel(), y.ravel(), z.ravel()].astype(int)
+ *         unique_coords = unique_coords[2:, :].tolist()             # <<<<<<<<<<<<<<
+ * 
+ *     elif dims == 3:
+ */
+    __pyx_t_8 = PyObject_GetItem(__pyx_v_unique_coords, __pyx_tuple__37); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 541, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_8);
+    __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_8, __pyx_n_s_tolist); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 541, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_3);
+    __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
+    __pyx_t_8 = NULL;
+    if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_3))) {
+      __pyx_t_8 = PyMethod_GET_SELF(__pyx_t_3);
+      if (likely(__pyx_t_8)) {
+        PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_3);
+        __Pyx_INCREF(__pyx_t_8);
+        __Pyx_INCREF(function);
+        __Pyx_DECREF_SET(__pyx_t_3, function);
+      }
+    }
+    if (__pyx_t_8) {
+      __pyx_t_4 = __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_t_8); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 541, __pyx_L1_error)
+      __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
+    } else {
+      __pyx_t_4 = __Pyx_PyObject_CallNoArg(__pyx_t_3); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 541, __pyx_L1_error)
+    }
+    __Pyx_GOTREF(__pyx_t_4);
+    __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+    __Pyx_DECREF_SET(__pyx_v_unique_coords, __pyx_t_4);
+    __pyx_t_4 = 0;
+
+    /* "interaction3/bem/core/fma_functions.pyx":537
+ * def get_unique_coords(dims=2):
+ * 
+ *     if dims == 2:             # <<<<<<<<<<<<<<
+ * 
+ *         x, y, z = np.mgrid[1:4, 0:4, 0:1:1j]
+ */
+    goto __pyx_L3;
+  }
+
+  /* "interaction3/bem/core/fma_functions.pyx":543
+ *         unique_coords = unique_coords[2:, :].tolist()
+ * 
+ *     elif dims == 3:             # <<<<<<<<<<<<<<
+ *         unique_coords = None
+ * 
+ */
+  __pyx_t_4 = __Pyx_PyInt_EqObjC(__pyx_v_dims, __pyx_int_3, 3, 0); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 543, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_4);
+  __pyx_t_2 = __Pyx_PyObject_IsTrue(__pyx_t_4); if (unlikely(__pyx_t_2 < 0)) __PYX_ERR(0, 543, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
+  if (__pyx_t_2) {
+
+    /* "interaction3/bem/core/fma_functions.pyx":544
+ * 
+ *     elif dims == 3:
+ *         unique_coords = None             # <<<<<<<<<<<<<<
+ * 
+ *     return unique_coords
+ */
+    __Pyx_INCREF(Py_None);
+    __pyx_v_unique_coords = Py_None;
+
+    /* "interaction3/bem/core/fma_functions.pyx":543
+ *         unique_coords = unique_coords[2:, :].tolist()
+ * 
+ *     elif dims == 3:             # <<<<<<<<<<<<<<
+ *         unique_coords = None
+ * 
+ */
+  }
+  __pyx_L3:;
+
+  /* "interaction3/bem/core/fma_functions.pyx":546
+ *         unique_coords = None
+ * 
+ *     return unique_coords             # <<<<<<<<<<<<<<
+ */
+  __Pyx_XDECREF(__pyx_r);
+  if (unlikely(!__pyx_v_unique_coords)) { __Pyx_RaiseUnboundLocalError("unique_coords"); __PYX_ERR(0, 546, __pyx_L1_error) }
+  __Pyx_INCREF(__pyx_v_unique_coords);
+  __pyx_r = __pyx_v_unique_coords;
+  goto __pyx_L0;
+
+  /* "interaction3/bem/core/fma_functions.pyx":535
+ * ## UTILITY FUNCTIONS ##
+ * 
+ * def get_unique_coords(dims=2):             # <<<<<<<<<<<<<<
+ * 
+ *     if dims == 2:
+ */
+
+  /* function exit code */
+  __pyx_L1_error:;
+  __Pyx_XDECREF(__pyx_t_1);
+  __Pyx_XDECREF(__pyx_t_3);
+  __Pyx_XDECREF(__pyx_t_4);
+  __Pyx_XDECREF(__pyx_t_5);
+  __Pyx_XDECREF(__pyx_t_6);
+  __Pyx_XDECREF(__pyx_t_8);
+  __Pyx_XDECREF(__pyx_t_9);
+  __Pyx_AddTraceback("interaction3.bem.core.fma_functions.get_unique_coords", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __pyx_r = NULL;
+  __pyx_L0:;
+  __Pyx_XDECREF(__pyx_v_x);
+  __Pyx_XDECREF(__pyx_v_y);
+  __Pyx_XDECREF(__pyx_v_z);
+  __Pyx_XDECREF(__pyx_v_unique_coords);
   __Pyx_XGIVEREF(__pyx_r);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
@@ -10910,7 +11425,7 @@ static int __pyx_pf_5numpy_7ndarray___getbuffer__(PyArrayObject *__pyx_v_self, P
  * 
  *             if ((flags & pybuf.PyBUF_F_CONTIGUOUS == pybuf.PyBUF_F_CONTIGUOUS)
  */
-    __pyx_t_3 = __Pyx_PyObject_Call(__pyx_builtin_ValueError, __pyx_tuple__31, NULL); if (unlikely(!__pyx_t_3)) __PYX_ERR(1, 218, __pyx_L1_error)
+    __pyx_t_3 = __Pyx_PyObject_Call(__pyx_builtin_ValueError, __pyx_tuple__38, NULL); if (unlikely(!__pyx_t_3)) __PYX_ERR(1, 218, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
     __Pyx_Raise(__pyx_t_3, 0, 0, 0);
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
@@ -10966,7 +11481,7 @@ static int __pyx_pf_5numpy_7ndarray___getbuffer__(PyArrayObject *__pyx_v_self, P
  * 
  *             info.buf = PyArray_DATA(self)
  */
-    __pyx_t_3 = __Pyx_PyObject_Call(__pyx_builtin_ValueError, __pyx_tuple__32, NULL); if (unlikely(!__pyx_t_3)) __PYX_ERR(1, 222, __pyx_L1_error)
+    __pyx_t_3 = __Pyx_PyObject_Call(__pyx_builtin_ValueError, __pyx_tuple__39, NULL); if (unlikely(!__pyx_t_3)) __PYX_ERR(1, 222, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
     __Pyx_Raise(__pyx_t_3, 0, 0, 0);
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
@@ -11275,7 +11790,7 @@ static int __pyx_pf_5numpy_7ndarray___getbuffer__(PyArrayObject *__pyx_v_self, P
  *                 if   t == NPY_BYTE:        f = "b"
  *                 elif t == NPY_UBYTE:       f = "B"
  */
-      __pyx_t_3 = __Pyx_PyObject_Call(__pyx_builtin_ValueError, __pyx_tuple__33, NULL); if (unlikely(!__pyx_t_3)) __PYX_ERR(1, 259, __pyx_L1_error)
+      __pyx_t_3 = __Pyx_PyObject_Call(__pyx_builtin_ValueError, __pyx_tuple__40, NULL); if (unlikely(!__pyx_t_3)) __PYX_ERR(1, 259, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_3);
       __Pyx_Raise(__pyx_t_3, 0, 0, 0);
       __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
@@ -12090,7 +12605,7 @@ static CYTHON_INLINE char *__pyx_f_5numpy__util_dtypestring(PyArray_Descr *__pyx
  * 
  *         if ((child.byteorder == c'>' and little_endian) or
  */
-      __pyx_t_3 = __Pyx_PyObject_Call(__pyx_builtin_RuntimeError, __pyx_tuple__34, NULL); if (unlikely(!__pyx_t_3)) __PYX_ERR(1, 799, __pyx_L1_error)
+      __pyx_t_3 = __Pyx_PyObject_Call(__pyx_builtin_RuntimeError, __pyx_tuple__41, NULL); if (unlikely(!__pyx_t_3)) __PYX_ERR(1, 799, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_3);
       __Pyx_Raise(__pyx_t_3, 0, 0, 0);
       __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
@@ -12158,7 +12673,7 @@ static CYTHON_INLINE char *__pyx_f_5numpy__util_dtypestring(PyArray_Descr *__pyx
  *             # One could encode it in the format string and have Cython
  *             # complain instead, BUT: < and > in format strings also imply
  */
-      __pyx_t_3 = __Pyx_PyObject_Call(__pyx_builtin_ValueError, __pyx_tuple__35, NULL); if (unlikely(!__pyx_t_3)) __PYX_ERR(1, 803, __pyx_L1_error)
+      __pyx_t_3 = __Pyx_PyObject_Call(__pyx_builtin_ValueError, __pyx_tuple__42, NULL); if (unlikely(!__pyx_t_3)) __PYX_ERR(1, 803, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_3);
       __Pyx_Raise(__pyx_t_3, 0, 0, 0);
       __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
@@ -12267,7 +12782,7 @@ static CYTHON_INLINE char *__pyx_f_5numpy__util_dtypestring(PyArray_Descr *__pyx
  * 
  *             # Until ticket #99 is fixed, use integers to avoid warnings
  */
-        __pyx_t_4 = __Pyx_PyObject_Call(__pyx_builtin_RuntimeError, __pyx_tuple__36, NULL); if (unlikely(!__pyx_t_4)) __PYX_ERR(1, 823, __pyx_L1_error)
+        __pyx_t_4 = __Pyx_PyObject_Call(__pyx_builtin_RuntimeError, __pyx_tuple__43, NULL); if (unlikely(!__pyx_t_4)) __PYX_ERR(1, 823, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_4);
         __Pyx_Raise(__pyx_t_4, 0, 0, 0);
         __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
@@ -12948,7 +13463,7 @@ static CYTHON_INLINE int __pyx_f_5numpy_import_array(void) {
  * 
  * cdef inline int import_umath() except -1:
  */
-      __pyx_t_8 = __Pyx_PyObject_Call(__pyx_builtin_ImportError, __pyx_tuple__37, NULL); if (unlikely(!__pyx_t_8)) __PYX_ERR(1, 989, __pyx_L5_except_error)
+      __pyx_t_8 = __Pyx_PyObject_Call(__pyx_builtin_ImportError, __pyx_tuple__44, NULL); if (unlikely(!__pyx_t_8)) __PYX_ERR(1, 989, __pyx_L5_except_error)
       __Pyx_GOTREF(__pyx_t_8);
       __Pyx_Raise(__pyx_t_8, 0, 0, 0);
       __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
@@ -13079,7 +13594,7 @@ static CYTHON_INLINE int __pyx_f_5numpy_import_umath(void) {
  * 
  * cdef inline int import_ufunc() except -1:
  */
-      __pyx_t_8 = __Pyx_PyObject_Call(__pyx_builtin_ImportError, __pyx_tuple__38, NULL); if (unlikely(!__pyx_t_8)) __PYX_ERR(1, 995, __pyx_L5_except_error)
+      __pyx_t_8 = __Pyx_PyObject_Call(__pyx_builtin_ImportError, __pyx_tuple__45, NULL); if (unlikely(!__pyx_t_8)) __PYX_ERR(1, 995, __pyx_L5_except_error)
       __Pyx_GOTREF(__pyx_t_8);
       __Pyx_Raise(__pyx_t_8, 0, 0, 0);
       __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
@@ -13207,7 +13722,7 @@ static CYTHON_INLINE int __pyx_f_5numpy_import_ufunc(void) {
  *     except Exception:
  *         raise ImportError("numpy.core.umath failed to import")             # <<<<<<<<<<<<<<
  */
-      __pyx_t_8 = __Pyx_PyObject_Call(__pyx_builtin_ImportError, __pyx_tuple__39, NULL); if (unlikely(!__pyx_t_8)) __PYX_ERR(1, 1001, __pyx_L5_except_error)
+      __pyx_t_8 = __Pyx_PyObject_Call(__pyx_builtin_ImportError, __pyx_tuple__46, NULL); if (unlikely(!__pyx_t_8)) __PYX_ERR(1, 1001, __pyx_L5_except_error)
       __Pyx_GOTREF(__pyx_t_8);
       __Pyx_Raise(__pyx_t_8, 0, 0, 0);
       __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
@@ -13451,7 +13966,7 @@ static int __pyx_array___pyx_pf_15View_dot_MemoryView_5array___cinit__(struct __
  * 
  *         if itemsize <= 0:
  */
-    __pyx_t_3 = __Pyx_PyObject_Call(__pyx_builtin_ValueError, __pyx_tuple__40, NULL); if (unlikely(!__pyx_t_3)) __PYX_ERR(2, 131, __pyx_L1_error)
+    __pyx_t_3 = __Pyx_PyObject_Call(__pyx_builtin_ValueError, __pyx_tuple__47, NULL); if (unlikely(!__pyx_t_3)) __PYX_ERR(2, 131, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
     __Pyx_Raise(__pyx_t_3, 0, 0, 0);
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
@@ -13483,7 +13998,7 @@ static int __pyx_array___pyx_pf_15View_dot_MemoryView_5array___cinit__(struct __
  * 
  *         if not isinstance(format, bytes):
  */
-    __pyx_t_3 = __Pyx_PyObject_Call(__pyx_builtin_ValueError, __pyx_tuple__41, NULL); if (unlikely(!__pyx_t_3)) __PYX_ERR(2, 134, __pyx_L1_error)
+    __pyx_t_3 = __Pyx_PyObject_Call(__pyx_builtin_ValueError, __pyx_tuple__48, NULL); if (unlikely(!__pyx_t_3)) __PYX_ERR(2, 134, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
     __Pyx_Raise(__pyx_t_3, 0, 0, 0);
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
@@ -13518,7 +14033,7 @@ static int __pyx_array___pyx_pf_15View_dot_MemoryView_5array___cinit__(struct __
  */
     __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_format, __pyx_n_s_encode); if (unlikely(!__pyx_t_3)) __PYX_ERR(2, 137, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
-    __pyx_t_5 = __Pyx_PyObject_Call(__pyx_t_3, __pyx_tuple__42, NULL); if (unlikely(!__pyx_t_5)) __PYX_ERR(2, 137, __pyx_L1_error)
+    __pyx_t_5 = __Pyx_PyObject_Call(__pyx_t_3, __pyx_tuple__49, NULL); if (unlikely(!__pyx_t_5)) __PYX_ERR(2, 137, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_5);
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
     __Pyx_DECREF_SET(__pyx_v_format, __pyx_t_5);
@@ -13594,7 +14109,7 @@ static int __pyx_array___pyx_pf_15View_dot_MemoryView_5array___cinit__(struct __
  * 
  * 
  */
-    __pyx_t_5 = __Pyx_PyObject_Call(__pyx_builtin_MemoryError, __pyx_tuple__43, NULL); if (unlikely(!__pyx_t_5)) __PYX_ERR(2, 146, __pyx_L1_error)
+    __pyx_t_5 = __Pyx_PyObject_Call(__pyx_builtin_MemoryError, __pyx_tuple__50, NULL); if (unlikely(!__pyx_t_5)) __PYX_ERR(2, 146, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_5);
     __Pyx_Raise(__pyx_t_5, 0, 0, 0);
     __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
@@ -13878,7 +14393,7 @@ static int __pyx_array___pyx_pf_15View_dot_MemoryView_5array___cinit__(struct __
  * 
  *             if self.dtype_is_object:
  */
-      __pyx_t_5 = __Pyx_PyObject_Call(__pyx_builtin_MemoryError, __pyx_tuple__44, NULL); if (unlikely(!__pyx_t_5)) __PYX_ERR(2, 174, __pyx_L1_error)
+      __pyx_t_5 = __Pyx_PyObject_Call(__pyx_builtin_MemoryError, __pyx_tuple__51, NULL); if (unlikely(!__pyx_t_5)) __PYX_ERR(2, 174, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_5);
       __Pyx_Raise(__pyx_t_5, 0, 0, 0);
       __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
@@ -14116,7 +14631,7 @@ static int __pyx_array___pyx_pf_15View_dot_MemoryView_5array_2__getbuffer__(stru
  *         info.buf = self.data
  *         info.len = self.len
  */
-    __pyx_t_3 = __Pyx_PyObject_Call(__pyx_builtin_ValueError, __pyx_tuple__45, NULL); if (unlikely(!__pyx_t_3)) __PYX_ERR(2, 190, __pyx_L1_error)
+    __pyx_t_3 = __Pyx_PyObject_Call(__pyx_builtin_ValueError, __pyx_tuple__52, NULL); if (unlikely(!__pyx_t_3)) __PYX_ERR(2, 190, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
     __Pyx_Raise(__pyx_t_3, 0, 0, 0);
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
@@ -14832,7 +15347,7 @@ static PyObject *__pyx_pf___pyx_array___reduce_cython__(CYTHON_UNUSED struct __p
  * def __setstate_cython__(self, __pyx_state):
  *     raise TypeError("no default __reduce__ due to non-trivial __cinit__")
  */
-  __pyx_t_1 = __Pyx_PyObject_Call(__pyx_builtin_TypeError, __pyx_tuple__46, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(2, 2, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_Call(__pyx_builtin_TypeError, __pyx_tuple__53, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(2, 2, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_Raise(__pyx_t_1, 0, 0, 0);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
@@ -14885,7 +15400,7 @@ static PyObject *__pyx_pf___pyx_array_2__setstate_cython__(CYTHON_UNUSED struct 
  * def __setstate_cython__(self, __pyx_state):
  *     raise TypeError("no default __reduce__ due to non-trivial __cinit__")             # <<<<<<<<<<<<<<
  */
-  __pyx_t_1 = __Pyx_PyObject_Call(__pyx_builtin_TypeError, __pyx_tuple__47, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(2, 4, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_Call(__pyx_builtin_TypeError, __pyx_tuple__54, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(2, 4, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_Raise(__pyx_t_1, 0, 0, 0);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
@@ -17533,7 +18048,7 @@ static PyObject *__pyx_memoryview_convert_item_to_object(struct __pyx_memoryview
  *         else:
  *             if len(self.view.format) == 1:
  */
-      __pyx_t_6 = __Pyx_PyObject_Call(__pyx_builtin_ValueError, __pyx_tuple__48, NULL); if (unlikely(!__pyx_t_6)) __PYX_ERR(2, 486, __pyx_L5_except_error)
+      __pyx_t_6 = __Pyx_PyObject_Call(__pyx_builtin_ValueError, __pyx_tuple__55, NULL); if (unlikely(!__pyx_t_6)) __PYX_ERR(2, 486, __pyx_L5_except_error)
       __Pyx_GOTREF(__pyx_t_6);
       __Pyx_Raise(__pyx_t_6, 0, 0, 0);
       __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
@@ -18374,7 +18889,7 @@ static PyObject *__pyx_pf_15View_dot_MemoryView_10memoryview_7strides___get__(st
  * 
  *         return tuple([stride for stride in self.view.strides[:self.view.ndim]])
  */
-    __pyx_t_2 = __Pyx_PyObject_Call(__pyx_builtin_ValueError, __pyx_tuple__49, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(2, 558, __pyx_L1_error)
+    __pyx_t_2 = __Pyx_PyObject_Call(__pyx_builtin_ValueError, __pyx_tuple__56, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(2, 558, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
     __Pyx_Raise(__pyx_t_2, 0, 0, 0);
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
@@ -18488,7 +19003,7 @@ static PyObject *__pyx_pf_15View_dot_MemoryView_10memoryview_10suboffsets___get_
     __Pyx_XDECREF(__pyx_r);
     __pyx_t_2 = __Pyx_PyInt_From_int(__pyx_v_self->view.ndim); if (unlikely(!__pyx_t_2)) __PYX_ERR(2, 565, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
-    __pyx_t_3 = PyNumber_Multiply(__pyx_tuple__50, __pyx_t_2); if (unlikely(!__pyx_t_3)) __PYX_ERR(2, 565, __pyx_L1_error)
+    __pyx_t_3 = PyNumber_Multiply(__pyx_tuple__57, __pyx_t_2); if (unlikely(!__pyx_t_3)) __PYX_ERR(2, 565, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
     __pyx_r = __pyx_t_3;
@@ -19495,7 +20010,7 @@ static PyObject *__pyx_pf___pyx_memoryview___reduce_cython__(CYTHON_UNUSED struc
  * def __setstate_cython__(self, __pyx_state):
  *     raise TypeError("no default __reduce__ due to non-trivial __cinit__")
  */
-  __pyx_t_1 = __Pyx_PyObject_Call(__pyx_builtin_TypeError, __pyx_tuple__51, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(2, 2, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_Call(__pyx_builtin_TypeError, __pyx_tuple__58, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(2, 2, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_Raise(__pyx_t_1, 0, 0, 0);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
@@ -19548,7 +20063,7 @@ static PyObject *__pyx_pf___pyx_memoryview_2__setstate_cython__(CYTHON_UNUSED st
  * def __setstate_cython__(self, __pyx_state):
  *     raise TypeError("no default __reduce__ due to non-trivial __cinit__")             # <<<<<<<<<<<<<<
  */
-  __pyx_t_1 = __Pyx_PyObject_Call(__pyx_builtin_TypeError, __pyx_tuple__52, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(2, 4, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_Call(__pyx_builtin_TypeError, __pyx_tuple__59, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(2, 4, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_Raise(__pyx_t_1, 0, 0, 0);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
@@ -19899,9 +20414,9 @@ static PyObject *_unellipsify(PyObject *__pyx_v_index, int __pyx_v_ndim) {
         __Pyx_GOTREF(__pyx_t_7);
         { Py_ssize_t __pyx_temp;
           for (__pyx_temp=0; __pyx_temp < ((__pyx_v_ndim - __pyx_t_8) + 1); __pyx_temp++) {
-            __Pyx_INCREF(__pyx_slice__53);
-            __Pyx_GIVEREF(__pyx_slice__53);
-            PyList_SET_ITEM(__pyx_t_7, __pyx_temp, __pyx_slice__53);
+            __Pyx_INCREF(__pyx_slice__60);
+            __Pyx_GIVEREF(__pyx_slice__60);
+            PyList_SET_ITEM(__pyx_t_7, __pyx_temp, __pyx_slice__60);
           }
         }
         __pyx_t_9 = __Pyx_PyList_Extend(__pyx_v_result, __pyx_t_7); if (unlikely(__pyx_t_9 == -1)) __PYX_ERR(2, 670, __pyx_L1_error)
@@ -19934,7 +20449,7 @@ static PyObject *_unellipsify(PyObject *__pyx_v_index, int __pyx_v_ndim) {
  *         else:
  */
       /*else*/ {
-        __pyx_t_9 = __Pyx_PyList_Append(__pyx_v_result, __pyx_slice__54); if (unlikely(__pyx_t_9 == -1)) __PYX_ERR(2, 673, __pyx_L1_error)
+        __pyx_t_9 = __Pyx_PyList_Append(__pyx_v_result, __pyx_slice__61); if (unlikely(__pyx_t_9 == -1)) __PYX_ERR(2, 673, __pyx_L1_error)
       }
       __pyx_L7:;
 
@@ -20079,9 +20594,9 @@ static PyObject *_unellipsify(PyObject *__pyx_v_index, int __pyx_v_ndim) {
     __Pyx_GOTREF(__pyx_t_3);
     { Py_ssize_t __pyx_temp;
       for (__pyx_temp=0; __pyx_temp < __pyx_v_nslices; __pyx_temp++) {
-        __Pyx_INCREF(__pyx_slice__55);
-        __Pyx_GIVEREF(__pyx_slice__55);
-        PyList_SET_ITEM(__pyx_t_3, __pyx_temp, __pyx_slice__55);
+        __Pyx_INCREF(__pyx_slice__62);
+        __Pyx_GIVEREF(__pyx_slice__62);
+        PyList_SET_ITEM(__pyx_t_3, __pyx_temp, __pyx_slice__62);
       }
     }
     __pyx_t_9 = __Pyx_PyList_Extend(__pyx_v_result, __pyx_t_3); if (unlikely(__pyx_t_9 == -1)) __PYX_ERR(2, 684, __pyx_L1_error)
@@ -20205,7 +20720,7 @@ static PyObject *assert_direct_dimensions(Py_ssize_t *__pyx_v_suboffsets, int __
  * 
  * 
  */
-      __pyx_t_5 = __Pyx_PyObject_Call(__pyx_builtin_ValueError, __pyx_tuple__56, NULL); if (unlikely(!__pyx_t_5)) __PYX_ERR(2, 691, __pyx_L1_error)
+      __pyx_t_5 = __Pyx_PyObject_Call(__pyx_builtin_ValueError, __pyx_tuple__63, NULL); if (unlikely(!__pyx_t_5)) __PYX_ERR(2, 691, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_5);
       __Pyx_Raise(__pyx_t_5, 0, 0, 0);
       __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
@@ -22376,7 +22891,7 @@ static PyObject *__pyx_pf___pyx_memoryviewslice___reduce_cython__(CYTHON_UNUSED 
  * def __setstate_cython__(self, __pyx_state):
  *     raise TypeError("no default __reduce__ due to non-trivial __cinit__")
  */
-  __pyx_t_1 = __Pyx_PyObject_Call(__pyx_builtin_TypeError, __pyx_tuple__57, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(2, 2, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_Call(__pyx_builtin_TypeError, __pyx_tuple__64, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(2, 2, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_Raise(__pyx_t_1, 0, 0, 0);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
@@ -22429,7 +22944,7 @@ static PyObject *__pyx_pf___pyx_memoryviewslice_2__setstate_cython__(CYTHON_UNUS
  * def __setstate_cython__(self, __pyx_state):
  *     raise TypeError("no default __reduce__ due to non-trivial __cinit__")             # <<<<<<<<<<<<<<
  */
-  __pyx_t_1 = __Pyx_PyObject_Call(__pyx_builtin_TypeError, __pyx_tuple__58, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(2, 4, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_Call(__pyx_builtin_TypeError, __pyx_tuple__65, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(2, 4, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_Raise(__pyx_t_1, 0, 0, 0);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
@@ -26187,7 +26702,7 @@ static PyBufferProcs __pyx_tp_as_buffer_array = {
 
 static PyTypeObject __pyx_type___pyx_array = {
   PyVarObject_HEAD_INIT(0, 0)
-  "bem.core.fma_functions.array", /*tp_name*/
+  "interaction3.bem.core.fma_functions.array", /*tp_name*/
   sizeof(struct __pyx_array_obj), /*tp_basicsize*/
   0, /*tp_itemsize*/
   __pyx_tp_dealloc_array, /*tp_dealloc*/
@@ -26295,7 +26810,7 @@ static PyMethodDef __pyx_methods_Enum[] = {
 
 static PyTypeObject __pyx_type___pyx_MemviewEnum = {
   PyVarObject_HEAD_INIT(0, 0)
-  "bem.core.fma_functions.Enum", /*tp_name*/
+  "interaction3.bem.core.fma_functions.Enum", /*tp_name*/
   sizeof(struct __pyx_MemviewEnum_obj), /*tp_basicsize*/
   0, /*tp_itemsize*/
   __pyx_tp_dealloc_Enum, /*tp_dealloc*/
@@ -26545,7 +27060,7 @@ static PyBufferProcs __pyx_tp_as_buffer_memoryview = {
 
 static PyTypeObject __pyx_type___pyx_memoryview = {
   PyVarObject_HEAD_INIT(0, 0)
-  "bem.core.fma_functions.memoryview", /*tp_name*/
+  "interaction3.bem.core.fma_functions.memoryview", /*tp_name*/
   sizeof(struct __pyx_memoryview_obj), /*tp_basicsize*/
   0, /*tp_itemsize*/
   __pyx_tp_dealloc_memoryview, /*tp_dealloc*/
@@ -26672,7 +27187,7 @@ static struct PyGetSetDef __pyx_getsets__memoryviewslice[] = {
 
 static PyTypeObject __pyx_type___pyx_memoryviewslice = {
   PyVarObject_HEAD_INIT(0, 0)
-  "bem.core.fma_functions._memoryviewslice", /*tp_name*/
+  "interaction3.bem.core.fma_functions._memoryviewslice", /*tp_name*/
   sizeof(struct __pyx_memoryviewslice_obj), /*tp_basicsize*/
   0, /*tp_itemsize*/
   __pyx_tp_dealloc__memoryviewslice, /*tp_dealloc*/
@@ -26737,25 +27252,25 @@ static PyTypeObject __pyx_type___pyx_memoryviewslice = {
 };
 
 static PyMethodDef __pyx_methods[] = {
-  {"mag", (PyCFunction)__pyx_pw_3bem_4core_13fma_functions_1mag, METH_O, __pyx_doc_3bem_4core_13fma_functions_mag},
-  {"distance", (PyCFunction)__pyx_pw_3bem_4core_13fma_functions_3distance, METH_VARARGS|METH_KEYWORDS, __pyx_doc_3bem_4core_13fma_functions_2distance},
-  {"dir2coord", (PyCFunction)__pyx_pw_3bem_4core_13fma_functions_5dir2coord, METH_O, __pyx_doc_3bem_4core_13fma_functions_4dir2coord},
-  {"sph_hankel2", (PyCFunction)__pyx_pw_3bem_4core_13fma_functions_7sph_hankel2, METH_VARARGS|METH_KEYWORDS, __pyx_doc_3bem_4core_13fma_functions_6sph_hankel2},
-  {"direct_eval", (PyCFunction)__pyx_pw_3bem_4core_13fma_functions_11direct_eval, METH_VARARGS|METH_KEYWORDS, __pyx_doc_3bem_4core_13fma_functions_10direct_eval},
-  {"ff_coeff", (PyCFunction)__pyx_pw_3bem_4core_13fma_functions_13ff_coeff, METH_VARARGS|METH_KEYWORDS, __pyx_doc_3bem_4core_13fma_functions_12ff_coeff},
-  {"calc_exp_part", (PyCFunction)__pyx_pw_3bem_4core_13fma_functions_15calc_exp_part, METH_VARARGS|METH_KEYWORDS, __pyx_doc_3bem_4core_13fma_functions_14calc_exp_part},
-  {"nf_eval", (PyCFunction)__pyx_pw_3bem_4core_13fma_functions_17nf_eval, METH_VARARGS|METH_KEYWORDS, __pyx_doc_3bem_4core_13fma_functions_16nf_eval},
-  {"ff2nf_op", (PyCFunction)__pyx_pw_3bem_4core_13fma_functions_19ff2nf_op, METH_VARARGS|METH_KEYWORDS, __pyx_doc_3bem_4core_13fma_functions_18ff2nf_op},
-  {"ff2nf_op2", (PyCFunction)__pyx_pw_3bem_4core_13fma_functions_21ff2nf_op2, METH_VARARGS|METH_KEYWORDS, __pyx_doc_3bem_4core_13fma_functions_20ff2nf_op2},
-  {"mod_ff2nf_op", (PyCFunction)__pyx_pw_3bem_4core_13fma_functions_23mod_ff2nf_op, METH_VARARGS|METH_KEYWORDS, __pyx_doc_3bem_4core_13fma_functions_22mod_ff2nf_op},
-  {"bandlimited_abs_sin", (PyCFunction)__pyx_pw_3bem_4core_13fma_functions_25bandlimited_abs_sin, METH_O, __pyx_doc_3bem_4core_13fma_functions_24bandlimited_abs_sin},
-  {"ff2ff_op", (PyCFunction)__pyx_pw_3bem_4core_13fma_functions_27ff2ff_op, METH_VARARGS|METH_KEYWORDS, __pyx_doc_3bem_4core_13fma_functions_26ff2ff_op},
-  {"half_fft2", (PyCFunction)__pyx_pw_3bem_4core_13fma_functions_29half_fft2, METH_O, __pyx_doc_3bem_4core_13fma_functions_28half_fft2},
-  {"half_ifft2", (PyCFunction)__pyx_pw_3bem_4core_13fma_functions_31half_ifft2, METH_O, __pyx_doc_3bem_4core_13fma_functions_30half_ifft2},
-  {"fft_interpolate", (PyCFunction)__pyx_pw_3bem_4core_13fma_functions_33fft_interpolate, METH_VARARGS|METH_KEYWORDS, __pyx_doc_3bem_4core_13fma_functions_32fft_interpolate},
-  {"fft_interpolate_theta", (PyCFunction)__pyx_pw_3bem_4core_13fma_functions_35fft_interpolate_theta, METH_VARARGS|METH_KEYWORDS, __pyx_doc_3bem_4core_13fma_functions_34fft_interpolate_theta},
-  {"fft_filter", (PyCFunction)__pyx_pw_3bem_4core_13fma_functions_37fft_filter, METH_VARARGS|METH_KEYWORDS, __pyx_doc_3bem_4core_13fma_functions_36fft_filter},
-  {"fft_quadrule", (PyCFunction)__pyx_pw_3bem_4core_13fma_functions_39fft_quadrule, METH_VARARGS|METH_KEYWORDS, __pyx_doc_3bem_4core_13fma_functions_38fft_quadrule},
+  {"mag", (PyCFunction)__pyx_pw_12interaction3_3bem_4core_13fma_functions_1mag, METH_O, __pyx_doc_12interaction3_3bem_4core_13fma_functions_mag},
+  {"distance", (PyCFunction)__pyx_pw_12interaction3_3bem_4core_13fma_functions_3distance, METH_VARARGS|METH_KEYWORDS, __pyx_doc_12interaction3_3bem_4core_13fma_functions_2distance},
+  {"dir2coord", (PyCFunction)__pyx_pw_12interaction3_3bem_4core_13fma_functions_5dir2coord, METH_O, __pyx_doc_12interaction3_3bem_4core_13fma_functions_4dir2coord},
+  {"sph_hankel2", (PyCFunction)__pyx_pw_12interaction3_3bem_4core_13fma_functions_7sph_hankel2, METH_VARARGS|METH_KEYWORDS, __pyx_doc_12interaction3_3bem_4core_13fma_functions_6sph_hankel2},
+  {"direct_eval", (PyCFunction)__pyx_pw_12interaction3_3bem_4core_13fma_functions_11direct_eval, METH_VARARGS|METH_KEYWORDS, __pyx_doc_12interaction3_3bem_4core_13fma_functions_10direct_eval},
+  {"ff_coeff", (PyCFunction)__pyx_pw_12interaction3_3bem_4core_13fma_functions_13ff_coeff, METH_VARARGS|METH_KEYWORDS, __pyx_doc_12interaction3_3bem_4core_13fma_functions_12ff_coeff},
+  {"calc_exp_part", (PyCFunction)__pyx_pw_12interaction3_3bem_4core_13fma_functions_15calc_exp_part, METH_VARARGS|METH_KEYWORDS, __pyx_doc_12interaction3_3bem_4core_13fma_functions_14calc_exp_part},
+  {"nf_eval", (PyCFunction)__pyx_pw_12interaction3_3bem_4core_13fma_functions_17nf_eval, METH_VARARGS|METH_KEYWORDS, __pyx_doc_12interaction3_3bem_4core_13fma_functions_16nf_eval},
+  {"ff2nf_op", (PyCFunction)__pyx_pw_12interaction3_3bem_4core_13fma_functions_19ff2nf_op, METH_VARARGS|METH_KEYWORDS, __pyx_doc_12interaction3_3bem_4core_13fma_functions_18ff2nf_op},
+  {"ff2nf_op2", (PyCFunction)__pyx_pw_12interaction3_3bem_4core_13fma_functions_21ff2nf_op2, METH_VARARGS|METH_KEYWORDS, __pyx_doc_12interaction3_3bem_4core_13fma_functions_20ff2nf_op2},
+  {"mod_ff2nf_op", (PyCFunction)__pyx_pw_12interaction3_3bem_4core_13fma_functions_23mod_ff2nf_op, METH_VARARGS|METH_KEYWORDS, __pyx_doc_12interaction3_3bem_4core_13fma_functions_22mod_ff2nf_op},
+  {"bandlimited_abs_sin", (PyCFunction)__pyx_pw_12interaction3_3bem_4core_13fma_functions_25bandlimited_abs_sin, METH_O, __pyx_doc_12interaction3_3bem_4core_13fma_functions_24bandlimited_abs_sin},
+  {"ff2ff_op", (PyCFunction)__pyx_pw_12interaction3_3bem_4core_13fma_functions_27ff2ff_op, METH_VARARGS|METH_KEYWORDS, __pyx_doc_12interaction3_3bem_4core_13fma_functions_26ff2ff_op},
+  {"half_fft2", (PyCFunction)__pyx_pw_12interaction3_3bem_4core_13fma_functions_29half_fft2, METH_O, __pyx_doc_12interaction3_3bem_4core_13fma_functions_28half_fft2},
+  {"half_ifft2", (PyCFunction)__pyx_pw_12interaction3_3bem_4core_13fma_functions_31half_ifft2, METH_O, __pyx_doc_12interaction3_3bem_4core_13fma_functions_30half_ifft2},
+  {"fft_interpolate", (PyCFunction)__pyx_pw_12interaction3_3bem_4core_13fma_functions_33fft_interpolate, METH_VARARGS|METH_KEYWORDS, __pyx_doc_12interaction3_3bem_4core_13fma_functions_32fft_interpolate},
+  {"fft_interpolate_theta", (PyCFunction)__pyx_pw_12interaction3_3bem_4core_13fma_functions_35fft_interpolate_theta, METH_VARARGS|METH_KEYWORDS, __pyx_doc_12interaction3_3bem_4core_13fma_functions_34fft_interpolate_theta},
+  {"fft_filter", (PyCFunction)__pyx_pw_12interaction3_3bem_4core_13fma_functions_37fft_filter, METH_VARARGS|METH_KEYWORDS, __pyx_doc_12interaction3_3bem_4core_13fma_functions_36fft_filter},
+  {"fft_quadrule", (PyCFunction)__pyx_pw_12interaction3_3bem_4core_13fma_functions_39fft_quadrule, METH_VARARGS|METH_KEYWORDS, __pyx_doc_12interaction3_3bem_4core_13fma_functions_38fft_quadrule},
   {0, 0, 0, 0}
 };
 
@@ -26808,14 +27323,14 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_allocate_buffer, __pyx_k_allocate_buffer, sizeof(__pyx_k_allocate_buffer), 0, 0, 1, 1},
   {&__pyx_n_s_arange, __pyx_k_arange, sizeof(__pyx_k_arange), 0, 0, 1, 1},
   {&__pyx_n_s_asarray, __pyx_k_asarray, sizeof(__pyx_k_asarray), 0, 0, 1, 1},
+  {&__pyx_n_s_astype, __pyx_k_astype, sizeof(__pyx_k_astype), 0, 0, 1, 1},
   {&__pyx_n_s_axes, __pyx_k_axes, sizeof(__pyx_k_axes), 0, 0, 1, 1},
   {&__pyx_n_s_axis, __pyx_k_axis, sizeof(__pyx_k_axis), 0, 0, 1, 1},
   {&__pyx_n_s_b, __pyx_k_b, sizeof(__pyx_k_b), 0, 0, 1, 1},
   {&__pyx_n_s_base, __pyx_k_base, sizeof(__pyx_k_base), 0, 0, 1, 1},
-  {&__pyx_n_s_bem_core_fma_functions, __pyx_k_bem_core_fma_functions, sizeof(__pyx_k_bem_core_fma_functions), 0, 0, 1, 1},
-  {&__pyx_kp_s_bem_core_fma_functions_pyx, __pyx_k_bem_core_fma_functions_pyx, sizeof(__pyx_k_bem_core_fma_functions_pyx), 0, 0, 1, 0},
   {&__pyx_n_s_c, __pyx_k_c, sizeof(__pyx_k_c), 0, 0, 1, 1},
   {&__pyx_n_u_c, __pyx_k_c, sizeof(__pyx_k_c), 0, 1, 0, 1},
+  {&__pyx_n_s_c_2, __pyx_k_c_2, sizeof(__pyx_k_c_2), 0, 0, 1, 1},
   {&__pyx_n_s_center, __pyx_k_center, sizeof(__pyx_k_center), 0, 0, 1, 1},
   {&__pyx_n_s_class, __pyx_k_class, sizeof(__pyx_k_class), 0, 0, 1, 1},
   {&__pyx_n_s_cline_in_traceback, __pyx_k_cline_in_traceback, sizeof(__pyx_k_cline_in_traceback), 0, 0, 1, 1},
@@ -26829,6 +27344,7 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_cos, __pyx_k_cos, sizeof(__pyx_k_cos), 0, 0, 1, 1},
   {&__pyx_n_s_cos_angle, __pyx_k_cos_angle, sizeof(__pyx_k_cos_angle), 0, 0, 1, 1},
   {&__pyx_n_s_dict, __pyx_k_dict, sizeof(__pyx_k_dict), 0, 0, 1, 1},
+  {&__pyx_n_s_dims, __pyx_k_dims, sizeof(__pyx_k_dims), 0, 0, 1, 1},
   {&__pyx_n_s_dist, __pyx_k_dist, sizeof(__pyx_k_dist), 0, 0, 1, 1},
   {&__pyx_n_s_dot, __pyx_k_dot, sizeof(__pyx_k_dot), 0, 0, 1, 1},
   {&__pyx_n_s_double, __pyx_k_double, sizeof(__pyx_k_double), 0, 0, 1, 1},
@@ -26849,6 +27365,7 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_format, __pyx_k_format, sizeof(__pyx_k_format), 0, 0, 1, 1},
   {&__pyx_n_s_fortran, __pyx_k_fortran, sizeof(__pyx_k_fortran), 0, 0, 1, 1},
   {&__pyx_n_u_fortran, __pyx_k_fortran, sizeof(__pyx_k_fortran), 0, 1, 0, 1},
+  {&__pyx_n_s_get_unique_coords, __pyx_k_get_unique_coords, sizeof(__pyx_k_get_unique_coords), 0, 0, 1, 1},
   {&__pyx_n_s_getstate, __pyx_k_getstate, sizeof(__pyx_k_getstate), 0, 0, 1, 1},
   {&__pyx_kp_s_got_differing_extents_in_dimensi, __pyx_k_got_differing_extents_in_dimensi, sizeof(__pyx_k_got_differing_extents_in_dimensi), 0, 0, 1, 0},
   {&__pyx_n_s_hankel2, __pyx_k_hankel2, sizeof(__pyx_k_hankel2), 0, 0, 1, 1},
@@ -26859,10 +27376,13 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_ij, __pyx_k_ij, sizeof(__pyx_k_ij), 0, 0, 1, 1},
   {&__pyx_n_s_import, __pyx_k_import, sizeof(__pyx_k_import), 0, 0, 1, 1},
   {&__pyx_n_s_indexing, __pyx_k_indexing, sizeof(__pyx_k_indexing), 0, 0, 1, 1},
+  {&__pyx_kp_s_interaction3_bem_core_fma_functi, __pyx_k_interaction3_bem_core_fma_functi, sizeof(__pyx_k_interaction3_bem_core_fma_functi), 0, 0, 1, 0},
+  {&__pyx_n_s_interaction3_bem_core_fma_functi_2, __pyx_k_interaction3_bem_core_fma_functi_2, sizeof(__pyx_k_interaction3_bem_core_fma_functi_2), 0, 0, 1, 1},
   {&__pyx_n_s_itemsize, __pyx_k_itemsize, sizeof(__pyx_k_itemsize), 0, 0, 1, 1},
   {&__pyx_kp_s_itemsize_0_for_cython_array, __pyx_k_itemsize_0_for_cython_array, sizeof(__pyx_k_itemsize_0_for_cython_array), 0, 0, 1, 0},
   {&__pyx_n_s_k, __pyx_k_k, sizeof(__pyx_k_k), 0, 0, 1, 1},
   {&__pyx_n_s_kcoord, __pyx_k_kcoord, sizeof(__pyx_k_kcoord), 0, 0, 1, 1},
+  {&__pyx_n_s_kcoordT, __pyx_k_kcoordT, sizeof(__pyx_k_kcoordT), 0, 0, 1, 1},
   {&__pyx_n_s_kdir, __pyx_k_kdir, sizeof(__pyx_k_kdir), 0, 0, 1, 1},
   {&__pyx_n_s_kdir_dim1, __pyx_k_kdir_dim1, sizeof(__pyx_k_kdir_dim1), 0, 0, 1, 1},
   {&__pyx_n_s_kdir_dim2, __pyx_k_kdir_dim2, sizeof(__pyx_k_kdir_dim2), 0, 0, 1, 1},
@@ -26871,6 +27391,7 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_main, __pyx_k_main, sizeof(__pyx_k_main), 0, 0, 1, 1},
   {&__pyx_n_s_memview, __pyx_k_memview, sizeof(__pyx_k_memview), 0, 0, 1, 1},
   {&__pyx_n_s_meshgrid, __pyx_k_meshgrid, sizeof(__pyx_k_meshgrid), 0, 0, 1, 1},
+  {&__pyx_n_s_mgrid, __pyx_k_mgrid, sizeof(__pyx_k_mgrid), 0, 0, 1, 1},
   {&__pyx_n_s_mode, __pyx_k_mode, sizeof(__pyx_k_mode), 0, 0, 1, 1},
   {&__pyx_n_s_name, __pyx_k_name, sizeof(__pyx_k_name), 0, 0, 1, 1},
   {&__pyx_n_s_name_2, __pyx_k_name_2, sizeof(__pyx_k_name_2), 0, 0, 1, 1},
@@ -26907,6 +27428,7 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_q, __pyx_k_q, sizeof(__pyx_k_q), 0, 0, 1, 1},
   {&__pyx_n_s_r, __pyx_k_r, sizeof(__pyx_k_r), 0, 0, 1, 1},
   {&__pyx_n_s_range, __pyx_k_range, sizeof(__pyx_k_range), 0, 0, 1, 1},
+  {&__pyx_n_s_ravel, __pyx_k_ravel, sizeof(__pyx_k_ravel), 0, 0, 1, 1},
   {&__pyx_n_s_reduce, __pyx_k_reduce, sizeof(__pyx_k_reduce), 0, 0, 1, 1},
   {&__pyx_n_s_reduce_cython, __pyx_k_reduce_cython, sizeof(__pyx_k_reduce_cython), 0, 0, 1, 1},
   {&__pyx_n_s_reduce_ex, __pyx_k_reduce_ex, sizeof(__pyx_k_reduce_ex), 0, 0, 1, 1},
@@ -26931,13 +27453,18 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_theta, __pyx_k_theta, sizeof(__pyx_k_theta), 0, 0, 1, 1},
   {&__pyx_n_s_theta_order, __pyx_k_theta_order, sizeof(__pyx_k_theta_order), 0, 0, 1, 1},
   {&__pyx_n_s_theta_weights, __pyx_k_theta_weights, sizeof(__pyx_k_theta_weights), 0, 0, 1, 1},
+  {&__pyx_n_s_tolist, __pyx_k_tolist, sizeof(__pyx_k_tolist), 0, 0, 1, 1},
   {&__pyx_n_s_trans_order, __pyx_k_trans_order, sizeof(__pyx_k_trans_order), 0, 0, 1, 1},
+  {&__pyx_n_s_transpose, __pyx_k_transpose, sizeof(__pyx_k_transpose), 0, 0, 1, 1},
   {&__pyx_kp_s_unable_to_allocate_array_data, __pyx_k_unable_to_allocate_array_data, sizeof(__pyx_k_unable_to_allocate_array_data), 0, 0, 1, 0},
   {&__pyx_kp_s_unable_to_allocate_shape_and_str, __pyx_k_unable_to_allocate_shape_and_str, sizeof(__pyx_k_unable_to_allocate_shape_and_str), 0, 0, 1, 0},
+  {&__pyx_n_s_unique_coords, __pyx_k_unique_coords, sizeof(__pyx_k_unique_coords), 0, 0, 1, 1},
   {&__pyx_kp_u_unknown_dtype_code_in_numpy_pxd, __pyx_k_unknown_dtype_code_in_numpy_pxd, sizeof(__pyx_k_unknown_dtype_code_in_numpy_pxd), 0, 1, 0, 0},
   {&__pyx_n_s_unpack, __pyx_k_unpack, sizeof(__pyx_k_unpack), 0, 0, 1, 1},
   {&__pyx_n_s_update, __pyx_k_update, sizeof(__pyx_k_update), 0, 0, 1, 1},
   {&__pyx_n_s_weights, __pyx_k_weights, sizeof(__pyx_k_weights), 0, 0, 1, 1},
+  {&__pyx_n_s_x, __pyx_k_x, sizeof(__pyx_k_x), 0, 0, 1, 1},
+  {&__pyx_n_s_y, __pyx_k_y, sizeof(__pyx_k_y), 0, 0, 1, 1},
   {&__pyx_n_s_z, __pyx_k_z, sizeof(__pyx_k_z), 0, 0, 1, 1},
   {&__pyx_n_s_zeros, __pyx_k_zeros, sizeof(__pyx_k_zeros), 0, 0, 1, 1},
   {0, 0, 0, 0, 0, 0, 0}
@@ -26962,7 +27489,7 @@ static int __Pyx_InitCachedConstants(void) {
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__Pyx_InitCachedConstants", 0);
 
-  /* "bem/core/fma_functions.pyx":68
+  /* "interaction3/bem/core/fma_functions.pyx":68
  *     Transforms angular directions from spherical to cartesian.
  *     '''
  *     theta = kdir[:, :, 0]             # <<<<<<<<<<<<<<
@@ -26979,7 +27506,7 @@ static int __Pyx_InitCachedConstants(void) {
   __Pyx_GOTREF(__pyx_tuple__3);
   __Pyx_GIVEREF(__pyx_tuple__3);
 
-  /* "bem/core/fma_functions.pyx":69
+  /* "interaction3/bem/core/fma_functions.pyx":69
  *     '''
  *     theta = kdir[:, :, 0]
  *     phi = kdir[:, :, 1]             # <<<<<<<<<<<<<<
@@ -26996,7 +27523,7 @@ static int __Pyx_InitCachedConstants(void) {
   __Pyx_GOTREF(__pyx_tuple__6);
   __Pyx_GIVEREF(__pyx_tuple__6);
 
-  /* "bem/core/fma_functions.pyx":75
+  /* "interaction3/bem/core/fma_functions.pyx":75
  *     z = np.cos(theta)
  * 
  *     kcoord = np.concatenate((x[..., None], y[..., None], z[..., None]), axis=2)             # <<<<<<<<<<<<<<
@@ -27013,7 +27540,7 @@ static int __Pyx_InitCachedConstants(void) {
   __Pyx_GOTREF(__pyx_tuple__9);
   __Pyx_GIVEREF(__pyx_tuple__9);
 
-  /* "bem/core/fma_functions.pyx":315
+  /* "interaction3/bem/core/fma_functions.pyx":315
  *         inter1 = fft_interpolate_theta(translation, trans_order + theta_order)
  * 
  *     inter2 = inter1 * sinabs[...,None]             # <<<<<<<<<<<<<<
@@ -27024,7 +27551,7 @@ static int __Pyx_InitCachedConstants(void) {
   __Pyx_GOTREF(__pyx_tuple__10);
   __Pyx_GIVEREF(__pyx_tuple__10);
 
-  /* "bem/core/fma_functions.pyx":331
+  /* "interaction3/bem/core/fma_functions.pyx":331
  * 
  *     if deg % 2 == 0:
  *         fseries[::2] = 2 / pi / (1 - n[::2] ** 2)             # <<<<<<<<<<<<<<
@@ -27038,7 +27565,7 @@ static int __Pyx_InitCachedConstants(void) {
   __Pyx_GOTREF(__pyx_slice__12);
   __Pyx_GIVEREF(__pyx_slice__12);
 
-  /* "bem/core/fma_functions.pyx":333
+  /* "interaction3/bem/core/fma_functions.pyx":333
  *         fseries[::2] = 2 / pi / (1 - n[::2] ** 2)
  *     else:
  *         fseries[1::2] = 2 / pi / (1 - n[1::2] ** 2)             # <<<<<<<<<<<<<<
@@ -27052,7 +27579,7 @@ static int __Pyx_InitCachedConstants(void) {
   __Pyx_GOTREF(__pyx_slice__14);
   __Pyx_GIVEREF(__pyx_slice__14);
 
-  /* "bem/core/fma_functions.pyx":384
+  /* "interaction3/bem/core/fma_functions.pyx":384
  *     v = np.concatenate((v, dummy), axis=1)
  * 
  *     w = fftshift(fft(v[:(M - 1) / 2 + 1, :], axis=1), axes=1)             # <<<<<<<<<<<<<<
@@ -27063,7 +27590,7 @@ static int __Pyx_InitCachedConstants(void) {
   __Pyx_GOTREF(__pyx_slice__15);
   __Pyx_GIVEREF(__pyx_slice__15);
 
-  /* "bem/core/fma_functions.pyx":385
+  /* "interaction3/bem/core/fma_functions.pyx":385
  * 
  *     w = fftshift(fft(v[:(M - 1) / 2 + 1, :], axis=1), axes=1)
  *     dummy = np.flipud(w[:-1, :]).copy()             # <<<<<<<<<<<<<<
@@ -27080,7 +27607,7 @@ static int __Pyx_InitCachedConstants(void) {
   __Pyx_GOTREF(__pyx_tuple__18);
   __Pyx_GIVEREF(__pyx_tuple__18);
 
-  /* "bem/core/fma_functions.pyx":388
+  /* "interaction3/bem/core/fma_functions.pyx":388
  * 
  *     n = (-1) ** np.arange(-N, N, dtype=np.float64)
  *     dummy *= n[None, ...]             # <<<<<<<<<<<<<<
@@ -27091,7 +27618,7 @@ static int __Pyx_InitCachedConstants(void) {
   __Pyx_GOTREF(__pyx_tuple__19);
   __Pyx_GIVEREF(__pyx_tuple__19);
 
-  /* "bem/core/fma_functions.pyx":402
+  /* "interaction3/bem/core/fma_functions.pyx":402
  *     cdef int N = x.shape[1]
  * 
  *     return ifft2(ifftshift(x))[:,:N/2]             # <<<<<<<<<<<<<<
@@ -27102,7 +27629,7 @@ static int __Pyx_InitCachedConstants(void) {
   __Pyx_GOTREF(__pyx_slice__20);
   __Pyx_GIVEREF(__pyx_slice__20);
 
-  /* "bem/core/fma_functions.pyx":447
+  /* "interaction3/bem/core/fma_functions.pyx":447
  * 
  *     spectrum1 = np.concatenate((v, dummy), axis=1)
  *     spectrum2 = np.pad(spectrum1, ((padM, padM),(0, 0)), mode='constant')             # <<<<<<<<<<<<<<
@@ -27113,7 +27640,7 @@ static int __Pyx_InitCachedConstants(void) {
   __Pyx_GOTREF(__pyx_tuple__21);
   __Pyx_GIVEREF(__pyx_tuple__21);
 
-  /* "bem/core/fma_functions.pyx":449
+  /* "interaction3/bem/core/fma_functions.pyx":449
  *     spectrum2 = np.pad(spectrum1, ((padM, padM),(0, 0)), mode='constant')
  * 
  *     newcoeff = M2 / (<double> M1) * ifft(ifftshift(spectrum2, axes=0), axis=0)[:, :N1]             # <<<<<<<<<<<<<<
@@ -27124,7 +27651,7 @@ static int __Pyx_InitCachedConstants(void) {
   __Pyx_GOTREF(__pyx_slice__22);
   __Pyx_GIVEREF(__pyx_slice__22);
 
-  /* "bem/core/fma_functions.pyx":502
+  /* "interaction3/bem/core/fma_functions.pyx":502
  *     phiweights = np.ones(N) * 2 * pi / N
  * 
  *     weights = thetaweights[:, None].dot(phiweights[None, :])             # <<<<<<<<<<<<<<
@@ -27144,7 +27671,7 @@ static int __Pyx_InitCachedConstants(void) {
   __Pyx_GOTREF(__pyx_tuple__26);
   __Pyx_GIVEREF(__pyx_tuple__26);
 
-  /* "bem/core/fma_functions.pyx":508
+  /* "interaction3/bem/core/fma_functions.pyx":508
  * 
  *     ktheta, kphi = np.meshgrid(theta, phi, indexing='ij')
  *     kdir = np.concatenate((ktheta[..., None], kphi[..., None]), axis=2)             # <<<<<<<<<<<<<<
@@ -27158,7 +27685,7 @@ static int __Pyx_InitCachedConstants(void) {
   __Pyx_GOTREF(__pyx_tuple__28);
   __Pyx_GIVEREF(__pyx_tuple__28);
 
-  /* "bem/core/fma_functions.pyx":510
+  /* "interaction3/bem/core/fma_functions.pyx":510
  *     kdir = np.concatenate((ktheta[..., None], kphi[..., None]), axis=2)
  * 
  *     kdir[:(M - 1) / 2, :, 0] *= -1             # <<<<<<<<<<<<<<
@@ -27169,7 +27696,7 @@ static int __Pyx_InitCachedConstants(void) {
   __Pyx_GOTREF(__pyx_slice__29);
   __Pyx_GIVEREF(__pyx_slice__29);
 
-  /* "bem/core/fma_functions.pyx":511
+  /* "interaction3/bem/core/fma_functions.pyx":511
  * 
  *     kdir[:(M - 1) / 2, :, 0] *= -1
  *     kdir[:(M - 1) / 2, :, 1] += pi             # <<<<<<<<<<<<<<
@@ -27180,6 +27707,51 @@ static int __Pyx_InitCachedConstants(void) {
   __Pyx_GOTREF(__pyx_slice__30);
   __Pyx_GIVEREF(__pyx_slice__30);
 
+  /* "interaction3/bem/core/fma_functions.pyx":514
+ * 
+ *     kcoord = dir2coord(kdir)
+ *     kcoordT = kcoord.transpose((0, 2, 1))             # <<<<<<<<<<<<<<
+ * 
+ *     quadrule = dict()
+ */
+  __pyx_tuple__31 = PyTuple_Pack(3, __pyx_int_0, __pyx_int_2, __pyx_int_1); if (unlikely(!__pyx_tuple__31)) __PYX_ERR(0, 514, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__31);
+  __Pyx_GIVEREF(__pyx_tuple__31);
+  __pyx_tuple__32 = PyTuple_Pack(1, __pyx_tuple__31); if (unlikely(!__pyx_tuple__32)) __PYX_ERR(0, 514, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__32);
+  __Pyx_GIVEREF(__pyx_tuple__32);
+
+  /* "interaction3/bem/core/fma_functions.pyx":539
+ *     if dims == 2:
+ * 
+ *         x, y, z = np.mgrid[1:4, 0:4, 0:1:1j]             # <<<<<<<<<<<<<<
+ *         unique_coords = np.c_[x.ravel(), y.ravel(), z.ravel()].astype(int)
+ *         unique_coords = unique_coords[2:, :].tolist()
+ */
+  __pyx_slice__33 = PySlice_New(__pyx_int_1, __pyx_int_4, Py_None); if (unlikely(!__pyx_slice__33)) __PYX_ERR(0, 539, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_slice__33);
+  __Pyx_GIVEREF(__pyx_slice__33);
+  __pyx_slice__34 = PySlice_New(__pyx_int_0, __pyx_int_4, Py_None); if (unlikely(!__pyx_slice__34)) __PYX_ERR(0, 539, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_slice__34);
+  __Pyx_GIVEREF(__pyx_slice__34);
+
+  /* "interaction3/bem/core/fma_functions.pyx":541
+ *         x, y, z = np.mgrid[1:4, 0:4, 0:1:1j]
+ *         unique_coords = np.c_[x.ravel(), y.ravel(), z.ravel()].astype(int)
+ *         unique_coords = unique_coords[2:, :].tolist()             # <<<<<<<<<<<<<<
+ * 
+ *     elif dims == 3:
+ */
+  __pyx_slice__35 = PySlice_New(__pyx_int_2, Py_None, Py_None); if (unlikely(!__pyx_slice__35)) __PYX_ERR(0, 541, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_slice__35);
+  __Pyx_GIVEREF(__pyx_slice__35);
+  __pyx_slice__36 = PySlice_New(Py_None, Py_None, Py_None); if (unlikely(!__pyx_slice__36)) __PYX_ERR(0, 541, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_slice__36);
+  __Pyx_GIVEREF(__pyx_slice__36);
+  __pyx_tuple__37 = PyTuple_Pack(2, __pyx_slice__35, __pyx_slice__36); if (unlikely(!__pyx_tuple__37)) __PYX_ERR(0, 541, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__37);
+  __Pyx_GIVEREF(__pyx_tuple__37);
+
   /* "../../Anaconda3/lib/site-packages/Cython/Includes/numpy/__init__.pxd":218
  *             if ((flags & pybuf.PyBUF_C_CONTIGUOUS == pybuf.PyBUF_C_CONTIGUOUS)
  *                 and not PyArray_CHKFLAGS(self, NPY_C_CONTIGUOUS)):
@@ -27187,9 +27759,9 @@ static int __Pyx_InitCachedConstants(void) {
  * 
  *             if ((flags & pybuf.PyBUF_F_CONTIGUOUS == pybuf.PyBUF_F_CONTIGUOUS)
  */
-  __pyx_tuple__31 = PyTuple_Pack(1, __pyx_kp_u_ndarray_is_not_C_contiguous); if (unlikely(!__pyx_tuple__31)) __PYX_ERR(1, 218, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__31);
-  __Pyx_GIVEREF(__pyx_tuple__31);
+  __pyx_tuple__38 = PyTuple_Pack(1, __pyx_kp_u_ndarray_is_not_C_contiguous); if (unlikely(!__pyx_tuple__38)) __PYX_ERR(1, 218, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__38);
+  __Pyx_GIVEREF(__pyx_tuple__38);
 
   /* "../../Anaconda3/lib/site-packages/Cython/Includes/numpy/__init__.pxd":222
  *             if ((flags & pybuf.PyBUF_F_CONTIGUOUS == pybuf.PyBUF_F_CONTIGUOUS)
@@ -27198,9 +27770,9 @@ static int __Pyx_InitCachedConstants(void) {
  * 
  *             info.buf = PyArray_DATA(self)
  */
-  __pyx_tuple__32 = PyTuple_Pack(1, __pyx_kp_u_ndarray_is_not_Fortran_contiguou); if (unlikely(!__pyx_tuple__32)) __PYX_ERR(1, 222, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__32);
-  __Pyx_GIVEREF(__pyx_tuple__32);
+  __pyx_tuple__39 = PyTuple_Pack(1, __pyx_kp_u_ndarray_is_not_Fortran_contiguou); if (unlikely(!__pyx_tuple__39)) __PYX_ERR(1, 222, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__39);
+  __Pyx_GIVEREF(__pyx_tuple__39);
 
   /* "../../Anaconda3/lib/site-packages/Cython/Includes/numpy/__init__.pxd":259
  *                 if ((descr.byteorder == c'>' and little_endian) or
@@ -27209,9 +27781,9 @@ static int __Pyx_InitCachedConstants(void) {
  *                 if   t == NPY_BYTE:        f = "b"
  *                 elif t == NPY_UBYTE:       f = "B"
  */
-  __pyx_tuple__33 = PyTuple_Pack(1, __pyx_kp_u_Non_native_byte_order_not_suppor); if (unlikely(!__pyx_tuple__33)) __PYX_ERR(1, 259, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__33);
-  __Pyx_GIVEREF(__pyx_tuple__33);
+  __pyx_tuple__40 = PyTuple_Pack(1, __pyx_kp_u_Non_native_byte_order_not_suppor); if (unlikely(!__pyx_tuple__40)) __PYX_ERR(1, 259, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__40);
+  __Pyx_GIVEREF(__pyx_tuple__40);
 
   /* "../../Anaconda3/lib/site-packages/Cython/Includes/numpy/__init__.pxd":799
  * 
@@ -27220,9 +27792,9 @@ static int __Pyx_InitCachedConstants(void) {
  * 
  *         if ((child.byteorder == c'>' and little_endian) or
  */
-  __pyx_tuple__34 = PyTuple_Pack(1, __pyx_kp_u_Format_string_allocated_too_shor); if (unlikely(!__pyx_tuple__34)) __PYX_ERR(1, 799, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__34);
-  __Pyx_GIVEREF(__pyx_tuple__34);
+  __pyx_tuple__41 = PyTuple_Pack(1, __pyx_kp_u_Format_string_allocated_too_shor); if (unlikely(!__pyx_tuple__41)) __PYX_ERR(1, 799, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__41);
+  __Pyx_GIVEREF(__pyx_tuple__41);
 
   /* "../../Anaconda3/lib/site-packages/Cython/Includes/numpy/__init__.pxd":803
  *         if ((child.byteorder == c'>' and little_endian) or
@@ -27231,9 +27803,9 @@ static int __Pyx_InitCachedConstants(void) {
  *             # One could encode it in the format string and have Cython
  *             # complain instead, BUT: < and > in format strings also imply
  */
-  __pyx_tuple__35 = PyTuple_Pack(1, __pyx_kp_u_Non_native_byte_order_not_suppor); if (unlikely(!__pyx_tuple__35)) __PYX_ERR(1, 803, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__35);
-  __Pyx_GIVEREF(__pyx_tuple__35);
+  __pyx_tuple__42 = PyTuple_Pack(1, __pyx_kp_u_Non_native_byte_order_not_suppor); if (unlikely(!__pyx_tuple__42)) __PYX_ERR(1, 803, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__42);
+  __Pyx_GIVEREF(__pyx_tuple__42);
 
   /* "../../Anaconda3/lib/site-packages/Cython/Includes/numpy/__init__.pxd":823
  *             t = child.type_num
@@ -27242,9 +27814,9 @@ static int __Pyx_InitCachedConstants(void) {
  * 
  *             # Until ticket #99 is fixed, use integers to avoid warnings
  */
-  __pyx_tuple__36 = PyTuple_Pack(1, __pyx_kp_u_Format_string_allocated_too_shor_2); if (unlikely(!__pyx_tuple__36)) __PYX_ERR(1, 823, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__36);
-  __Pyx_GIVEREF(__pyx_tuple__36);
+  __pyx_tuple__43 = PyTuple_Pack(1, __pyx_kp_u_Format_string_allocated_too_shor_2); if (unlikely(!__pyx_tuple__43)) __PYX_ERR(1, 823, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__43);
+  __Pyx_GIVEREF(__pyx_tuple__43);
 
   /* "../../Anaconda3/lib/site-packages/Cython/Includes/numpy/__init__.pxd":989
  *         _import_array()
@@ -27253,9 +27825,9 @@ static int __Pyx_InitCachedConstants(void) {
  * 
  * cdef inline int import_umath() except -1:
  */
-  __pyx_tuple__37 = PyTuple_Pack(1, __pyx_kp_s_numpy_core_multiarray_failed_to); if (unlikely(!__pyx_tuple__37)) __PYX_ERR(1, 989, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__37);
-  __Pyx_GIVEREF(__pyx_tuple__37);
+  __pyx_tuple__44 = PyTuple_Pack(1, __pyx_kp_s_numpy_core_multiarray_failed_to); if (unlikely(!__pyx_tuple__44)) __PYX_ERR(1, 989, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__44);
+  __Pyx_GIVEREF(__pyx_tuple__44);
 
   /* "../../Anaconda3/lib/site-packages/Cython/Includes/numpy/__init__.pxd":995
  *         _import_umath()
@@ -27264,18 +27836,18 @@ static int __Pyx_InitCachedConstants(void) {
  * 
  * cdef inline int import_ufunc() except -1:
  */
-  __pyx_tuple__38 = PyTuple_Pack(1, __pyx_kp_s_numpy_core_umath_failed_to_impor); if (unlikely(!__pyx_tuple__38)) __PYX_ERR(1, 995, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__38);
-  __Pyx_GIVEREF(__pyx_tuple__38);
+  __pyx_tuple__45 = PyTuple_Pack(1, __pyx_kp_s_numpy_core_umath_failed_to_impor); if (unlikely(!__pyx_tuple__45)) __PYX_ERR(1, 995, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__45);
+  __Pyx_GIVEREF(__pyx_tuple__45);
 
   /* "../../Anaconda3/lib/site-packages/Cython/Includes/numpy/__init__.pxd":1001
  *         _import_umath()
  *     except Exception:
  *         raise ImportError("numpy.core.umath failed to import")             # <<<<<<<<<<<<<<
  */
-  __pyx_tuple__39 = PyTuple_Pack(1, __pyx_kp_s_numpy_core_umath_failed_to_impor); if (unlikely(!__pyx_tuple__39)) __PYX_ERR(1, 1001, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__39);
-  __Pyx_GIVEREF(__pyx_tuple__39);
+  __pyx_tuple__46 = PyTuple_Pack(1, __pyx_kp_s_numpy_core_umath_failed_to_impor); if (unlikely(!__pyx_tuple__46)) __PYX_ERR(1, 1001, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__46);
+  __Pyx_GIVEREF(__pyx_tuple__46);
 
   /* "View.MemoryView":131
  * 
@@ -27284,9 +27856,9 @@ static int __Pyx_InitCachedConstants(void) {
  * 
  *         if itemsize <= 0:
  */
-  __pyx_tuple__40 = PyTuple_Pack(1, __pyx_kp_s_Empty_shape_tuple_for_cython_arr); if (unlikely(!__pyx_tuple__40)) __PYX_ERR(2, 131, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__40);
-  __Pyx_GIVEREF(__pyx_tuple__40);
+  __pyx_tuple__47 = PyTuple_Pack(1, __pyx_kp_s_Empty_shape_tuple_for_cython_arr); if (unlikely(!__pyx_tuple__47)) __PYX_ERR(2, 131, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__47);
+  __Pyx_GIVEREF(__pyx_tuple__47);
 
   /* "View.MemoryView":134
  * 
@@ -27295,9 +27867,9 @@ static int __Pyx_InitCachedConstants(void) {
  * 
  *         if not isinstance(format, bytes):
  */
-  __pyx_tuple__41 = PyTuple_Pack(1, __pyx_kp_s_itemsize_0_for_cython_array); if (unlikely(!__pyx_tuple__41)) __PYX_ERR(2, 134, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__41);
-  __Pyx_GIVEREF(__pyx_tuple__41);
+  __pyx_tuple__48 = PyTuple_Pack(1, __pyx_kp_s_itemsize_0_for_cython_array); if (unlikely(!__pyx_tuple__48)) __PYX_ERR(2, 134, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__48);
+  __Pyx_GIVEREF(__pyx_tuple__48);
 
   /* "View.MemoryView":137
  * 
@@ -27306,9 +27878,9 @@ static int __Pyx_InitCachedConstants(void) {
  *         self._format = format  # keep a reference to the byte string
  *         self.format = self._format
  */
-  __pyx_tuple__42 = PyTuple_Pack(1, __pyx_n_s_ASCII); if (unlikely(!__pyx_tuple__42)) __PYX_ERR(2, 137, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__42);
-  __Pyx_GIVEREF(__pyx_tuple__42);
+  __pyx_tuple__49 = PyTuple_Pack(1, __pyx_n_s_ASCII); if (unlikely(!__pyx_tuple__49)) __PYX_ERR(2, 137, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__49);
+  __Pyx_GIVEREF(__pyx_tuple__49);
 
   /* "View.MemoryView":146
  * 
@@ -27317,9 +27889,9 @@ static int __Pyx_InitCachedConstants(void) {
  * 
  * 
  */
-  __pyx_tuple__43 = PyTuple_Pack(1, __pyx_kp_s_unable_to_allocate_shape_and_str); if (unlikely(!__pyx_tuple__43)) __PYX_ERR(2, 146, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__43);
-  __Pyx_GIVEREF(__pyx_tuple__43);
+  __pyx_tuple__50 = PyTuple_Pack(1, __pyx_kp_s_unable_to_allocate_shape_and_str); if (unlikely(!__pyx_tuple__50)) __PYX_ERR(2, 146, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__50);
+  __Pyx_GIVEREF(__pyx_tuple__50);
 
   /* "View.MemoryView":174
  *             self.data = <char *>malloc(self.len)
@@ -27328,9 +27900,9 @@ static int __Pyx_InitCachedConstants(void) {
  * 
  *             if self.dtype_is_object:
  */
-  __pyx_tuple__44 = PyTuple_Pack(1, __pyx_kp_s_unable_to_allocate_array_data); if (unlikely(!__pyx_tuple__44)) __PYX_ERR(2, 174, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__44);
-  __Pyx_GIVEREF(__pyx_tuple__44);
+  __pyx_tuple__51 = PyTuple_Pack(1, __pyx_kp_s_unable_to_allocate_array_data); if (unlikely(!__pyx_tuple__51)) __PYX_ERR(2, 174, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__51);
+  __Pyx_GIVEREF(__pyx_tuple__51);
 
   /* "View.MemoryView":190
  *             bufmode = PyBUF_F_CONTIGUOUS | PyBUF_ANY_CONTIGUOUS
@@ -27339,9 +27911,9 @@ static int __Pyx_InitCachedConstants(void) {
  *         info.buf = self.data
  *         info.len = self.len
  */
-  __pyx_tuple__45 = PyTuple_Pack(1, __pyx_kp_s_Can_only_create_a_buffer_that_is); if (unlikely(!__pyx_tuple__45)) __PYX_ERR(2, 190, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__45);
-  __Pyx_GIVEREF(__pyx_tuple__45);
+  __pyx_tuple__52 = PyTuple_Pack(1, __pyx_kp_s_Can_only_create_a_buffer_that_is); if (unlikely(!__pyx_tuple__52)) __PYX_ERR(2, 190, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__52);
+  __Pyx_GIVEREF(__pyx_tuple__52);
 
   /* "(tree fragment)":2
  * def __reduce_cython__(self):
@@ -27349,18 +27921,18 @@ static int __Pyx_InitCachedConstants(void) {
  * def __setstate_cython__(self, __pyx_state):
  *     raise TypeError("no default __reduce__ due to non-trivial __cinit__")
  */
-  __pyx_tuple__46 = PyTuple_Pack(1, __pyx_kp_s_no_default___reduce___due_to_non); if (unlikely(!__pyx_tuple__46)) __PYX_ERR(2, 2, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__46);
-  __Pyx_GIVEREF(__pyx_tuple__46);
+  __pyx_tuple__53 = PyTuple_Pack(1, __pyx_kp_s_no_default___reduce___due_to_non); if (unlikely(!__pyx_tuple__53)) __PYX_ERR(2, 2, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__53);
+  __Pyx_GIVEREF(__pyx_tuple__53);
 
   /* "(tree fragment)":4
  *     raise TypeError("no default __reduce__ due to non-trivial __cinit__")
  * def __setstate_cython__(self, __pyx_state):
  *     raise TypeError("no default __reduce__ due to non-trivial __cinit__")             # <<<<<<<<<<<<<<
  */
-  __pyx_tuple__47 = PyTuple_Pack(1, __pyx_kp_s_no_default___reduce___due_to_non); if (unlikely(!__pyx_tuple__47)) __PYX_ERR(2, 4, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__47);
-  __Pyx_GIVEREF(__pyx_tuple__47);
+  __pyx_tuple__54 = PyTuple_Pack(1, __pyx_kp_s_no_default___reduce___due_to_non); if (unlikely(!__pyx_tuple__54)) __PYX_ERR(2, 4, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__54);
+  __Pyx_GIVEREF(__pyx_tuple__54);
 
   /* "View.MemoryView":486
  *             result = struct.unpack(self.view.format, bytesitem)
@@ -27369,9 +27941,9 @@ static int __Pyx_InitCachedConstants(void) {
  *         else:
  *             if len(self.view.format) == 1:
  */
-  __pyx_tuple__48 = PyTuple_Pack(1, __pyx_kp_s_Unable_to_convert_item_to_object); if (unlikely(!__pyx_tuple__48)) __PYX_ERR(2, 486, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__48);
-  __Pyx_GIVEREF(__pyx_tuple__48);
+  __pyx_tuple__55 = PyTuple_Pack(1, __pyx_kp_s_Unable_to_convert_item_to_object); if (unlikely(!__pyx_tuple__55)) __PYX_ERR(2, 486, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__55);
+  __Pyx_GIVEREF(__pyx_tuple__55);
 
   /* "View.MemoryView":558
  *         if self.view.strides == NULL:
@@ -27380,9 +27952,9 @@ static int __Pyx_InitCachedConstants(void) {
  * 
  *         return tuple([stride for stride in self.view.strides[:self.view.ndim]])
  */
-  __pyx_tuple__49 = PyTuple_Pack(1, __pyx_kp_s_Buffer_view_does_not_expose_stri); if (unlikely(!__pyx_tuple__49)) __PYX_ERR(2, 558, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__49);
-  __Pyx_GIVEREF(__pyx_tuple__49);
+  __pyx_tuple__56 = PyTuple_Pack(1, __pyx_kp_s_Buffer_view_does_not_expose_stri); if (unlikely(!__pyx_tuple__56)) __PYX_ERR(2, 558, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__56);
+  __Pyx_GIVEREF(__pyx_tuple__56);
 
   /* "View.MemoryView":565
  *     def suboffsets(self):
@@ -27391,12 +27963,12 @@ static int __Pyx_InitCachedConstants(void) {
  * 
  *         return tuple([suboffset for suboffset in self.view.suboffsets[:self.view.ndim]])
  */
-  __pyx_tuple__50 = PyTuple_New(1); if (unlikely(!__pyx_tuple__50)) __PYX_ERR(2, 565, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__50);
+  __pyx_tuple__57 = PyTuple_New(1); if (unlikely(!__pyx_tuple__57)) __PYX_ERR(2, 565, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__57);
   __Pyx_INCREF(__pyx_int_neg_1);
   __Pyx_GIVEREF(__pyx_int_neg_1);
-  PyTuple_SET_ITEM(__pyx_tuple__50, 0, __pyx_int_neg_1);
-  __Pyx_GIVEREF(__pyx_tuple__50);
+  PyTuple_SET_ITEM(__pyx_tuple__57, 0, __pyx_int_neg_1);
+  __Pyx_GIVEREF(__pyx_tuple__57);
 
   /* "(tree fragment)":2
  * def __reduce_cython__(self):
@@ -27404,18 +27976,18 @@ static int __Pyx_InitCachedConstants(void) {
  * def __setstate_cython__(self, __pyx_state):
  *     raise TypeError("no default __reduce__ due to non-trivial __cinit__")
  */
-  __pyx_tuple__51 = PyTuple_Pack(1, __pyx_kp_s_no_default___reduce___due_to_non); if (unlikely(!__pyx_tuple__51)) __PYX_ERR(2, 2, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__51);
-  __Pyx_GIVEREF(__pyx_tuple__51);
+  __pyx_tuple__58 = PyTuple_Pack(1, __pyx_kp_s_no_default___reduce___due_to_non); if (unlikely(!__pyx_tuple__58)) __PYX_ERR(2, 2, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__58);
+  __Pyx_GIVEREF(__pyx_tuple__58);
 
   /* "(tree fragment)":4
  *     raise TypeError("no default __reduce__ due to non-trivial __cinit__")
  * def __setstate_cython__(self, __pyx_state):
  *     raise TypeError("no default __reduce__ due to non-trivial __cinit__")             # <<<<<<<<<<<<<<
  */
-  __pyx_tuple__52 = PyTuple_Pack(1, __pyx_kp_s_no_default___reduce___due_to_non); if (unlikely(!__pyx_tuple__52)) __PYX_ERR(2, 4, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__52);
-  __Pyx_GIVEREF(__pyx_tuple__52);
+  __pyx_tuple__59 = PyTuple_Pack(1, __pyx_kp_s_no_default___reduce___due_to_non); if (unlikely(!__pyx_tuple__59)) __PYX_ERR(2, 4, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__59);
+  __Pyx_GIVEREF(__pyx_tuple__59);
 
   /* "View.MemoryView":670
  *         if item is Ellipsis:
@@ -27424,9 +27996,9 @@ static int __Pyx_InitCachedConstants(void) {
  *                 seen_ellipsis = True
  *             else:
  */
-  __pyx_slice__53 = PySlice_New(Py_None, Py_None, Py_None); if (unlikely(!__pyx_slice__53)) __PYX_ERR(2, 670, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_slice__53);
-  __Pyx_GIVEREF(__pyx_slice__53);
+  __pyx_slice__60 = PySlice_New(Py_None, Py_None, Py_None); if (unlikely(!__pyx_slice__60)) __PYX_ERR(2, 670, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_slice__60);
+  __Pyx_GIVEREF(__pyx_slice__60);
 
   /* "View.MemoryView":673
  *                 seen_ellipsis = True
@@ -27435,9 +28007,9 @@ static int __Pyx_InitCachedConstants(void) {
  *             have_slices = True
  *         else:
  */
-  __pyx_slice__54 = PySlice_New(Py_None, Py_None, Py_None); if (unlikely(!__pyx_slice__54)) __PYX_ERR(2, 673, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_slice__54);
-  __Pyx_GIVEREF(__pyx_slice__54);
+  __pyx_slice__61 = PySlice_New(Py_None, Py_None, Py_None); if (unlikely(!__pyx_slice__61)) __PYX_ERR(2, 673, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_slice__61);
+  __Pyx_GIVEREF(__pyx_slice__61);
 
   /* "View.MemoryView":684
  *     nslices = ndim - len(result)
@@ -27446,9 +28018,9 @@ static int __Pyx_InitCachedConstants(void) {
  * 
  *     return have_slices or nslices, tuple(result)
  */
-  __pyx_slice__55 = PySlice_New(Py_None, Py_None, Py_None); if (unlikely(!__pyx_slice__55)) __PYX_ERR(2, 684, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_slice__55);
-  __Pyx_GIVEREF(__pyx_slice__55);
+  __pyx_slice__62 = PySlice_New(Py_None, Py_None, Py_None); if (unlikely(!__pyx_slice__62)) __PYX_ERR(2, 684, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_slice__62);
+  __Pyx_GIVEREF(__pyx_slice__62);
 
   /* "View.MemoryView":691
  *     for suboffset in suboffsets[:ndim]:
@@ -27457,9 +28029,9 @@ static int __Pyx_InitCachedConstants(void) {
  * 
  * 
  */
-  __pyx_tuple__56 = PyTuple_Pack(1, __pyx_kp_s_Indirect_dimensions_not_supporte); if (unlikely(!__pyx_tuple__56)) __PYX_ERR(2, 691, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__56);
-  __Pyx_GIVEREF(__pyx_tuple__56);
+  __pyx_tuple__63 = PyTuple_Pack(1, __pyx_kp_s_Indirect_dimensions_not_supporte); if (unlikely(!__pyx_tuple__63)) __PYX_ERR(2, 691, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__63);
+  __Pyx_GIVEREF(__pyx_tuple__63);
 
   /* "(tree fragment)":2
  * def __reduce_cython__(self):
@@ -27467,30 +28039,42 @@ static int __Pyx_InitCachedConstants(void) {
  * def __setstate_cython__(self, __pyx_state):
  *     raise TypeError("no default __reduce__ due to non-trivial __cinit__")
  */
-  __pyx_tuple__57 = PyTuple_Pack(1, __pyx_kp_s_no_default___reduce___due_to_non); if (unlikely(!__pyx_tuple__57)) __PYX_ERR(2, 2, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__57);
-  __Pyx_GIVEREF(__pyx_tuple__57);
+  __pyx_tuple__64 = PyTuple_Pack(1, __pyx_kp_s_no_default___reduce___due_to_non); if (unlikely(!__pyx_tuple__64)) __PYX_ERR(2, 2, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__64);
+  __Pyx_GIVEREF(__pyx_tuple__64);
 
   /* "(tree fragment)":4
  *     raise TypeError("no default __reduce__ due to non-trivial __cinit__")
  * def __setstate_cython__(self, __pyx_state):
  *     raise TypeError("no default __reduce__ due to non-trivial __cinit__")             # <<<<<<<<<<<<<<
  */
-  __pyx_tuple__58 = PyTuple_Pack(1, __pyx_kp_s_no_default___reduce___due_to_non); if (unlikely(!__pyx_tuple__58)) __PYX_ERR(2, 4, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__58);
-  __Pyx_GIVEREF(__pyx_tuple__58);
+  __pyx_tuple__65 = PyTuple_Pack(1, __pyx_kp_s_no_default___reduce___due_to_non); if (unlikely(!__pyx_tuple__65)) __PYX_ERR(2, 4, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__65);
+  __Pyx_GIVEREF(__pyx_tuple__65);
 
-  /* "bem/core/fma_functions.pyx":92
+  /* "interaction3/bem/core/fma_functions.pyx":92
  * @cython.boundscheck(False)
  * @cython.wraparound(False)
  * def sph_hankel2_np(l, z):             # <<<<<<<<<<<<<<
  *     '''
  *     Spherical Hankel function of the second kind of order l and argument z
  */
-  __pyx_tuple__59 = PyTuple_Pack(2, __pyx_n_s_l, __pyx_n_s_z); if (unlikely(!__pyx_tuple__59)) __PYX_ERR(0, 92, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__59);
-  __Pyx_GIVEREF(__pyx_tuple__59);
-  __pyx_codeobj__60 = (PyObject*)__Pyx_PyCode_New(2, 0, 2, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__59, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_bem_core_fma_functions_pyx, __pyx_n_s_sph_hankel2_np, 92, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__60)) __PYX_ERR(0, 92, __pyx_L1_error)
+  __pyx_tuple__66 = PyTuple_Pack(2, __pyx_n_s_l, __pyx_n_s_z); if (unlikely(!__pyx_tuple__66)) __PYX_ERR(0, 92, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__66);
+  __Pyx_GIVEREF(__pyx_tuple__66);
+  __pyx_codeobj__67 = (PyObject*)__Pyx_PyCode_New(2, 0, 2, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__66, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_interaction3_bem_core_fma_functi, __pyx_n_s_sph_hankel2_np, 92, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__67)) __PYX_ERR(0, 92, __pyx_L1_error)
+
+  /* "interaction3/bem/core/fma_functions.pyx":535
+ * ## UTILITY FUNCTIONS ##
+ * 
+ * def get_unique_coords(dims=2):             # <<<<<<<<<<<<<<
+ * 
+ *     if dims == 2:
+ */
+  __pyx_tuple__68 = PyTuple_Pack(5, __pyx_n_s_dims, __pyx_n_s_x, __pyx_n_s_y, __pyx_n_s_z, __pyx_n_s_unique_coords); if (unlikely(!__pyx_tuple__68)) __PYX_ERR(0, 535, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__68);
+  __Pyx_GIVEREF(__pyx_tuple__68);
+  __pyx_codeobj__69 = (PyObject*)__Pyx_PyCode_New(1, 0, 5, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__68, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_interaction3_bem_core_fma_functi, __pyx_n_s_get_unique_coords, 535, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__69)) __PYX_ERR(0, 535, __pyx_L1_error)
 
   /* "View.MemoryView":284
  *         return self.name
@@ -27499,9 +28083,9 @@ static int __Pyx_InitCachedConstants(void) {
  * cdef strided = Enum("<strided and direct>") # default
  * cdef indirect = Enum("<strided and indirect>")
  */
-  __pyx_tuple__61 = PyTuple_Pack(1, __pyx_kp_s_strided_and_direct_or_indirect); if (unlikely(!__pyx_tuple__61)) __PYX_ERR(2, 284, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__61);
-  __Pyx_GIVEREF(__pyx_tuple__61);
+  __pyx_tuple__70 = PyTuple_Pack(1, __pyx_kp_s_strided_and_direct_or_indirect); if (unlikely(!__pyx_tuple__70)) __PYX_ERR(2, 284, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__70);
+  __Pyx_GIVEREF(__pyx_tuple__70);
 
   /* "View.MemoryView":285
  * 
@@ -27510,9 +28094,9 @@ static int __Pyx_InitCachedConstants(void) {
  * cdef indirect = Enum("<strided and indirect>")
  * 
  */
-  __pyx_tuple__62 = PyTuple_Pack(1, __pyx_kp_s_strided_and_direct); if (unlikely(!__pyx_tuple__62)) __PYX_ERR(2, 285, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__62);
-  __Pyx_GIVEREF(__pyx_tuple__62);
+  __pyx_tuple__71 = PyTuple_Pack(1, __pyx_kp_s_strided_and_direct); if (unlikely(!__pyx_tuple__71)) __PYX_ERR(2, 285, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__71);
+  __Pyx_GIVEREF(__pyx_tuple__71);
 
   /* "View.MemoryView":286
  * cdef generic = Enum("<strided and direct or indirect>")
@@ -27521,9 +28105,9 @@ static int __Pyx_InitCachedConstants(void) {
  * 
  * 
  */
-  __pyx_tuple__63 = PyTuple_Pack(1, __pyx_kp_s_strided_and_indirect); if (unlikely(!__pyx_tuple__63)) __PYX_ERR(2, 286, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__63);
-  __Pyx_GIVEREF(__pyx_tuple__63);
+  __pyx_tuple__72 = PyTuple_Pack(1, __pyx_kp_s_strided_and_indirect); if (unlikely(!__pyx_tuple__72)) __PYX_ERR(2, 286, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__72);
+  __Pyx_GIVEREF(__pyx_tuple__72);
 
   /* "View.MemoryView":289
  * 
@@ -27532,9 +28116,9 @@ static int __Pyx_InitCachedConstants(void) {
  * cdef indirect_contiguous = Enum("<contiguous and indirect>")
  * 
  */
-  __pyx_tuple__64 = PyTuple_Pack(1, __pyx_kp_s_contiguous_and_direct); if (unlikely(!__pyx_tuple__64)) __PYX_ERR(2, 289, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__64);
-  __Pyx_GIVEREF(__pyx_tuple__64);
+  __pyx_tuple__73 = PyTuple_Pack(1, __pyx_kp_s_contiguous_and_direct); if (unlikely(!__pyx_tuple__73)) __PYX_ERR(2, 289, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__73);
+  __Pyx_GIVEREF(__pyx_tuple__73);
 
   /* "View.MemoryView":290
  * 
@@ -27543,19 +28127,19 @@ static int __Pyx_InitCachedConstants(void) {
  * 
  * 
  */
-  __pyx_tuple__65 = PyTuple_Pack(1, __pyx_kp_s_contiguous_and_indirect); if (unlikely(!__pyx_tuple__65)) __PYX_ERR(2, 290, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__65);
-  __Pyx_GIVEREF(__pyx_tuple__65);
+  __pyx_tuple__74 = PyTuple_Pack(1, __pyx_kp_s_contiguous_and_indirect); if (unlikely(!__pyx_tuple__74)) __PYX_ERR(2, 290, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__74);
+  __Pyx_GIVEREF(__pyx_tuple__74);
 
   /* "(tree fragment)":1
  * def __pyx_unpickle_Enum(__pyx_type, long __pyx_checksum, __pyx_state):             # <<<<<<<<<<<<<<
  *     if __pyx_checksum != 0xb068931:
  *         from pickle import PickleError as __pyx_PickleError
  */
-  __pyx_tuple__66 = PyTuple_Pack(5, __pyx_n_s_pyx_type, __pyx_n_s_pyx_checksum, __pyx_n_s_pyx_state, __pyx_n_s_pyx_PickleError, __pyx_n_s_pyx_result); if (unlikely(!__pyx_tuple__66)) __PYX_ERR(2, 1, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__66);
-  __Pyx_GIVEREF(__pyx_tuple__66);
-  __pyx_codeobj__67 = (PyObject*)__Pyx_PyCode_New(3, 0, 5, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__66, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_stringsource, __pyx_n_s_pyx_unpickle_Enum, 1, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__67)) __PYX_ERR(2, 1, __pyx_L1_error)
+  __pyx_tuple__75 = PyTuple_Pack(5, __pyx_n_s_pyx_type, __pyx_n_s_pyx_checksum, __pyx_n_s_pyx_state, __pyx_n_s_pyx_PickleError, __pyx_n_s_pyx_result); if (unlikely(!__pyx_tuple__75)) __PYX_ERR(2, 1, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__75);
+  __Pyx_GIVEREF(__pyx_tuple__75);
+  __pyx_codeobj__76 = (PyObject*)__Pyx_PyCode_New(3, 0, 5, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__75, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_stringsource, __pyx_n_s_pyx_unpickle_Enum, 1, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__76)) __PYX_ERR(2, 1, __pyx_L1_error)
   __Pyx_RefNannyFinishContext();
   return 0;
   __pyx_L1_error:;
@@ -27569,6 +28153,7 @@ static int __Pyx_InitGlobals(void) {
   __pyx_int_0 = PyInt_FromLong(0); if (unlikely(!__pyx_int_0)) __PYX_ERR(0, 1, __pyx_L1_error)
   __pyx_int_1 = PyInt_FromLong(1); if (unlikely(!__pyx_int_1)) __PYX_ERR(0, 1, __pyx_L1_error)
   __pyx_int_2 = PyInt_FromLong(2); if (unlikely(!__pyx_int_2)) __PYX_ERR(0, 1, __pyx_L1_error)
+  __pyx_int_3 = PyInt_FromLong(3); if (unlikely(!__pyx_int_3)) __PYX_ERR(0, 1, __pyx_L1_error)
   __pyx_int_4 = PyInt_FromLong(4); if (unlikely(!__pyx_int_4)) __PYX_ERR(0, 1, __pyx_L1_error)
   __pyx_int_16 = PyInt_FromLong(16); if (unlikely(!__pyx_int_16)) __PYX_ERR(0, 1, __pyx_L1_error)
   __pyx_int_184977713 = PyInt_FromLong(184977713L); if (unlikely(!__pyx_int_184977713)) __PYX_ERR(0, 1, __pyx_L1_error)
@@ -27646,14 +28231,14 @@ PyMODINIT_FUNC PyInit_fma_functions(void)
   #if PY_MAJOR_VERSION < 3 && (__PYX_DEFAULT_STRING_ENCODING_IS_ASCII || __PYX_DEFAULT_STRING_ENCODING_IS_DEFAULT)
   if (__Pyx_init_sys_getdefaultencoding_params() < 0) __PYX_ERR(0, 1, __pyx_L1_error)
   #endif
-  if (__pyx_module_is_main_bem__core__fma_functions) {
+  if (__pyx_module_is_main_interaction3__bem__core__fma_functions) {
     if (PyObject_SetAttrString(__pyx_m, "__name__", __pyx_n_s_main) < 0) __PYX_ERR(0, 1, __pyx_L1_error)
   }
   #if PY_MAJOR_VERSION >= 3
   {
     PyObject *modules = PyImport_GetModuleDict(); if (unlikely(!modules)) __PYX_ERR(0, 1, __pyx_L1_error)
-    if (!PyDict_GetItemString(modules, "bem.core.fma_functions")) {
-      if (unlikely(PyDict_SetItemString(modules, "bem.core.fma_functions", __pyx_m) < 0)) __PYX_ERR(0, 1, __pyx_L1_error)
+    if (!PyDict_GetItemString(modules, "interaction3.bem.core.fma_functions")) {
+      if (unlikely(PyDict_SetItemString(modules, "interaction3.bem.core.fma_functions", __pyx_m) < 0)) __PYX_ERR(0, 1, __pyx_L1_error)
     }
   }
   #endif
@@ -27669,23 +28254,23 @@ PyMODINIT_FUNC PyInit_fma_functions(void)
   indirect_contiguous = Py_None; Py_INCREF(Py_None);
   /*--- Variable export code ---*/
   /*--- Function export code ---*/
-  if (__Pyx_ExportFunction("mag", (void (*)(void))__pyx_f_3bem_4core_13fma_functions_mag, "double (__Pyx_memviewslice, int __pyx_skip_dispatch)") < 0) __PYX_ERR(0, 1, __pyx_L1_error)
-  if (__Pyx_ExportFunction("distance", (void (*)(void))__pyx_f_3bem_4core_13fma_functions_distance, "PyArrayObject *(__Pyx_memviewslice, __Pyx_memviewslice, int __pyx_skip_dispatch)") < 0) __PYX_ERR(0, 1, __pyx_L1_error)
-  if (__Pyx_ExportFunction("direct_eval", (void (*)(void))__pyx_f_3bem_4core_13fma_functions_direct_eval, "PyArrayObject *(__Pyx_memviewslice, __Pyx_memviewslice, double, double, double, int __pyx_skip_dispatch)") < 0) __PYX_ERR(0, 1, __pyx_L1_error)
-  if (__Pyx_ExportFunction("ff_coeff", (void (*)(void))__pyx_f_3bem_4core_13fma_functions_ff_coeff, "PyArrayObject *(__Pyx_memviewslice, __Pyx_memviewslice, int __pyx_skip_dispatch)") < 0) __PYX_ERR(0, 1, __pyx_L1_error)
-  if (__Pyx_ExportFunction("calc_exp_part", (void (*)(void))__pyx_f_3bem_4core_13fma_functions_calc_exp_part, "PyArrayObject *(__Pyx_memviewslice, __Pyx_memviewslice, __Pyx_memviewslice, double, int __pyx_skip_dispatch)") < 0) __PYX_ERR(0, 1, __pyx_L1_error)
-  if (__Pyx_ExportFunction("nf_eval", (void (*)(void))__pyx_f_3bem_4core_13fma_functions_nf_eval, "PyArrayObject *(__Pyx_memviewslice, __Pyx_memviewslice, double, double, double, int __pyx_skip_dispatch)") < 0) __PYX_ERR(0, 1, __pyx_L1_error)
-  if (__Pyx_ExportFunction("sph_hankel2", (void (*)(void))__pyx_f_3bem_4core_13fma_functions_sph_hankel2, "__pyx_t_double_complex (int, double, int __pyx_skip_dispatch)") < 0) __PYX_ERR(0, 1, __pyx_L1_error)
-  if (__Pyx_ExportFunction("ff2nf_op", (void (*)(void))__pyx_f_3bem_4core_13fma_functions_ff2nf_op, "PyArrayObject *(double, __Pyx_memviewslice, double, int, int __pyx_skip_dispatch)") < 0) __PYX_ERR(0, 1, __pyx_L1_error)
-  if (__Pyx_ExportFunction("mod_ff2nf_op", (void (*)(void))__pyx_f_3bem_4core_13fma_functions_mod_ff2nf_op, "PyArrayObject *(double, __Pyx_memviewslice, double, int, int __pyx_skip_dispatch)") < 0) __PYX_ERR(0, 1, __pyx_L1_error)
-  if (__Pyx_ExportFunction("ff2ff_op", (void (*)(void))__pyx_f_3bem_4core_13fma_functions_ff2ff_op, "PyArrayObject *(double, __Pyx_memviewslice, double, int __pyx_skip_dispatch)") < 0) __PYX_ERR(0, 1, __pyx_L1_error)
-  if (__Pyx_ExportFunction("half_fft2", (void (*)(void))__pyx_f_3bem_4core_13fma_functions_half_fft2, "PyArrayObject *(PyArrayObject *, int __pyx_skip_dispatch)") < 0) __PYX_ERR(0, 1, __pyx_L1_error)
-  if (__Pyx_ExportFunction("half_ifft2", (void (*)(void))__pyx_f_3bem_4core_13fma_functions_half_ifft2, "PyArrayObject *(PyArrayObject *, int __pyx_skip_dispatch)") < 0) __PYX_ERR(0, 1, __pyx_L1_error)
-  if (__Pyx_ExportFunction("fft_interpolate", (void (*)(void))__pyx_f_3bem_4core_13fma_functions_fft_interpolate, "PyArrayObject *(PyArrayObject *, int, int, int __pyx_skip_dispatch)") < 0) __PYX_ERR(0, 1, __pyx_L1_error)
-  if (__Pyx_ExportFunction("fft_interpolate_theta", (void (*)(void))__pyx_f_3bem_4core_13fma_functions_fft_interpolate_theta, "PyArrayObject *(PyArrayObject *, int, int __pyx_skip_dispatch)") < 0) __PYX_ERR(0, 1, __pyx_L1_error)
-  if (__Pyx_ExportFunction("fft_filter", (void (*)(void))__pyx_f_3bem_4core_13fma_functions_fft_filter, "PyArrayObject *(__Pyx_memviewslice, int, int, int __pyx_skip_dispatch)") < 0) __PYX_ERR(0, 1, __pyx_L1_error)
-  if (__Pyx_ExportFunction("fft_quadrule", (void (*)(void))__pyx_f_3bem_4core_13fma_functions_fft_quadrule, "PyObject *(int, int, int __pyx_skip_dispatch)") < 0) __PYX_ERR(0, 1, __pyx_L1_error)
-  if (__Pyx_ExportFunction("bandlimited_abs_sin", (void (*)(void))__pyx_f_3bem_4core_13fma_functions_bandlimited_abs_sin, "PyArrayObject *(int, int __pyx_skip_dispatch)") < 0) __PYX_ERR(0, 1, __pyx_L1_error)
+  if (__Pyx_ExportFunction("mag", (void (*)(void))__pyx_f_12interaction3_3bem_4core_13fma_functions_mag, "double (__Pyx_memviewslice, int __pyx_skip_dispatch)") < 0) __PYX_ERR(0, 1, __pyx_L1_error)
+  if (__Pyx_ExportFunction("distance", (void (*)(void))__pyx_f_12interaction3_3bem_4core_13fma_functions_distance, "PyArrayObject *(__Pyx_memviewslice, __Pyx_memviewslice, int __pyx_skip_dispatch)") < 0) __PYX_ERR(0, 1, __pyx_L1_error)
+  if (__Pyx_ExportFunction("direct_eval", (void (*)(void))__pyx_f_12interaction3_3bem_4core_13fma_functions_direct_eval, "PyArrayObject *(__Pyx_memviewslice, __Pyx_memviewslice, double, double, double, int __pyx_skip_dispatch)") < 0) __PYX_ERR(0, 1, __pyx_L1_error)
+  if (__Pyx_ExportFunction("ff_coeff", (void (*)(void))__pyx_f_12interaction3_3bem_4core_13fma_functions_ff_coeff, "PyArrayObject *(__Pyx_memviewslice, __Pyx_memviewslice, int __pyx_skip_dispatch)") < 0) __PYX_ERR(0, 1, __pyx_L1_error)
+  if (__Pyx_ExportFunction("calc_exp_part", (void (*)(void))__pyx_f_12interaction3_3bem_4core_13fma_functions_calc_exp_part, "PyArrayObject *(__Pyx_memviewslice, __Pyx_memviewslice, __Pyx_memviewslice, double, int __pyx_skip_dispatch)") < 0) __PYX_ERR(0, 1, __pyx_L1_error)
+  if (__Pyx_ExportFunction("nf_eval", (void (*)(void))__pyx_f_12interaction3_3bem_4core_13fma_functions_nf_eval, "PyArrayObject *(__Pyx_memviewslice, __Pyx_memviewslice, double, double, double, int __pyx_skip_dispatch)") < 0) __PYX_ERR(0, 1, __pyx_L1_error)
+  if (__Pyx_ExportFunction("sph_hankel2", (void (*)(void))__pyx_f_12interaction3_3bem_4core_13fma_functions_sph_hankel2, "__pyx_t_double_complex (int, double, int __pyx_skip_dispatch)") < 0) __PYX_ERR(0, 1, __pyx_L1_error)
+  if (__Pyx_ExportFunction("ff2nf_op", (void (*)(void))__pyx_f_12interaction3_3bem_4core_13fma_functions_ff2nf_op, "PyArrayObject *(double, __Pyx_memviewslice, double, int, int __pyx_skip_dispatch)") < 0) __PYX_ERR(0, 1, __pyx_L1_error)
+  if (__Pyx_ExportFunction("mod_ff2nf_op", (void (*)(void))__pyx_f_12interaction3_3bem_4core_13fma_functions_mod_ff2nf_op, "PyArrayObject *(double, __Pyx_memviewslice, double, int, int __pyx_skip_dispatch)") < 0) __PYX_ERR(0, 1, __pyx_L1_error)
+  if (__Pyx_ExportFunction("ff2ff_op", (void (*)(void))__pyx_f_12interaction3_3bem_4core_13fma_functions_ff2ff_op, "PyArrayObject *(double, __Pyx_memviewslice, double, int __pyx_skip_dispatch)") < 0) __PYX_ERR(0, 1, __pyx_L1_error)
+  if (__Pyx_ExportFunction("half_fft2", (void (*)(void))__pyx_f_12interaction3_3bem_4core_13fma_functions_half_fft2, "PyArrayObject *(PyArrayObject *, int __pyx_skip_dispatch)") < 0) __PYX_ERR(0, 1, __pyx_L1_error)
+  if (__Pyx_ExportFunction("half_ifft2", (void (*)(void))__pyx_f_12interaction3_3bem_4core_13fma_functions_half_ifft2, "PyArrayObject *(PyArrayObject *, int __pyx_skip_dispatch)") < 0) __PYX_ERR(0, 1, __pyx_L1_error)
+  if (__Pyx_ExportFunction("fft_interpolate", (void (*)(void))__pyx_f_12interaction3_3bem_4core_13fma_functions_fft_interpolate, "PyArrayObject *(PyArrayObject *, int, int, int __pyx_skip_dispatch)") < 0) __PYX_ERR(0, 1, __pyx_L1_error)
+  if (__Pyx_ExportFunction("fft_interpolate_theta", (void (*)(void))__pyx_f_12interaction3_3bem_4core_13fma_functions_fft_interpolate_theta, "PyArrayObject *(PyArrayObject *, int, int __pyx_skip_dispatch)") < 0) __PYX_ERR(0, 1, __pyx_L1_error)
+  if (__Pyx_ExportFunction("fft_filter", (void (*)(void))__pyx_f_12interaction3_3bem_4core_13fma_functions_fft_filter, "PyArrayObject *(__Pyx_memviewslice, int, int, int __pyx_skip_dispatch)") < 0) __PYX_ERR(0, 1, __pyx_L1_error)
+  if (__Pyx_ExportFunction("fft_quadrule", (void (*)(void))__pyx_f_12interaction3_3bem_4core_13fma_functions_fft_quadrule, "PyObject *(int, int, int __pyx_skip_dispatch)") < 0) __PYX_ERR(0, 1, __pyx_L1_error)
+  if (__Pyx_ExportFunction("bandlimited_abs_sin", (void (*)(void))__pyx_f_12interaction3_3bem_4core_13fma_functions_bandlimited_abs_sin, "PyArrayObject *(int, int __pyx_skip_dispatch)") < 0) __PYX_ERR(0, 1, __pyx_L1_error)
   /*--- Type init code ---*/
   __pyx_vtabptr_array = &__pyx_vtable_array;
   __pyx_vtable_array.get_memview = (PyObject *(*)(struct __pyx_array_obj *))__pyx_array_get_memview;
@@ -27741,7 +28326,7 @@ PyMODINIT_FUNC PyInit_fma_functions(void)
   if (__Pyx_patch_abc() < 0) __PYX_ERR(0, 1, __pyx_L1_error)
   #endif
 
-  /* "bem/core/fma_functions.pyx":6
+  /* "interaction3/bem/core/fma_functions.pyx":6
  * Author: Bernard Shieh (bshieh@gatech.edu)
  * '''
  * import numpy as np             # <<<<<<<<<<<<<<
@@ -27753,7 +28338,7 @@ PyMODINIT_FUNC PyInit_fma_functions(void)
   if (PyDict_SetItem(__pyx_d, __pyx_n_s_np, __pyx_t_1) < 0) __PYX_ERR(0, 6, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "bem/core/fma_functions.pyx":15
+  /* "interaction3/bem/core/fma_functions.pyx":15
  * from libc.math cimport sqrt, cos, sin, exp
  * from complex cimport cabs, carg, cexp, creal, cimag, conj
  * from scipy.fftpack import fft, ifft, fft2, ifft2, fftshift, ifftshift             # <<<<<<<<<<<<<<
@@ -27809,7 +28394,7 @@ PyMODINIT_FUNC PyInit_fma_functions(void)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-  /* "bem/core/fma_functions.pyx":16
+  /* "interaction3/bem/core/fma_functions.pyx":16
  * from complex cimport cabs, carg, cexp, creal, cimag, conj
  * from scipy.fftpack import fft, ifft, fft2, ifft2, fftshift, ifftshift
  * from scipy.special import eval_legendre, hankel2             # <<<<<<<<<<<<<<
@@ -27837,7 +28422,7 @@ PyMODINIT_FUNC PyInit_fma_functions(void)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "bem/core/fma_functions.pyx":22
+  /* "interaction3/bem/core/fma_functions.pyx":22
  * 
  * #cdef double pi = np.pi
  * pi = np.pi             # <<<<<<<<<<<<<<
@@ -27852,19 +28437,31 @@ PyMODINIT_FUNC PyInit_fma_functions(void)
   if (PyDict_SetItem(__pyx_d, __pyx_n_s_pi, __pyx_t_2) < 0) __PYX_ERR(0, 22, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-  /* "bem/core/fma_functions.pyx":92
+  /* "interaction3/bem/core/fma_functions.pyx":92
  * @cython.boundscheck(False)
  * @cython.wraparound(False)
  * def sph_hankel2_np(l, z):             # <<<<<<<<<<<<<<
  *     '''
  *     Spherical Hankel function of the second kind of order l and argument z
  */
-  __pyx_t_2 = PyCFunction_NewEx(&__pyx_mdef_3bem_4core_13fma_functions_9sph_hankel2_np, NULL, __pyx_n_s_bem_core_fma_functions); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 92, __pyx_L1_error)
+  __pyx_t_2 = PyCFunction_NewEx(&__pyx_mdef_12interaction3_3bem_4core_13fma_functions_9sph_hankel2_np, NULL, __pyx_n_s_interaction3_bem_core_fma_functi_2); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 92, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   if (PyDict_SetItem(__pyx_d, __pyx_n_s_sph_hankel2_np, __pyx_t_2) < 0) __PYX_ERR(0, 92, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-  /* "bem/core/fma_functions.pyx":1
+  /* "interaction3/bem/core/fma_functions.pyx":535
+ * ## UTILITY FUNCTIONS ##
+ * 
+ * def get_unique_coords(dims=2):             # <<<<<<<<<<<<<<
+ * 
+ *     if dims == 2:
+ */
+  __pyx_t_2 = PyCFunction_NewEx(&__pyx_mdef_12interaction3_3bem_4core_13fma_functions_41get_unique_coords, NULL, __pyx_n_s_interaction3_bem_core_fma_functi_2); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 535, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_get_unique_coords, __pyx_t_2) < 0) __PYX_ERR(0, 535, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+
+  /* "interaction3/bem/core/fma_functions.pyx":1
  * ## bem / core / fma_functions.pyx             # <<<<<<<<<<<<<<
  * '''
  * Core functions for fast multipole calculations.
@@ -27894,7 +28491,7 @@ PyMODINIT_FUNC PyInit_fma_functions(void)
  * cdef strided = Enum("<strided and direct>") # default
  * cdef indirect = Enum("<strided and indirect>")
  */
-  __pyx_t_2 = __Pyx_PyObject_Call(((PyObject *)__pyx_MemviewEnum_type), __pyx_tuple__61, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(2, 284, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_Call(((PyObject *)__pyx_MemviewEnum_type), __pyx_tuple__70, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(2, 284, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_XGOTREF(generic);
   __Pyx_DECREF_SET(generic, __pyx_t_2);
@@ -27908,7 +28505,7 @@ PyMODINIT_FUNC PyInit_fma_functions(void)
  * cdef indirect = Enum("<strided and indirect>")
  * 
  */
-  __pyx_t_2 = __Pyx_PyObject_Call(((PyObject *)__pyx_MemviewEnum_type), __pyx_tuple__62, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(2, 285, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_Call(((PyObject *)__pyx_MemviewEnum_type), __pyx_tuple__71, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(2, 285, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_XGOTREF(strided);
   __Pyx_DECREF_SET(strided, __pyx_t_2);
@@ -27922,7 +28519,7 @@ PyMODINIT_FUNC PyInit_fma_functions(void)
  * 
  * 
  */
-  __pyx_t_2 = __Pyx_PyObject_Call(((PyObject *)__pyx_MemviewEnum_type), __pyx_tuple__63, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(2, 286, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_Call(((PyObject *)__pyx_MemviewEnum_type), __pyx_tuple__72, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(2, 286, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_XGOTREF(indirect);
   __Pyx_DECREF_SET(indirect, __pyx_t_2);
@@ -27936,7 +28533,7 @@ PyMODINIT_FUNC PyInit_fma_functions(void)
  * cdef indirect_contiguous = Enum("<contiguous and indirect>")
  * 
  */
-  __pyx_t_2 = __Pyx_PyObject_Call(((PyObject *)__pyx_MemviewEnum_type), __pyx_tuple__64, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(2, 289, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_Call(((PyObject *)__pyx_MemviewEnum_type), __pyx_tuple__73, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(2, 289, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_XGOTREF(contiguous);
   __Pyx_DECREF_SET(contiguous, __pyx_t_2);
@@ -27950,7 +28547,7 @@ PyMODINIT_FUNC PyInit_fma_functions(void)
  * 
  * 
  */
-  __pyx_t_2 = __Pyx_PyObject_Call(((PyObject *)__pyx_MemviewEnum_type), __pyx_tuple__65, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(2, 290, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_Call(((PyObject *)__pyx_MemviewEnum_type), __pyx_tuple__74, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(2, 290, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_XGOTREF(indirect_contiguous);
   __Pyx_DECREF_SET(indirect_contiguous, __pyx_t_2);
@@ -28035,11 +28632,11 @@ PyMODINIT_FUNC PyInit_fma_functions(void)
   __Pyx_XDECREF(__pyx_t_2);
   if (__pyx_m) {
     if (__pyx_d) {
-      __Pyx_AddTraceback("init bem.core.fma_functions", 0, __pyx_lineno, __pyx_filename);
+      __Pyx_AddTraceback("init interaction3.bem.core.fma_functions", 0, __pyx_lineno, __pyx_filename);
     }
     Py_DECREF(__pyx_m); __pyx_m = 0;
   } else if (!PyErr_Occurred()) {
-    PyErr_SetString(PyExc_ImportError, "init bem.core.fma_functions");
+    PyErr_SetString(PyExc_ImportError, "init interaction3.bem.core.fma_functions");
   }
   __pyx_L0:;
   __Pyx_RefNannyFinishContext();
@@ -29634,6 +30231,91 @@ static CYTHON_INLINE PyObject *__Pyx_GetItemInt_Fast(PyObject *o, Py_ssize_t i, 
     }
     return 0;
 }
+
+/* PyIntBinop */
+        #if !CYTHON_COMPILING_IN_PYPY
+static PyObject* __Pyx_PyInt_EqObjC(PyObject *op1, PyObject *op2, CYTHON_UNUSED long intval, CYTHON_UNUSED int inplace) {
+    if (op1 == op2) {
+        Py_RETURN_TRUE;
+    }
+    #if PY_MAJOR_VERSION < 3
+    if (likely(PyInt_CheckExact(op1))) {
+        const long b = intval;
+        long a = PyInt_AS_LONG(op1);
+        if (a == b) {
+            Py_RETURN_TRUE;
+        } else {
+            Py_RETURN_FALSE;
+        }
+    }
+    #endif
+    #if CYTHON_USE_PYLONG_INTERNALS
+    if (likely(PyLong_CheckExact(op1))) {
+        const long b = intval;
+        long a;
+        const digit* digits = ((PyLongObject*)op1)->ob_digit;
+        const Py_ssize_t size = Py_SIZE(op1);
+        if (likely(__Pyx_sst_abs(size) <= 1)) {
+            a = likely(size) ? digits[0] : 0;
+            if (size == -1) a = -a;
+        } else {
+            switch (size) {
+                case -2:
+                    if (8 * sizeof(long) - 1 > 2 * PyLong_SHIFT) {
+                        a = -(long) (((((unsigned long)digits[1]) << PyLong_SHIFT) | (unsigned long)digits[0]));
+                        break;
+                    }
+                case 2:
+                    if (8 * sizeof(long) - 1 > 2 * PyLong_SHIFT) {
+                        a = (long) (((((unsigned long)digits[1]) << PyLong_SHIFT) | (unsigned long)digits[0]));
+                        break;
+                    }
+                case -3:
+                    if (8 * sizeof(long) - 1 > 3 * PyLong_SHIFT) {
+                        a = -(long) (((((((unsigned long)digits[2]) << PyLong_SHIFT) | (unsigned long)digits[1]) << PyLong_SHIFT) | (unsigned long)digits[0]));
+                        break;
+                    }
+                case 3:
+                    if (8 * sizeof(long) - 1 > 3 * PyLong_SHIFT) {
+                        a = (long) (((((((unsigned long)digits[2]) << PyLong_SHIFT) | (unsigned long)digits[1]) << PyLong_SHIFT) | (unsigned long)digits[0]));
+                        break;
+                    }
+                case -4:
+                    if (8 * sizeof(long) - 1 > 4 * PyLong_SHIFT) {
+                        a = -(long) (((((((((unsigned long)digits[3]) << PyLong_SHIFT) | (unsigned long)digits[2]) << PyLong_SHIFT) | (unsigned long)digits[1]) << PyLong_SHIFT) | (unsigned long)digits[0]));
+                        break;
+                    }
+                case 4:
+                    if (8 * sizeof(long) - 1 > 4 * PyLong_SHIFT) {
+                        a = (long) (((((((((unsigned long)digits[3]) << PyLong_SHIFT) | (unsigned long)digits[2]) << PyLong_SHIFT) | (unsigned long)digits[1]) << PyLong_SHIFT) | (unsigned long)digits[0]));
+                        break;
+                    }
+                #if PyLong_SHIFT < 30 && PyLong_SHIFT != 15
+                default: return PyLong_Type.tp_richcompare(op1, op2, Py_EQ);
+                #else
+                default: Py_RETURN_FALSE;
+                #endif
+            }
+        }
+            if (a == b) {
+                Py_RETURN_TRUE;
+            } else {
+                Py_RETURN_FALSE;
+            }
+    }
+    #endif
+    if (PyFloat_CheckExact(op1)) {
+        const long b = intval;
+        double a = PyFloat_AS_DOUBLE(op1);
+            if ((double)a == (double)b) {
+                Py_RETURN_TRUE;
+            } else {
+                Py_RETURN_FALSE;
+            }
+    }
+    return PyObject_RichCompare(op1, op2, Py_EQ);
+}
+#endif
 
 /* RaiseException */
         #if PY_MAJOR_VERSION < 3

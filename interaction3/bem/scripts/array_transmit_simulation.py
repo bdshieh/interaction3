@@ -28,8 +28,13 @@ def process(args):
     simulation.solve()
 
     nodes = simulation.result['nodes']
+    membrane_ids = simulation.result['membrane_id']
+    channel_ids = simulation.result['channel_id']
+    x = simulation.result['x']
 
-    update_displacements_table(simulation.result)
+    with closing(sql.connect(file)) as conn:
+        update_displacements_table(conn, f, k, nodes, membrane_ids, channel_ids, x)
+        update_progress(conn, f)
 
 
 ## DATABASE FUNCTIONS ##
@@ -88,11 +93,29 @@ def update_progress(conn, f):
     conn.commit()
 
 
-def create_nodes_table(conn, nodes):
-    pass
+# def create_nodes_table(conn, nodes):
+#
+#     x, y, z = nodes.T
+#
+#     query = '''
+#             CREATE TABLE nodes (x float, y float, z float)
+#             '''
+#     conn.execute(query)
+#
+#     query = '''
+#             CREATE UNIQUE INDEX node_index ON nodes (x, y, z)
+#             '''
+#     conn.execute(query)
+#
+#     query = '''
+#             INSERT INTO nodes VALUES (?, ?, ?)
+#             '''
+#     conn.executemany(query, zip(x, y, z))
+#
+#     conn.commit()
 
 
-def create_displacement_table(conn):
+def create_displacements_table(conn):
 
     query = '''
             CREATE TABLE displacements (
@@ -107,8 +130,7 @@ def create_displacement_table(conn):
             displacement_real float,
             displacement_imag float,
             FOREIGN KEY (frequency) REFERENCES frequencies (frequency),
-            FOREIGN KEY (wavenumber) REFERENCES frequencies (wavenumber),
-            FOREIGN KEY (x, y, z) REFERENCES nodes (x, y, z)
+            FOREIGN KEY (wavenumber) REFERENCES frequencies (wavenumber)
             )
             '''
     conn.execute(query)
@@ -136,11 +158,11 @@ def update_displacements_table(conn, f, k, nodes, membrane_ids, channel_ids, dis
     x, y, z = nodes.T
 
     query = '''
-            INSERT INTO translations (frequency, wavenumber, x, y, z, displacement_real, displacement_imag)
-            VALUES (?, ?, ?, ?, ?, ?, ?)
+            INSERT INTO translations
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
             '''
-    conn.executemany(query, zip(repeat(f), repeat(k), repeat(x), repeat(y), repeat(z), np.real(displacements.ravel()),
-                                np.imag(displacements.ravel())))
+    conn.executemany(query, zip(repeat(f), repeat(k), repeat(x), repeat(y), repeat(z), membrane_ids, channel_ids,
+                                np.real(displacements.ravel()), np.imag(displacements.ravel())))
 
     conn.commit()
 
@@ -231,6 +253,7 @@ def main(**kwargs):
                 # create database tables
                 create_metadata_table(conn, **kwargs)
                 create_frequencies_table(conn, fs, ks)
+                create_displacements_table(conn)
 
         elif response.lower() in ['c', 'continue']:
 
@@ -266,6 +289,7 @@ def main(**kwargs):
             # create database tables
             create_metadata_table(conn, **kwargs)
             create_frequencies_table(conn, fs, ks)
+            create_displacements_table(conn)
 
     try:
 

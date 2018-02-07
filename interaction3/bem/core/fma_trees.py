@@ -9,27 +9,32 @@ import sys
 import attr
 
 from . import fma_functions as fma
-from .. import database as db
+from . import db_functions as db
 
 # extend recursion limit
 sys.setrecursionlimit(30000)
 
+
 @attr.s
 class Group():
 
+    # class attributes
     ROOT = 0
     BRANCH = 1
     LEAF = 2
     MAXLEVEL = 1
 
+    # instance attributes, init
     parent = attr.ib(repr=False)
-    bbox = attr.ib()
+    bounding_box = attr.ib()
     uid = attr.ib(default=(0, 0, 0))
 
+    # instance attributes, no init
     level = attr.ib(init=False)
     type = attr.ib(init=False)
     center = attr.ib(init=False)
-    children = attr.ib(init=False, repr=False, default=attr.Factory(lambda: [None] * 4))
+    children = attr.ib(init=False, default=attr.Factory(lambda: [None] * 4), repr=False,)
+    nodes = attr.ib(init=False, default=None, repr=False)
 
     @level.default
     def _level_default(self):
@@ -52,9 +57,10 @@ class Group():
     @center.default
     def _center_default(self):
 
-        x0, y0, x1, y1 = self.bbox
-        return x0 + (x1 - x0) / 2, y0 + (y1 - y0) / 2, 0.
-            
+        x0, y0, x1, y1 = self.bounding_box
+        return x0 + (x1 - x0) / 2, y0 + (y1 - y0) / 2, 0
+
+    # public methods
     def subdivide(self):
         '''
         Create tree by instantiating child Groups recursively.
@@ -64,7 +70,7 @@ class Group():
             return
 
         # calculate childrens' bbox
-        x0, y0, x1, y1 = self.bbox
+        x0, y0, x1, y1 = self.bounding_box
         xmid, ymid = (x1 - x0) / 2, (y1 - y0) / 2
 
         bbox00 = x0, y0, x0 + xmid, y0 + ymid
@@ -114,21 +120,25 @@ class Group():
 @attr.s
 class QuadTree(object):
 
-    nodes = attr.ib(repr=False)
-    bbox = attr.ib()
-    maxlevel = attr.ib(default=6)
+    ## INSTANCE ATTRIBUTES, INIT ##
 
-    _groups = attr.ib(init=False, default=attr.Factory(list))
-    _root = attr.ib(init=False, default=None)
-    _leaves = attr.ib(init=False, default=attr.Factory(list))
+    nodes = attr.ib(repr=False)
+    bounding_box = attr.ib()
+    max_level = attr.ib()
+
+    ## INSTANCE ATTRIBUTES, NO INIT ##
+
+    _groups = attr.ib(init=False, default=attr.Factory(list), repr=False)
+    _root = attr.ib(init=False, default=None, repr=False)
+    _leaves = attr.ib(init=False, default=attr.Factory(list), repr=False)
 
     def __attrs_post_init__(self):
 
         # Set tree parameters
-        Group.MAXLEVEL = self.maxlevel
+        Group.MAXLEVEL = self.max_level
 
         # Plant and grow full tree
-        root = Group(parent=None, bbox=self.bbox)
+        root = Group(parent=None, bounding_box=self.bounding_box)
         root.subdivide()
 
         # Setup tree and prune
@@ -140,6 +150,8 @@ class QuadTree(object):
 
         for group in self._groups:
             self._find_ntnn(group)
+
+    ## PRIVATE METHODS ##
 
     def _find(self, uid, group=None):
         '''
@@ -157,8 +169,8 @@ class QuadTree(object):
         '''
         self.nodes = nodes
 
-        x0, y0, x1, y1 = self._root.bbox
-        maxid = 2 ** self._root.maxlevel
+        x0, y0, x1, y1 = self._root.bounding_box
+        maxid = 2 ** self._root.MAXLEVEL
         xdim, ydim = (x1 - x0) / maxid, (y1 - y0) / maxid
 
         # calculate usid of each node: the unique single digit id which 
@@ -310,28 +322,34 @@ class QuadTree(object):
 @attr.s
 class FmaQuadTree(QuadTree):
 
-    frequency = attr.ib()
-    _node_area = attr.ib(repr=False)
-    _orders_db = attr.ib(converter=os.path.normpath, repr=False)
-    _translations_db = attr.ib(converter=os.path.normpath, repr=False)
-    _density = attr.ib(default=1000, repr=False)
-    _sound_speed = attr.ib(default=1500, repr=False)
+    ## INSTANCE ATTRIBUTES, INIT ##
 
-    _wavenumber = attr.ib(init=False, repr=False)
+    frequency = attr.ib()
+    node_area = attr.ib(repr=False)
+    orders_db = attr.ib(converter=os.path.normpath, repr=False)
+    translations_db = attr.ib(converter=os.path.normpath, repr=False)
+    density = attr.ib(repr=False)
+    sound_speed = attr.ib(repr=False)
+
+    ## INSTANCE ATTRIBUTES, NO INIT ##
+
+    wavenumber = attr.ib(init=False, repr=False)
     _apply_counter = attr.ib(init=False, default=0, repr=False)
     _level_data = attr.ib(init=False, default=attr.Factory(dict), repr=False)
     _translators = attr.ib(init=False, default=attr.Factory(dict), repr=False)
     _shifters = attr.ib(init=False, default=attr.Factory(dict), repr=False)
 
-    @_wavenumber.default
-    def _wavenumber_default(self):
-        return 2 * np.pi * self.frequency / self._sound_speed
+    @wavenumber.default
+    def wavenumber_default(self):
+        return 2 * np.pi * self.frequency / self.sound_speed
     
     def __attrs_post_init__(self):
         '''
         Set the QuadTree up for solving. This function calls the individual
         setup functions in the correct order.
         '''
+        super().__attrs_post_init__()
+
         self._setup_fma() # setup fma (quadrature rule etc.)
         self._setup_translators() # setup translators
         self._setup_shifters() # setup shifters
@@ -343,14 +361,16 @@ class FmaQuadTree(QuadTree):
             self._calc_neighbor_dist(group)
             self._calc_exp_part(group)
 
+    ## PRIVATE METHODS ##
+
     def _setup_fma(self):
         '''
         Setup quadrature rules and translation operator order.
         '''
         f = self.frequency
-        orders_db = self._orders_db
-        maxlevel = self.maxlevel
-        x0, y0, x1, y1 = self.bbox
+        orders_db = self.orders_db
+        maxlevel = self.max_level
+        x0, y0, x1, y1 = self.bounding_box
         ldata = self._level_data
 
         xlength, ylength = x1 - x0, y1 - y0
@@ -366,22 +386,22 @@ class FmaQuadTree(QuadTree):
 
     def _setup_translators(self):
         '''
-        Setup translation operators (precalculated) by loading them from a 
-        database.
+        Setup translation operators (precalculated) by loading them from a database.
         '''
         f = self.frequency
-        maxlevel = self.maxlevel
-        translations_db = self._translations_db
+        max_level = self.max_level
+        translations_db = self.translations_db
         translators = self._translators
         groups = self._groups
+        ldata = self._level_data
         
         # load translations for every level
-        for l in range(2, maxlevel + 1):
+        for l in range(2, max_level + 1):
 
             cache = dict()
 
             for vec in fma.get_unique_coords():
-                cache[vec] = db.get_translation_from_db(translations_db, f, l, vec)
+                cache[tuple(vec)] = db.get_translation(translations_db, f, l, vec)
 
             expanded_cache = dict()
 
@@ -420,7 +440,7 @@ class FmaQuadTree(QuadTree):
 
             for fargroup in group.ntnn:
 
-                rx, ry, _ = group.center - fargroup.center
+                rx, ry, _ = [x1 - x2 for x1, x2 in zip(group.center, fargroup.center)]
 
                 x = int(round(rx / xdim))
                 y = int(round(ry / ydim))
@@ -432,12 +452,12 @@ class FmaQuadTree(QuadTree):
         '''
         Setup shift operators (calculated here).
         '''
-        k = self._wavenumber
-        maxlevel = self.maxlevel
+        k = self.wavenumber
+        max_level = self.max_level
         ldata = self._level_data
         shifters = self._shifters
 
-        for l in range(2, maxlevel + 1):
+        for l in range(2, max_level + 1):
 
             xdim, ydim = ldata[l]['group_dims']
             kcoordT = ldata[l]['kcoordT']
@@ -465,7 +485,7 @@ class FmaQuadTree(QuadTree):
         '''
         Calculate the exponential part.
         '''
-        k = self._wavenumber
+        k = self.wavenumber
         ldata = self._level_data
 
         nodes = group.nodes
@@ -473,7 +493,7 @@ class FmaQuadTree(QuadTree):
         l = group.level
         kcoord = ldata[l]['kcoord']
 
-        group.exp_part = fma.calc_exp_part(nodes, center, kcoord, k)
+        group.exp_part = fma.calc_exp_part(nodes, np.array(center), kcoord, k)
 
     def _calc_self_dist(self, group):
         '''
@@ -493,28 +513,6 @@ class FmaQuadTree(QuadTree):
 
         for neighbor in neighbors:
             group.neighbor_dist.append(fma.distance(nodes, neighbor.nodes))
-
-    def apply(self, strengths):
-        
-        root = self._root
-        leaves = self._leaves
-        nnodes = len(self.nodes)
-
-        self._apply_counter += 1
-
-        for group in leaves:
-            self._calc_coeffs(group, strengths)
-
-        self._uptree(root)
-        self._downtree(root)
-
-        # calculate pressures
-        pres = np.zeros(nnodes, dtype=np.complex128)
-
-        for group in self.leaves:
-            self._calc_pres(group, strengths, pres)
-
-        return pres
 
     def _calc_coeffs(self, group, strengths):
         '''
@@ -543,7 +541,7 @@ class FmaQuadTree(QuadTree):
         if group.level < 2:
             return
 
-        shifters = self.shifters
+        shifters = self._shifters
 
         ntheta1, nphi1 = shifters[group.level + 1][0].shape
         ntheta2, nphi2 = shifters[group.level][0].shape
@@ -580,7 +578,7 @@ class FmaQuadTree(QuadTree):
             # skip this part for leaves
             if group.type != Group.LEAF:
 
-                shifters = self.shifters
+                shifters = self._shifters
 
                 ntheta1, nphi1 = shifters[group.level][0].shape
                 ntheta2, nphi2 = shifters[group.level + 1][0].shape
@@ -603,11 +601,11 @@ class FmaQuadTree(QuadTree):
         is calculated at every node either directly or by evaluation of 
         near-field coefficients.
         '''
-        k = self._wavenumber
-        maxlevel = self.maxlevel
-        rho = self._density
-        c = self._sound_speed
-        s_n = self._node_area
+        k = self.wavenumber
+        maxlevel = self.max_level
+        rho = self.density
+        c = self.sound_speed
+        s_n = self.node_area
         ldata = self._level_data
         
         node_ids = group.node_ids
@@ -630,3 +628,27 @@ class FmaQuadTree(QuadTree):
         # self pressures (piston radiation)
         a_eff = np.sqrt(s_n / np.pi)
         pres[node_ids] += rho * c * (0.5 * (k * a_eff) ** 2 + 1j * 8 / (3 * np.pi) * k * a_eff) / 2 * (q / s_n)
+
+    ## PUBLIC METHODS ##
+
+    def apply(self, strengths):
+
+        root = self._root
+        leaves = self._leaves
+        nnodes = len(self.nodes)
+
+        self._apply_counter += 1
+
+        for group in leaves:
+            self._calc_coeffs(group, strengths)
+
+        self._uptree(root)
+        self._downtree(root)
+
+        # calculate pressures
+        pres = np.zeros(nnodes, dtype=np.complex128)
+
+        for group in self._leaves:
+            self._calc_pres(group, strengths, pres)
+
+        return pres

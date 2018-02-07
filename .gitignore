@@ -68,3 +68,6 @@ ENV/
 
 # VS code
 .vscode
+
+# sqlite
+*.db

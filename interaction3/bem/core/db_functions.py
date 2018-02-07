@@ -6,6 +6,13 @@ import sqlite3 as sql
 from scipy.interpolate import interp1d
 from contextlib import closing
 
+# register adapters for sqlite to convert numpy types
+sql.register_adapter(np.float64, float)
+sql.register_adapter(np.float32, float)
+sql.register_adapter(np.int64, int)
+sql.register_adapter(np.int32, int)
+
+
 def get_orders_from_db(file, l):
 
     with closing(sql.connect(file)) as conn:
@@ -15,10 +22,13 @@ def get_orders_from_db(file, l):
                 WHERE level=?
                 ORDER BY frequency
                 '''
-        table = pd.read_sql(query, conn, [l,])
+        table = pd.read_sql(query, conn, params=[l,])
 
-    fs = table['frequency']
-    orders = table['translation_order']
+    fs = list(table['frequency'])
+    orders = list(table['translation_order'])
+
+    if len(orders) == 0:
+        raise Exception('Could not retrieve order from database')
 
     return fs, orders
 
@@ -33,7 +43,7 @@ def get_order(file, f, l):
     return order
 
 
-def get_translation_from_db(file, f, l, coord):
+def get_translation(file, f, l, coord):
 
     x, y, z = coord
 
@@ -49,6 +59,9 @@ def get_translation_from_db(file, f, l, coord):
                 ORDER BY theta, phi
                 '''
         table = pd.read_sql(query, conn, params=[f, l, x, y, z])
+
+    if len(table) == 0:
+        raise Exception('Could not retrieve translation from database')
 
     ntheta = table['ntheta'][0]
     nphi = table['nphi'][0]

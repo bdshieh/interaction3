@@ -34,8 +34,8 @@
       { "$ref": "#/membrane" },
       {
       "properties": {
-        "y_modulus": { "type": "number" },
-        "p_ratio": { "type": "number" },
+        "y_modulus": { "type": "array", "items": { "type": "number" }, "minItems": 1 },
+        "p_ratio": { "type": "array", "items": { "type": "number" }, "minItems": 1 },
         "isolation": { "type": "number" },
         "permittivity": { "type": "number" },
         "gap": { "type": "number" }
@@ -82,7 +82,7 @@
     ]
   },
 
-    "circular_pmut": {
+    "circular_pmut_membrane": {
     "name": "circular_pmut_membrane",
     "allOf": [
       { "$ref": "#/pmut_membrane" },
@@ -188,11 +188,25 @@
     "properties": {
       "frequency": { "type": "number"},
       "sound_speed": { "type": "number"},
+      "density": { "type": "number"}
+    }
+  },
+
+  "bem_array_transmit_simulation": {
+    "type": "object",
+    "name": "bem_array_transmit_simulation",
+    "properties": {
+      "frequency": { "type": "number"},
+      "sound_speed": { "type": "number"},
       "density": { "type": "number"},
       "tolerance": { "type": "number"},
       "max_iterations": { "type": "integer"},
+      "max_level": { "type": "integer"},
+      "orders_db": { "type": "string" },
+      "translations_db": { "type": "string" },
       "use_preconditioner": { "type": "boolean"},
-      "use_pressure_load": { "type": "boolean"}
+      "use_pressure_load": { "type": "boolean"},
+      "bounding_box": { "type": "array", "items": { "type": "number" }, "minItems": 4, "maxItems": 4 }
     }
   }
 }

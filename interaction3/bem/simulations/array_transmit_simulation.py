@@ -11,7 +11,6 @@ except ImportError:
     _RESOURCE_IMPORTED = False
 
 from interaction3 import abstract
-
 from .. core . fma_trees import FmaQuadTree
 from .. core import bem_functions as bem
 from . import _subconnectors as sub
@@ -20,27 +19,34 @@ from . import _subconnectors as sub
 @attr.s
 class ArrayTransmitSimulation(object):
 
-    # M, B, K, Kss, Zr1, G, G1, P1inv
+    ## INSTANCE ATTRIBUTES, INIT ##
 
+    nodes = attr.ib(repr=False)
+    bounding_box = attr.ib()
     frequency = attr.ib()
-    bbox = attr.ib()
+    node_area = attr.ib(repr=False)
+    orders_db = attr.ib()
+    translations_db = attr.ib()
+    density = attr.ib()
+    sound_speed = attr.ib()
     Gmech = attr.ib(repr=False)
     P = attr.ib(repr=False)
-    nodes = attr.ib(repr=False)
-    node_area = attr.ib(repr=False)
-    sound_speed = attr.ib(repr=False)
 
-    use_preconditioner = attr.ib(default=True, repr=False)
-    use_pressure_load = attr.ib(default=False, repr=False)
-    Ginv = attr.ib(default=None, repr=False)
+    ## INSTANCE ATTRIBUTES, INIT, OPTIONAL ##
+
     max_level = attr.ib(default=6)
-    tolerance = attr.ib(default=1.0, repr=False)
-    max_iterations = attr.ib(default=100, repr=False)
+    Ginv = attr.ib(default=None, repr=False)
+    use_preconditioner = attr.ib(default=True)
+    use_pressure_load = attr.ib(default=False)
+    tolerance = attr.ib(default=0.01)
+    max_iterations = attr.ib(default=100)
 
-    wavenumber = attr.ib(init=False)
-    _tree = attr.ib(init=False)
-    _linear_operator = attr.ib(init=False)
-    result = attr.ib(init=False, default=attr.Factory(dict))
+    ## INSTANCE ATTRIBUTES, NO INIT ##
+
+    wavenumber = attr.ib(init=False, repr=False)
+    result = attr.ib(init=False, default=attr.Factory(dict), repr=False)
+    _tree = attr.ib(init=False, repr=False)
+    _linear_operator = attr.ib(init=False, repr=False)
 
     @wavenumber.default
     def _wavenumber_default(self):
@@ -49,13 +55,21 @@ class ArrayTransmitSimulation(object):
     @_tree.default
     def _tree_default(self):
 
-        f = self.frequency
-        nodes = self.nodes
-        s_n = self.node_area
+        kwargs = dict()
+        kwargs['nodes'] = self.nodes
+        kwargs['bounding_box'] = self.bounding_box
+        kwargs['max_level'] = self.max_level
+        kwargs['frequency'] = self.frequency
+        kwargs['node_area']= self.node_area
+        kwargs['orders_db'] = self.orders_db
+        kwargs['translations_db'] = self.translations_db
+        kwargs['density'] = self.density
+        kwargs['sound_speed'] = self.sound_speed
+
         result = self.result
 
         t0 = timer()
-        tree = FmaQuadTree(nodes=nodes, frequency=f, node_area=s_n)
+        tree = FmaQuadTree(**kwargs)
         setup_time = timer() - t0
 
         result['setup_time'] = setup_time
@@ -99,11 +113,13 @@ class ArrayTransmitSimulation(object):
         def increment(self, *args):
             self.count += 1
 
+    ## PUBLIC METHODS ##
+
     def solve(self):
         '''
         Solve.
         '''
-        linear_operator = self.linear_operator
+        linear_operator = self._linear_operator
         result = self.result
         Ginv = self.Ginv
         P = self.P
@@ -127,34 +143,47 @@ class ArrayTransmitSimulation(object):
             result['ram_usage'] = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss / 1000
 
         result['x'] = x
-        result['niter'] = niter.count
+        result['number_of_iterations'] = niter.count
         result['solve_time'] = solve_time
 
 
-def connector(*args):
+def get_objects_from_spec(*files):
 
-    if len(args) != 2:
-        raise TypeError
+    spec = list()
 
-    for arg in args:
+    for file in files:
+        obj = abstract.load(file)
+        if isinstance(obj, list):
+            spec += obj
+        else:
+            spec.append(obj)
 
-        if isinstance(arg, abstract.Array):
-            array = arg
-        if isinstance(arg, abstract.Simulation):
-            simulation = arg
+    if len(spec) != 2:
+        raise Exception
+
+    for obj in spec:
+        if isinstance(obj, abstract.Array):
+            array = obj
+        elif isinstance(obj, abstract.Simulation):
+            simulation = obj
+
+    return simulation, array
+
+
+def connector(simulation, array):
 
     f = simulation['frequency']
     use_preconditioner = simulation['use_preconditioner']
     use_pressure_load = simulation['use_pressure_load']
 
-    is_cmut = isinstance(array['channels']['membranes'][0], (abstract.SquareCmutMembrane,
-                                                             abstract.CircularCmutMembrane))
-    is_pmut = isinstance(array['channels']['membranes'][0], (abstract.SquarePmutMembrane,
-                                                             abstract.CircularPmutMembrane))
+    is_cmut = isinstance(array['channels'][0]['elements'][0]['membranes'][0], (abstract.SquareCmutMembrane,
+                                                                               abstract.CircularCmutMembrane))
+    is_pmut = isinstance(array['channels'][0]['elements'][0]['membranes'][0], (abstract.SquarePmutMembrane,
+                                                                               abstract.CircularPmutMembrane))
 
     omega = 2 * np.pi * f
 
-    # general
+    # General
     M_list = list()
     B_list = list()
     K_list = list()
@@ -165,7 +194,6 @@ def connector(*args):
     membrane_id_list = list()
 
     if use_preconditioner:
-
         G1_list = list()
         Zr1_list = list()
         G1inv_list = list()
@@ -186,51 +214,49 @@ def connector(*args):
         dc_bias = ch['dc_bias']
         delay = ch['delay']
 
-        for m in ch['membranes']:
+        for elem in ch['elements']:
+            for mem in elem['membranes']:
 
-            if isinstance(m, abstract.SquareCmutMembrane):
-                subc = sub.connector_square_cmut_membrane(m, simulation, dc_bias=dc_bias)
+                if isinstance(mem, abstract.SquareCmutMembrane):
+                    subc = sub.connector_square_cmut_membrane(mem, simulation, dc_bias=dc_bias)
+                elif isinstance(mem, abstract.CircularCmutMembrane):
+                    subc = sub.connector_circular_cmut_membrane(mem, simulation, dc_bias=dc_bias)
+                elif isinstance(mem, abstract.SquarePmutMembrane):
+                    subc = sub.connector_square_pmut_membrane(mem, simulation)
+                elif isinstance(mem, abstract.CircularPmutMembrane):
+                    subc = sub.connector_circular_pmut_membrane(mem, simulation)
 
-            elif isinstance(m, abstract.CircularCmutMembrane):
-                subc = sub.connector_circular_cmut_membrane(m, simulation, dc_bias=dc_bias)
+                # add general matrices
+                M_list.append(subc['M'])
+                B_list.append(subc['B'])
+                K_list.append(subc['K'])
+                nodes_list.append(subc['nodes'])
+                e_mask_list.append(subc['electrode_mask'])
+                if use_preconditioner:
+                    Zr1_list.append(subc['Zr1'])
 
-            elif isinstance(m, abstract.SquarePmutMembrane):
-                subc = sub.connector_square_pmut_membrane(m, simulation)
+                nnodes = len(subc['nodes'])
+                membrane_id_list.append(np.ones(nnodes, dtype=int) * mem['id'])
+                channel_id_list.append(np.ones(nnodes, dtype=int) * ch['id'])
 
-            elif isinstance(m, abstract.CircularPmutMembrane):
-                subc = sub.connector_circular_pmut_membrane(m, simulation)
+                # add CMUT matrices
+                if is_cmut:
+                    Kss_list.append(subc['Kss'])
+                    t_ratios_list.append(subc['transformer_ratios'])
+                    u0_list.append(subc['static_displacement'])
 
-            # add general matrices
-            M_list.append(subc['M'])
-            B_list.append(subc['B'])
-            K_list.append(subc['K'])
-            nodes_list.append(subc['nodes'])
-            e_mask_list.append(subc['e_mask'])
-            if use_preconditioner:
-                Zr1_list.append(subc['Zr1'])
+                # determine node excitations
+                if use_pressure_load:
+                    P_list.append(np.ones(nnodes) * np.exp(-1j * omega * delay))
 
-            nnodes = len(subc['nodes'])
-            membrane_id_list.append(np.ones(nnodes, dtype=int) * m['id'])
-            channel_id_list.append(np.ones(nnodes, dtype=int) * ch['id'])
+                elif is_cmut:
+                    t_ratios = subc['transformer_ratios']
+                    P_list.append(t_ratios * np.exp(-1j * omega * delay))
 
-            # add CMUT matrices
-            if is_cmut:
+                elif is_pmut:
+                    pass
 
-                Kss_list.append(subc['Kss'])
-                t_ratios_list.append(subc['t_ratios'])
-                u0_list.append(subc['u0'])
-
-            # determine node excitations
-            if use_pressure_load:
-                P_list.append(np.ones(nnodes) * np.exp(-1j * omega * delay))
-
-            elif is_cmut:
-
-                t_ratios = subc['t_ratios']
-                P_list.append(t_ratios * np.exp(-1j * omega * delay))
-
-            elif is_pmut:
-                pass
+    s_n = subc['node_area']
 
     if is_cmut:
         Gmech_list = [-omega ** 2 * M + 1j * omega * B + K - Kss for M, B, K, Kss in
@@ -241,7 +267,6 @@ def connector(*args):
                       zip(M_list, B_list, K_list)]
 
     if use_preconditioner:
-
         G1_list = [G1 + 1j * omega * Zr1 for G1, Zr1 in zip(Gmech_list, Zr1_list)]
         G1inv_list = [bem.g1inv_matrix(G1) for G1 in G1_list]
 
@@ -249,18 +274,18 @@ def connector(*args):
     M = sps.block_diag(M_list, format='csr')
     B = sps.block_diag(B_list, format='csr')
     K = sps.block_diag(K_list, format='csr')
-    nodes = np.concatenate(nodes_list, axis=0)
+    nodes = np.concatenate(nodes_list)
     e_mask = np.concatenate(e_mask_list)
     Gmech = sps.block_diag(Gmech_list, format='csr')
-    P = np.concatenate(P_list, format='csr')
+    P = np.concatenate(P_list)
+    membrane_id = np.concatenate(membrane_id_list)
+    channel_id = np.concatenate(channel_id_list)
 
     if use_preconditioner:
-
         G1 = sps.block_diag(G1_list, format='csr')
         G1inv = sps.block_diag(G1inv_list, format='csr')
 
     if is_cmut:
-
         Kss = sps.block_diag(Kss_list, format='csr')
         t_ratios = np.concatenate(t_ratios_list, axis=0)
         u0 = np.concatenate(u0_list, axis=0)
@@ -268,28 +293,40 @@ def connector(*args):
     # elif is_pmut:
         # Peq = np.concatenate(Peq_list, axis=0)
 
+    output = dict()
+    output['nodes'] = nodes
+    output['node_area'] = s_n
+    output['Gmech'] = Gmech
+    output['P'] = P
+    output['frequency'] = simulation['frequency']
+    output['density'] = simulation['density']
+    output['sound_speed'] = simulation['sound_speed']
+    output['max_level'] = simulation['max_level']
+    output['bounding_box'] = simulation['bounding_box']
+    output['orders_db'] = simulation['orders_db']
+    output['translations_db'] = simulation['translations_db']
+    output['use_preconditioner'] = simulation['use_preconditioner']
+    output['use_pressure_load'] = simulation['use_pressure_load']
+    output['tolerance'] = simulation['tolerance']
+    output['max_iterations'] = simulation['max_iterations']
+    # result.update(simulation)
 
-    result = dict()
-    result.update(simulation)
-    result['nodes'] = nodes
-    result['nnodes'] = len(nodes)
-    result['node_area'] = dx * dy
-    result['M'] = M
-    result['B'] = B
-    result['K'] = K
-    result['Gmech'] = Gmech
-    result['electrode_mask'] = e_mask
-    result['P'] = P
+    meta = dict()
+    meta['nnodes'] = len(nodes)
+    meta['M'] = M
+    meta['B'] = B
+    meta['K'] = K
+    meta['electrode_mask'] = e_mask
+    meta['membrane_id'] = membrane_id
+    meta['channel_id'] = channel_id
 
     if is_cmut:
-
-        result['Kss'] = Kss
-        result['transformer_ratios'] = t_ratios
-        result['static_displacement'] = u0
+        meta['Kss'] = Kss
+        meta['transformer_ratios'] = t_ratios
+        meta['static_displacement'] = u0
 
     if use_preconditioner:
+        output['Ginv'] = G1inv
+        meta['G1'] = G1
 
-        result['G1inv'] = G1inv
-        result['G1'] = G1
-
-    return result
+    return output, meta

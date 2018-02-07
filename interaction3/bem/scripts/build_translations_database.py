@@ -64,7 +64,7 @@ def generate_translations(file, f, k, dims, levels, orders_db):
 
     for l in range(minlevel, maxlevel + 1):
 
-        order = get_order(orders_db, l, f)
+        order = get_order(orders_db, f, l)
 
         qrule = fma.fft_quadrule(order, order)
         group_xdim, group_ydim = xdim / (2 ** l), ydim / (2 ** l)
@@ -82,7 +82,6 @@ def generate_translations(file, f, k, dims, levels, orders_db):
             cos_angle = rhat.dot(kcoordT)
 
             translation = np.ascontiguousarray(fma.mod_ff2nf_op(fma.mag(r), cos_angle, k, order))
-
             with closing(sql.connect(file)) as conn:
                 update_translations_table(conn, f, k, l, order, tuple(coords), theta, phi, translation)
 
