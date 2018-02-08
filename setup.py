@@ -23,7 +23,7 @@ ext_modules = [
     Extension(name = 'interaction3.bem.core.fma_functions',
               sources = ['interaction3/bem/core/fma_functions.pyx'],
               include_dirs = [np.get_include()],
-              language='c++'
+              language=_LANGUAGE
     )
 ]
 
