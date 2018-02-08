@@ -7,12 +7,7 @@ from .. core import bem_functions as bem
 
 ## CONNECTORS ##
 
-def connector_square_cmut_membrane(obj, simulation, **kwargs):
-
-    f = simulation['frequency']
-    rho = simulation['density']
-    c = simulation['sound_speed']
-    use_preconditioner = simulation['use_preconditioner']
+def connector_square_cmut_membrane(obj, **kwargs):
 
     length_x = obj['length_x']
     length_y = obj['length_y']
@@ -24,6 +19,10 @@ def connector_square_cmut_membrane(obj, simulation, **kwargs):
     rotations = obj.get('rotations', None)
     mem_rho = obj['density']
 
+    f = kwargs['frequency']
+    rho = kwargs['density']
+    c = kwargs['sound_speed']
+    use_preconditioner = kwargs['use_preconditioner']
     dc_bias = kwargs['dc_bias']
 
     nodes_at_origin, nnodes, dx, dy, s_n, e_mask = generate_square_nodes(length_x, length_y, electrode_x, electrode_y,
@@ -71,16 +70,12 @@ def connector_square_cmut_membrane(obj, simulation, **kwargs):
     if use_preconditioner:
         Zr1 = bem.zr1_matrix(nodes_at_origin, f, rho, c, s_n)
 
-    # mem_no = obj['membrane_no']
-
     output = dict()
-
     output['nodes'] = nodes
     output['nnodes'] = nnodes
     output['dx'] = dx
     output['dy'] = dy
     output['node_area'] = s_n
-    # output['nodes_idx'] = np.arange(mem_no * nnodes, mem_no * nnodes + nnodes)
     output['M'] = M
     output['B'] = B
     output['K'] = K
@@ -94,12 +89,7 @@ def connector_square_cmut_membrane(obj, simulation, **kwargs):
     return output
 
 
-def connector_circular_cmut_membrane(obj, simulation, **kwargs):
-
-    f = simulation['frequency']
-    rho = simulation['density']
-    c = simulation['sound_speed']
-    use_preconditioner = simulation['use_preconditioner']
+def connector_circular_cmut_membrane(obj, **kwargs):
 
     radius = obj['radius']
     electrode_r = obj['electrode_r']
@@ -108,6 +98,10 @@ def connector_circular_cmut_membrane(obj, simulation, **kwargs):
     center = obj['center']
     rotations = obj.get('rotations', None)
 
+    f = kwargs['frequency']
+    rho = kwargs['density']
+    c = kwargs['sound_speed']
+    use_preconditioner = kwargs['use_preconditioner']
     dc_bias = kwargs['dc_bias']
 
     nodes_at_origin, nnodes, dx, dy, s_n, e_mask = generate_circular_nodes(radius, electrode_r, nnodes_x, nnodes_y)
@@ -131,13 +125,10 @@ def connector_circular_cmut_membrane(obj, simulation, **kwargs):
 
     # stiffness matrix
     if 'k_matrix_comsol_file' in obj:
-
         filename = obj['k_matrix_comsol_file']
         K = bem.k_matrix_comsol(filename)
-
     else:
-
-        raise Exception # finite-differences not supported for circular membranes yet
+        raise NotImplementedError # finite-differences not supported for circular membranes yet
 
     # spring-softening matrix
     h_gap = obj['gap']
@@ -151,16 +142,12 @@ def connector_circular_cmut_membrane(obj, simulation, **kwargs):
     if use_preconditioner:
         Zr1 = bem.zr1_matrix(nodes_at_origin, f, rho, c, s_n)
 
-    # mem_no = obj['membrane_no']
-
     output = dict()
-
     output['nodes'] = nodes
     output['nnodes'] = nnodes
     output['dx'] = dx
     output['dy'] = dy
     output['node_area'] = s_n
-    # output['nodes_idx'] = np.arange(mem_no * nnodes, mem_no * nnodes + nnodes)
     output['M'] = M
     output['B'] = B
     output['K'] = K
@@ -174,12 +161,7 @@ def connector_circular_cmut_membrane(obj, simulation, **kwargs):
     return output
 
 
-def connector_square_pmut_membrane(obj, simulation, **kwargs):
-
-    f = simulation['frequency']
-    rho = simulation['density']
-    c = simulation['sound_speed']
-    use_preconditioner = simulation['use_preconditioner']
+def connector_square_pmut_membrane(obj, **kwargs):
 
     length_x = obj['length_x']
     length_y = obj['length_y']
@@ -189,6 +171,11 @@ def connector_square_pmut_membrane(obj, simulation, **kwargs):
     nnodes_y = obj['nnodes_y']
     center = obj['center']
     rotations = obj.get('rotations', None)
+
+    f = kwargs['frequency']
+    rho = kwargs['density']
+    c = kwargs['sound_speed']
+    use_preconditioner = kwargs['use_preconditioner']
 
     nodes_at_origin, nnodes, dx, dy, s_n, e_mask = generate_square_nodes(length_x, length_y, electrode_x, electrode_y,
                                                                           nnodes_x, nnodes_y)
@@ -212,12 +199,9 @@ def connector_square_pmut_membrane(obj, simulation, **kwargs):
 
     # stiffness matrix
     if 'k_matrix_comsol_file' in obj:
-
         filename = obj['k_matrix_comsol_file']
         K = bem.k_matrix_comsol(filename)
-
     else:
-
         E = obj['y_modulus']
         eta = obj['p_ratio']
         shape = nnodes_x - 2, nnodes_y - 2
@@ -231,16 +215,12 @@ def connector_square_pmut_membrane(obj, simulation, **kwargs):
     filename = obj['peq_matrix_file']
     Peq = bem.peq_matrix(filename)
 
-    # mem_no = obj['membrane_no']
-
     output = dict()
-
     output['nodes'] = nodes
     output['nnodes'] = nnodes
     output['dx'] = dx
     output['dy'] = dy
     output['node_area'] = s_n
-    # output['nodes_idx'] = np.arange(mem_no * nnodes, mem_no * nnodes + nnodes)
     output['M'] = M
     output['B'] = B
     output['K'] = K
@@ -252,12 +232,7 @@ def connector_square_pmut_membrane(obj, simulation, **kwargs):
     return output
 
 
-def connector_circular_pmut_membrane(obj, simulation, **kwargs):
-
-    f = simulation['frequency']
-    rho = simulation['density']
-    c = simulation['sound_speed']
-    use_preconditioner = simulation['use_preconditioner']
+def connector_circular_pmut_membrane(obj, **kwargs):
 
     radius = obj['radius']
     electrode_r = obj['electrode_r']
@@ -265,6 +240,11 @@ def connector_circular_pmut_membrane(obj, simulation, **kwargs):
     nnodes_y = obj['nnodes_y']
     center = obj['center']
     rotations = obj.get('rotations', None)
+
+    f = kwargs['frequency']
+    rho = kwargs['density']
+    c = kwargs['sound_speed']
+    use_preconditioner = kwargs['use_preconditioner']
 
     nodes_at_origin, nnodes, dx, dy, s_n, e_mask = generate_circular_nodes(radius, electrode_r, nnodes_x, nnodes_y)
 
@@ -287,12 +267,9 @@ def connector_circular_pmut_membrane(obj, simulation, **kwargs):
 
     # stiffness matrix
     if 'k_matrix_comsol_file' in obj:
-
         filename = obj['k_matrix_comsol_file']
         K = bem.k_matrix_comsol(filename)
-
     else:
-
         E = obj['y_modulus']
         eta = obj['p_ratio']
         shape = nnodes_x - 2, nnodes_y - 2
@@ -306,16 +283,12 @@ def connector_circular_pmut_membrane(obj, simulation, **kwargs):
     filename = obj['peq_matrix_file']
     Peq = bem.peq_matrix(filename)
 
-    # mem_no = obj['membrane_no']
-
     output = dict()
-
     output['nodes'] = nodes
     output['nnodes'] = nnodes
     output['dx'] = dx
     output['dy'] = dy
     output['node_area'] = s_n
-    # output['nodes_idx'] = np.arange(mem_no * nnodes, mem_no * nnodes + nnodes)
     output['M'] = M
     output['B'] = B
     output['K'] = K

@@ -8,7 +8,8 @@ from itertools import repeat
 from contextlib import closing
 from tqdm import tqdm
 
-from interaction3.bem.simulations.array_transmit_simulation import ArrayTransmitSimulation, connector
+from interaction3.bem.simulations.array_transmit_simulation import ArrayTransmitSimulation
+from interaction3.bem.simulations.array_transmit_simulation import connector, get_objects_from_spec
 from interaction3 import abstract
 
 # register adapters for sqlite to convert numpy types
@@ -22,219 +23,58 @@ sql.register_adapter(np.int32, int)
 
 def process(args):
 
-    file, f, k, simulation, array = args
+    file, f, k, sim, array = args
 
-    simulation = ArrayTransmitSimulation(connector([simulation, array]))
+    sim['frequency'] = f
+    kwargs, meta = connector(sim, array)
+
+    simulation= ArrayTransmitSimulation(**kwargs)
     simulation.solve()
 
-    nodes = simulation.result['nodes']
-    membrane_ids = simulation.result['membrane_id']
-    channel_ids = simulation.result['channel_id']
-    x = simulation.result['x']
+    nodes = simulation.nodes
+    membrane_ids = meta['membrane_id']
+    element_ids = meta['element_id']
+    channel_ids = meta['channel_id']
+    displacement = simulation.result['displacement']
 
-    with closing(sql.connect(file)) as conn:
-        update_displacements_table(conn, f, k, nodes, membrane_ids, channel_ids, x)
-        update_progress(conn, f)
+    with closing(sql.connect(file)) as con:
 
+        if not table_exists(con, 'nodes'):
+            create_nodes_table(con, nodes, membrane_ids, element_ids, channel_ids)
 
-## DATABASE FUNCTIONS ##
+        if not table_exists(con, 'displacements'):
+            create_displacements_table(con)
 
-def create_metadata_table(conn, **kwargs):
-    '''
-    '''
-    table = [[str(v) for v in list(kwargs.values())]]
-    columns = list(kwargs.keys())
-
-    pd.DataFrame(table, columns=columns, dtype=str).to_sql('metadata', conn, if_exists='replace', index=False)
-
-
-def create_frequencies_table(conn, fs, ks):
-    '''
-    '''
-    # create table
-    query = '''
-            CREATE TABLE frequencies ( 
-            frequency float,
-            wavenumber float,
-            is_complete boolean
-            )
-            '''
-    conn.execute(query)
-
-    # create unique index on frequency
-    query = '''
-            CREATE UNIQUE INDEX frequency_index ON frequencies (frequency)
-            '''
-    conn.execute(query)
-
-    # create unique index on wavenumber
-    query = '''
-            CREATE UNIQUE INDEX wavenumber_index ON frequencies (wavenumber)
-            '''
-    conn.execute(query)
-
-    # insert values into table
-    query = '''
-            INSERT INTO frequencies (frequency, wavenumber, is_complete)
-            VALUES (?, ?, ?)
-            '''
-    conn.executemany(query, zip(fs, ks, repeat(False)))
-
-    conn.commit()
-
-
-def update_progress(conn, f):
-
-    query = '''
-            UPDATE frequencies SET is_complete=1 WHERE frequency=?
-            '''
-    conn.execute(query, [f,])
-
-    conn.commit()
-
-
-# def create_nodes_table(conn, nodes):
-#
-#     x, y, z = nodes.T
-#
-#     query = '''
-#             CREATE TABLE nodes (x float, y float, z float)
-#             '''
-#     conn.execute(query)
-#
-#     query = '''
-#             CREATE UNIQUE INDEX node_index ON nodes (x, y, z)
-#             '''
-#     conn.execute(query)
-#
-#     query = '''
-#             INSERT INTO nodes VALUES (?, ?, ?)
-#             '''
-#     conn.executemany(query, zip(x, y, z))
-#
-#     conn.commit()
-
-
-def create_displacements_table(conn):
-
-    query = '''
-            CREATE TABLE displacements (
-            id INTEGER PRIMARY KEY,
-            frequency float,
-            wavenumber float,
-            x float,
-            y float,
-            z float,
-            membrane_id int,
-            channel_id int,
-            displacement_real float,
-            displacement_imag float,
-            FOREIGN KEY (frequency) REFERENCES frequencies (frequency),
-            FOREIGN KEY (wavenumber) REFERENCES frequencies (wavenumber)
-            )
-            '''
-    conn.execute(query)
-
-    query = '''
-            CREATE INDEX translation_index ON displacements (frequency, x, y, z)
-            '''
-    conn.execute(query)
-
-    query = '''
-            CREATE INDEX translation_index ON displacements (membrane_id)
-            '''
-    conn.execute(query)
-
-    query = '''
-            CREATE INDEX translation_index ON displacements (channel_id)
-            '''
-    conn.execute(query)
-
-    conn.commit()
-
-
-def update_displacements_table(conn, f, k, nodes, membrane_ids, channel_ids, displacements):
-
-    x, y, z = nodes.T
-
-    query = '''
-            INSERT INTO translations
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-            '''
-    conn.executemany(query, zip(repeat(f), repeat(k), repeat(x), repeat(y), repeat(z), membrane_ids, channel_ids,
-                                np.real(displacements.ravel()), np.imag(displacements.ravel())))
-
-    conn.commit()
-
-
-## MAIN FUNCTIONS ##
-
-def read_json_files(*args):
-
-    spec = list()
-
-    for arg in args:
-
-        obj = abstract.load(arg)
-
-        if isinstance(obj, list):
-            spec += obj
-        else:
-            spec.append(obj)
-
-    return spec
-
-
-def get_objects_from_spec(spec):
-
-    for obj in spec:
-
-        if isinstance(obj, abstract.Array):
-            array = obj
-
-        elif isinstance(obj, abstract.Simulation):
-            simulation = obj
-
-    return simulation, array
+        update_displacements_table(con, f, k, nodes, displacement)
+        update_progress(con, f)
 
 
 ## ENTRY POINT ##
 
-def main(**kwargs):
+def main(**args):
 
+    threads = args['threads']
+    freqs = args['freqs']
+    file = args['file']
+    spec = args['specification']
 
-    threads = kwargs['threads']
-    freqs = kwargs['freqs']
-    file = kwargs['file']
-    spec = kwargs['specification']
+    simulation, array = get_objects_from_spec(*spec)
 
-    simulation, array = get_objects_from_spec(read_json_files(spec))
+    # set arg defaults if not provided
+    if 'threads' in simulation:
+        threads = simulation.pop('threads')
+        args['threads'] = threads
 
-    # set default threads to logical core count
-    if threads is None:
-
-        if 'threads' in simulation:
-            threads = simulation['threads']
-        else:
-            threads = multiprocessing.cpu_count()
-
-        kwargs['threads'] = threads
-
-    if freqs is None:
-
-        if 'freqs' in simulation:
-            freqs = simulation['freqs']
-        else:
-            freqs = 50e3, 50e6, 50e3
-
-        kwargs['freqs'] = freqs
+    if 'freqs' in simulation:
+        freqs = simulation.pop('freqs')
+        args['freqs'] = freqs
 
     c = simulation['sound_speed']
 
     # check for existing file
     if os.path.isfile(file):
 
-        # conn = sql.connect(file)
+        # con = sql.connect(file)
         response = input('File ' + str(file) + ' already exists. \nContinue (c), Overwrite (o), or Do nothing ('
                                                    'any other key)?')
 
@@ -248,22 +88,20 @@ def main(**kwargs):
             ks = 2 * np.pi * fs / c
 
             # create database
-            with closing(sql.connect(file)) as conn:
+            with closing(sql.connect(file)) as con:
 
                 # create database tables
-                create_metadata_table(conn, **kwargs)
-                create_frequencies_table(conn, fs, ks)
-                create_displacements_table(conn)
+                create_metadata_table(con, **args, **simulation)
+                create_frequencies_table(con, fs, ks)
 
         elif response.lower() in ['c', 'continue']:
 
-            with closing(sql.connect(file)) as conn:
+            with closing(sql.connect(file)) as con:
 
                 query = '''
-                        SELECT (frequency, wavenumber) FROM frequencies 
-                        WHERE is_complete=False
+                        SELECT (frequency, wavenumber) FROM frequencies WHERE is_complete=False
                         '''
-                table = pd.read_sql(query, conn)
+                table = pd.read_sql(query, con)
 
             fs = np.array(table['frequency'])
             ks = np.array(table['wavenumber'])
@@ -284,12 +122,11 @@ def main(**kwargs):
         ks = 2 * np.pi * fs / c
 
         # create database
-        with closing(sql.connect(file)) as conn:
+        with closing(sql.connect(file)) as con:
 
             # create database tables
-            create_metadata_table(conn, **kwargs)
-            create_frequencies_table(conn, fs, ks)
-            create_displacements_table(conn)
+            create_metadata_table(con, **args)
+            create_frequencies_table(con, fs, ks)
 
     try:
 
@@ -310,6 +147,98 @@ def main(**kwargs):
         pool.close()
 
 
+## DATABASE FUNCTIONS ##
+
+def create_metadata_table(con, **kwargs):
+
+    table = [[str(v) for v in list(kwargs.values())]]
+    columns = list(kwargs.keys())
+
+    pd.DataFrame(table, columns=columns, dtype=str).to_sql('metadata', con, if_exists='replace', index=False)
+
+
+def create_frequencies_table(con, fs, ks):
+
+    with con:
+
+        # create table
+        con.execute('CREATE TABLE frequencies (frequency float, wavenumber float, is_complete boolean)')
+
+        # create indexes
+        con.execute('CREATE UNIQUE INDEX frequency_index ON frequencies (frequency)')
+        con.execute('CREATE UNIQUE INDEX wavenumber_index ON frequencies (wavenumber)')
+
+        # insert values into table
+        con.executemany('INSERT INTO frequencies VALUES (?, ?, ?)', zip(fs, ks, repeat(False)))
+
+
+def update_progress(con, f):
+
+    with con:
+        con.execute('UPDATE frequencies SET is_complete=1 WHERE frequency=?', [f,])
+
+
+def table_exists(con, name):
+
+    query = '''SELECT count(*) FROM sqlite_master WHERE type='table' and name=?'''
+    return con.execute(query, name).fetchone()[0] != 0
+
+def create_nodes_table(con, nodes, membrane_ids, element_ids, channel_ids):
+
+    x, y, z = nodes.T
+
+    with con:
+
+        # create table
+        con.execute('CREATE TABLE nodes (x float, y float, z float, membrane_id, element_id, channel_id)')
+
+        # create indexes
+        con.execute('CREATE UNIQUE INDEX node_index ON nodes (x, y, z)')
+        con.execute('CREATE INDEX membrane_id_index ON nodes (membrane_id)')
+        con.execute('CREATE INDEX element_id_index ON nodes (element_id)')
+        con.execute('CREATE INDEX channel_id_index ON channel_id_index (channel_id)')
+
+        # insert values into table
+        query = 'INSERT INTO nodes VALUES (?, ?, ?, ?, ?, ?)'
+        con.executemany(query, zip(x, y, z, membrane_ids, element_ids, channel_ids))
+
+
+def create_displacements_table(con):
+
+    with con:
+
+        # create table
+        query = '''
+                CREATE TABLE displacements (
+                id INTEGER PRIMARY KEY,
+                frequency float,
+                wavenumber float,
+                x float,
+                y float,
+                z float,
+                displacement_real float,
+                displacement_imag float,
+                FOREIGN KEY (frequency) REFERENCES frequencies (frequency),
+                FOREIGN KEY (wavenumber) REFERENCES frequencies (wavenumber),
+                FOREIGN KEY (x, y, z) REFERENCES nodes (x, y, z)
+                )
+                '''
+        con.execute(query)
+
+        # create indexes
+        con.execute('CREATE INDEX query_index ON displacements (frequency, x, y, z)')
+
+
+def update_displacements_table(con, f, k, nodes, displacements):
+
+    x, y, z = nodes.T
+
+    with con:
+        query = 'INSERT INTO displacements VALUES (?, ?, ?, ?, ?, ?, ?)'
+        con.executemany(query, zip(repeat(f), repeat(k), repeat(x), repeat(y), repeat(z),
+                                    np.real(displacements.ravel()), np.imag(displacements.ravel())))
+
+
 ## COMMAND LINE INTERFACE ##
 
 if __name__ == '__main__':
@@ -323,22 +252,10 @@ if __name__ == '__main__':
     import argparse
 
     # default arguments
-    nthreads = None
-    freqs = None
+    nthreads = multiprocessing.cpu_count
+    freqs = 50e3, 50e6, 50e3
     file = None
     specification = None
-
-    # max_level = 6
-    # dims = 4e-3, 4e-3
-    # sound_speed = 1500
-    # density = 1000
-    # orders_db = None
-    # translations_db = None
-    # bbox = [0, 1, 0, 1]
-    # max_iterations = 100
-    # tolerance = 0.01
-    # use_preconditioner = True
-    # use_pressure_load = False
 
     # define and parse arguments
     parser = argparse.ArgumentParser()

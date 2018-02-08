@@ -142,7 +142,7 @@ class ArrayTransmitSimulation(object):
         if _RESOURCE_IMPORTED:
             result['ram_usage'] = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss / 1000
 
-        result['x'] = x
+        result['displacement'] = x
         result['number_of_iterations'] = niter.count
         result['solve_time'] = solve_time
 
@@ -164,7 +164,7 @@ def get_objects_from_spec(*files):
     for obj in spec:
         if isinstance(obj, abstract.Array):
             array = obj
-        elif isinstance(obj, abstract.Simulation):
+        elif isinstance(obj, abstract.BemArrayTransmitSimulation):
             simulation = obj
 
     return simulation, array
@@ -172,15 +172,20 @@ def get_objects_from_spec(*files):
 
 def connector(simulation, array):
 
-    f = simulation['frequency']
-    use_preconditioner = simulation['use_preconditioner']
-    use_pressure_load = simulation['use_pressure_load']
+    # set simulation defaults
+    use_preconditioner = simulation.get('use_preconditioner', True)
+    use_pressure_load = simulation.get('use_pressure_load', False)
+    tolerance = simulation.get('tolerance', 0.01)
+    max_iterations = simulation.get('max_iterations', 100)
+    max_level = simulation.get('max_level', 6)
 
+    f = simulation['frequency']
+    rho = simulation['density']
+    c = simulation['sound_speed']
     is_cmut = isinstance(array['channels'][0]['elements'][0]['membranes'][0], (abstract.SquareCmutMembrane,
                                                                                abstract.CircularCmutMembrane))
     is_pmut = isinstance(array['channels'][0]['elements'][0]['membranes'][0], (abstract.SquarePmutMembrane,
                                                                                abstract.CircularPmutMembrane))
-
     omega = 2 * np.pi * f
 
     # General
@@ -191,6 +196,7 @@ def connector(simulation, array):
     nodes_list = list()
     e_mask_list = list()
     channel_id_list = list()
+    element_id_list = list()
     membrane_id_list = list()
 
     if use_preconditioner:
@@ -218,13 +224,17 @@ def connector(simulation, array):
             for mem in elem['membranes']:
 
                 if isinstance(mem, abstract.SquareCmutMembrane):
-                    subc = sub.connector_square_cmut_membrane(mem, simulation, dc_bias=dc_bias)
+                    subc = sub.connector_square_cmut_membrane(mem, frequency=f, density=rho, sound_speed=c,
+                                                              dc_bias=dc_bias, use_preconditioner=use_preconditioner)
                 elif isinstance(mem, abstract.CircularCmutMembrane):
-                    subc = sub.connector_circular_cmut_membrane(mem, simulation, dc_bias=dc_bias)
+                    subc = sub.connector_circular_cmut_membrane(mem, frequency=f, density=rho, sound_speed=c,
+                                                                dc_bias=dc_bias, use_preconditioner=use_preconditioner)
                 elif isinstance(mem, abstract.SquarePmutMembrane):
-                    subc = sub.connector_square_pmut_membrane(mem, simulation)
+                    subc = sub.connector_square_pmut_membrane(mem, frequency=f, density=rho, sound_speed=c,
+                                                              use_preconditioner=use_preconditioner)
                 elif isinstance(mem, abstract.CircularPmutMembrane):
-                    subc = sub.connector_circular_pmut_membrane(mem, simulation)
+                    subc = sub.connector_circular_pmut_membrane(mem, frequency=f, density=rho, sound_speed=c,
+                                                                use_preconditioner=use_preconditioner)
 
                 # add general matrices
                 M_list.append(subc['M'])
@@ -237,6 +247,7 @@ def connector(simulation, array):
 
                 nnodes = len(subc['nodes'])
                 membrane_id_list.append(np.ones(nnodes, dtype=int) * mem['id'])
+                element_id_list.append(np.ones(nnodes, dtype=int) * elem['id'])
                 channel_id_list.append(np.ones(nnodes, dtype=int) * ch['id'])
 
                 # add CMUT matrices
@@ -279,6 +290,7 @@ def connector(simulation, array):
     Gmech = sps.block_diag(Gmech_list, format='csr')
     P = np.concatenate(P_list)
     membrane_id = np.concatenate(membrane_id_list)
+    element_id = np.concatenate(element_id_list)
     channel_id = np.concatenate(channel_id_list)
 
     if use_preconditioner:
@@ -293,6 +305,7 @@ def connector(simulation, array):
     # elif is_pmut:
         # Peq = np.concatenate(Peq_list, axis=0)
 
+    # output required ArrayTransmitSimulation init arguments
     output = dict()
     output['nodes'] = nodes
     output['node_area'] = s_n
@@ -301,16 +314,16 @@ def connector(simulation, array):
     output['frequency'] = simulation['frequency']
     output['density'] = simulation['density']
     output['sound_speed'] = simulation['sound_speed']
-    output['max_level'] = simulation['max_level']
     output['bounding_box'] = simulation['bounding_box']
     output['orders_db'] = simulation['orders_db']
     output['translations_db'] = simulation['translations_db']
-    output['use_preconditioner'] = simulation['use_preconditioner']
-    output['use_pressure_load'] = simulation['use_pressure_load']
-    output['tolerance'] = simulation['tolerance']
-    output['max_iterations'] = simulation['max_iterations']
-    # result.update(simulation)
+    output['max_level'] = max_level
+    output['use_preconditioner'] = use_preconditioner
+    output['use_pressure_load'] = use_pressure_load
+    output['tolerance'] = tolerance
+    output['max_iterations'] = max_iterations
 
+    # metadata
     meta = dict()
     meta['nnodes'] = len(nodes)
     meta['M'] = M
@@ -318,6 +331,7 @@ def connector(simulation, array):
     meta['K'] = K
     meta['electrode_mask'] = e_mask
     meta['membrane_id'] = membrane_id
+    meta['element_id'] = element_id
     meta['channel_id'] = channel_id
 
     if is_cmut:
