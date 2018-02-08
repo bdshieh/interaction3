@@ -398,12 +398,12 @@ if __name__ == '__main__':
     # define and parse arguments
     parser = argparse.ArgumentParser()
     parser.add_argument('file', nargs='?', default=file)
-    parser.add_argument('-t', '--threads', nargs=1, type=int, default=nthreads)
+    parser.add_argument('-t', '--threads', type=int, default=nthreads)
     parser.add_argument('-f', '--freqs', nargs=3, type=float, default=freqs)
     parser.add_argument('-l', '--levels', nargs=2, type=int, default=levels)
     parser.add_argument('-d', '--dims', nargs=2, type=float, default=dims)
-    parser.add_argument('-o', '--orders-db', nargs=1, type=str, default=orders_db)
-    parser.add_argument('--sound-speed', nargs=1, type=float, default=sound_speed)
+    parser.add_argument('-o', '--orders-db', type=str, default=orders_db)
+    parser.add_argument('--sound-speed', type=float, default=sound_speed)
 
     args = vars(parser.parse_args())
     main(**args)

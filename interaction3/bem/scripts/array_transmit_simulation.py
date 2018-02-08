@@ -261,7 +261,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('file', nargs='?', default=file)
     parser.add_argument('-s', '--specification', nargs='+', default=specification)
-    parser.add_argument('-t', '--threads', nargs=1, type=int, default=nthreads)
+    parser.add_argument('-t', '--threads', type=int, default=nthreads)
     parser.add_argument('-f', '--freqs', nargs=3, type=float, default=freqs)
 
     args = vars(parser.parse_args())
