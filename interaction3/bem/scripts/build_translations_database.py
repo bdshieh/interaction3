@@ -401,7 +401,7 @@ if __name__ == '__main__':
     parser.add_argument('-t', '--threads', nargs=1, type=int, default=nthreads)
     parser.add_argument('-f', '--freqs', nargs=3, type=float, default=freqs)
     parser.add_argument('-l', '--levels', nargs=2, type=int, default=levels)
-    parser.add_argument('-d', '--dims', nargs=2, default=dims)
+    parser.add_argument('-d', '--dims', nargs=2, type=float, default=dims)
     parser.add_argument('-o', '--orders-db', nargs=1, type=str, default=orders_db)
     parser.add_argument('--sound-speed', nargs=1, type=float, default=sound_speed)
 

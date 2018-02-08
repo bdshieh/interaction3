@@ -447,7 +447,7 @@ if __name__ == '__main__':
     parser.add_argument('--fcrossover', nargs=1, type=float, default=fcrossover)
     parser.add_argument('-fmultiplier', nargs=1, type=int, default=fmultiplier)
     parser.add_argument('-l', '--levels', nargs=2, type=int, default=levels)
-    parser.add_argument('-d', '--dims', nargs=2, default=dims)
+    parser.add_argument('-d', '--dims', nargs=2, type=float, default=dims)
     parser.add_argument('--tolerance', nargs=1, type=float, default=tolerance)
     parser.add_argument('--sound-speed', nargs=1, type=float, default=sound_speed)
     parser.add_argument('--density', nargs=1, type=float, default=density)
