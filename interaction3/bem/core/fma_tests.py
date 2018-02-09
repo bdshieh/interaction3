@@ -78,24 +78,19 @@ def calculate_error_measures(pres_fmm, pres_exact):
     phase_fmm = np.angle(pres_fmm)
     phase_exact = np.angle(pres_exact)
     phase_error = np.arccos(np.round(np.cos(phase_fmm) * np.cos(phase_exact) + np.sin(phase_fmm) * np.sin(phase_exact),
-                                     10))
+                                     10)) # this is the angle between two phasors, rounded to avoid fp errors?
     phase_rel_error = phase_error / (2 * np.pi) * 100
     max_phase_rel_error = np.max(np.abs(phase_rel_error))
     
     # amplitude and phase bias (useful for determing occurence of breakdown)
-    amp_bias = np.mean(amp_rel_error) / np.std(amp_rel_error)
-    phase_bias = np.mean(phase_rel_error) / np.std(phase_rel_error)
+    with np.errstate(all='raise'): # catch floating point errors if standard deviations are 0
+        try:
+            amp_bias = np.mean(amp_rel_error) / np.std(amp_rel_error)
+        except FloatingPointError:
+            amp_bias = 0
+        try:
+            phase_bias = np.mean(phase_rel_error) / np.std(phase_rel_error)
+        except FloatingPointError:
+            phase_bias = 0
           
     return max_amp_rel_error, max_phase_rel_error, amp_bias, phase_bias
-
-
-def print_results(max_amp_error, max_phase_error, amp_bias, phase_bias):
-    
-    print('Amplitude error within 0.1% ...', '[', max_amp_error <= 0.1, ']')
-    print('Amplitude error within 1% ...', '[', max_amp_error <= 1, ']')
-    print('Amplitude error within 5% ...', '[', max_amp_error <= 5, ']')
-    print('Amplitude error within 10% ...', '[', max_amp_error <= 10, ']')
-    print('Phase error within 0.1% ...', '[', max_phase_error <= 0.1, ']')
-    print('Phase error within 1% ...', '[', max_phase_error <= 1, ']')
-    print('Phase error within 5% ...', '[', max_phase_error <= 5, ']')
-    print('Phase error within 10% ...', '[', max_phase_error <= 10, ']')
