@@ -34,30 +34,7 @@ sql.register_adapter(np.int32, int)
 
 ## PROCESS FUNCTIONS ##
 
-# def get_orders_interp_funcs(orders_db, levels):
-#
-#     minlevel, maxlevel = levels
-#     orders_interp_funcs = dict()
-#     conn = sql.connect(orders_db)
-#
-#     for l in range(minlevel, maxlevel + 1):
-#
-#         query = '''
-#                 SELECT wavenumber, translation_order FROM orders
-#                 WHERE level=?
-#                 ORDER BY wavenumber
-#                 '''
-#         table = pd.read_sql(query, conn, params=[l,])
-#
-#         ks = table['wavenumber']
-#         orders = table['translation_order']
-#
-#         orders_interp_funcs[l] = interp1d(ks, orders)
-#
-#     return orders_interp_funcs
-
-
-def generate_translations(file, f, k, dims, levels, orders_db, write_lock):
+def generate_translations(file, f, k, dims, levels, orders_db):
 
     xdim, ydim = dims
     minlevel, maxlevel = levels
@@ -87,16 +64,141 @@ def generate_translations(file, f, k, dims, levels, orders_db, write_lock):
                 with closing(sql.connect(file)) as conn:
                     update_translations_table(conn, f, k, l, order, tuple(coords), theta, phi, translation)
 
+def init_process(_write_lock):
+
+    global write_lock
+    write_lock = _write_lock
+
 
 def process(proc_args):
 
-    file, f, k, dims, levels, orders_db, write_lock = proc_args
+    file, f, k, dims, levels, orders_db = proc_args
 
     generate_translations(file, f, k, dims, levels, orders_db)
 
     with write_lock:
         with closing(sql.connect(file)) as conn:
             update_progress(conn, f)
+
+
+## ENTRY POINT ##
+
+def main(**kwargs):
+
+    threads = kwargs['threads']
+    freqs = kwargs['freqs']
+    levels = kwargs['levels']
+    dims = kwargs['dims']
+    c = kwargs['sound_speed']
+    file = kwargs['file']
+    orders_db = kwargs['orders_db']
+
+    # set default threads to logical core count
+    if threads is None:
+
+        threads = multiprocessing.cpu_count()
+        kwargs['threads'] = threads
+
+    # path to this module's directory
+    module_dir = os.path.dirname(os.path.realpath(__file__))
+
+    # set default file name for database
+    if file is None:
+
+        file = os.path.join(module_dir, 'translations_dims_{:0.4f}_{:0.4f}.db'.format(*dims))
+        kwargs['file'] = file
+
+    # set default file nam of orders database to use
+    if orders_db is None:
+
+        orders_db = os.path.join(module_dir, 'orders_dims_{:0.4f}_{:0.4f}.db'.format(*dims))
+        kwargs['orders_db'] = orders_db
+
+    # read orders database and form interpolating functions
+    # orders_interp_funcs = get_orders_interp_funcs(orders_db, levels)
+
+    # check for existing file
+    if os.path.isfile(file):
+
+        # conn = sql.connect(file)
+        response = input('Database ' + str(file) + ' already exists. \nContinue (c), Overwrite (o), or Do nothing ('
+                                                   'any other key)?')
+
+        if response.lower() in ['o', 'overwrite']:
+
+            os.remove(file)
+
+            # determine frequencies and wavenumbers
+            f_start, f_stop, f_step = freqs
+            fs = np.arange(f_start, f_stop + f_step, f_step)
+            ks = 2 * np.pi * fs / c
+
+            # create database
+            with closing(sql.connect(file)) as conn:
+
+                # create database tables
+                create_metadata_table(conn, **kwargs)
+                create_frequencies_table(conn, fs, ks)
+                create_levels_table(conn, levels)
+                create_coordinates_table(conn)
+                create_translations_table(conn)
+
+        elif response.lower() in ['c', 'continue']:
+
+            with closing(sql.connect(file)) as conn:
+
+                query = '''
+                        SELECT (frequency, wavenumber) FROM frequencies 
+                        WHERE is_complete=False
+                        '''
+                table = pd.read_sql(query, conn)
+
+            fs = np.array(table['frequency'])
+            ks = np.array(table['wavenumber'])
+
+        else:
+            raise Exception('Database already exists')
+
+    else:
+
+        # Make directories if they do not exist
+        file_dir = os.path.dirname(file)
+        if not os.path.exists(file_dir):
+            os.makedirs(file_dir)
+
+        # determine frequencies and wavenumbers
+        f_start, f_stop, f_step = freqs
+        fs = np.arange(f_start, f_stop + f_step, f_step)
+        ks = 2 * np.pi * fs / c
+
+        # create database
+        with closing(sql.connect(file)) as conn:
+
+            # create database tables
+            create_metadata_table(conn, **kwargs)
+            create_frequencies_table(conn, fs, ks)
+            create_levels_table(conn, levels)
+            create_coordinates_table(conn)
+            create_translations_table(conn)
+
+    try:
+
+        # start multiprocessing pool and run process\
+        write_lock = multiprocessing.Lock()
+        pool = multiprocessing.Pool(threads, initializer=init_process, initargs=(write_lock,))
+        proc_args = [(file, f, k, dims, levels, orders_db) for f, k in zip(fs, ks)]
+        result = pool.imap_unordered(process, proc_args)
+
+        for r in tqdm(result, desc='Building', total=len(fs)):
+            pass
+
+    except Exception as e:
+        print(e)
+
+    finally:
+
+        pool.terminate()
+        pool.close()
 
 
 ## DATABASE FUNCTIONS ##
@@ -262,126 +364,6 @@ def update_translations_table(conn, f, k, l, order, coord, thetas, phis, transla
                                 np.real(translations.ravel()), np.imag(translations.ravel())))
 
     conn.commit()
-
-
-## ENTRY POINT ##
-
-def main(**kwargs):
-
-    threads = kwargs['threads']
-    freqs = kwargs['freqs']
-    levels = kwargs['levels']
-    dims = kwargs['dims']
-    c = kwargs['sound_speed']
-    file = kwargs['file']
-    orders_db = kwargs['orders_db']
-
-    # set default threads to logical core count
-    if threads is None:
-
-        threads = multiprocessing.cpu_count()
-        kwargs['threads'] = threads
-
-    # path to this module's directory
-    module_dir = os.path.dirname(os.path.realpath(__file__))
-
-    # set default file name for database
-    if file is None:
-
-        file = os.path.join(module_dir, 'translations_dims_{:0.4f}_{:0.4f}.db'.format(*dims))
-        kwargs['file'] = file
-
-    # set default file nam of orders database to use
-    if orders_db is None:
-
-        orders_db = os.path.join(module_dir, 'orders_dims_{:0.4f}_{:0.4f}.db'.format(*dims))
-        kwargs['orders_db'] = orders_db
-
-    # read orders database and form interpolating functions
-    # orders_interp_funcs = get_orders_interp_funcs(orders_db, levels)
-
-    # check for existing file
-    if os.path.isfile(file):
-
-        # conn = sql.connect(file)
-        response = input('Database ' + str(file) + ' already exists. \nContinue (c), Overwrite (o), or Do nothing ('
-                                                   'any other key)?')
-
-        if response.lower() in ['o', 'overwrite']:
-
-            os.remove(file)
-
-            # determine frequencies and wavenumbers
-            f_start, f_stop, f_step = freqs
-            fs = np.arange(f_start, f_stop + f_step, f_step)
-            ks = 2 * np.pi * fs / c
-
-            # create database
-            with closing(sql.connect(file)) as conn:
-
-                # create database tables
-                create_metadata_table(conn, **kwargs)
-                create_frequencies_table(conn, fs, ks)
-                create_levels_table(conn, levels)
-                create_coordinates_table(conn)
-                create_translations_table(conn)
-
-        elif response.lower() in ['c', 'continue']:
-
-            with closing(sql.connect(file)) as conn:
-
-                query = '''
-                        SELECT (frequency, wavenumber) FROM frequencies 
-                        WHERE is_complete=False
-                        '''
-                table = pd.read_sql(query, conn)
-
-            fs = np.array(table['frequency'])
-            ks = np.array(table['wavenumber'])
-
-        else:
-            raise Exception('Database already exists')
-
-    else:
-
-        # Make directories if they do not exist
-        file_dir = os.path.dirname(file)
-        if not os.path.exists(file_dir):
-            os.makedirs(file_dir)
-
-        # determine frequencies and wavenumbers
-        f_start, f_stop, f_step = freqs
-        fs = np.arange(f_start, f_stop + f_step, f_step)
-        ks = 2 * np.pi * fs / c
-
-        # create database
-        with closing(sql.connect(file)) as conn:
-
-            # create database tables
-            create_metadata_table(conn, **kwargs)
-            create_frequencies_table(conn, fs, ks)
-            create_levels_table(conn, levels)
-            create_coordinates_table(conn)
-            create_translations_table(conn)
-
-    try:
-
-        # start multiprocessing pool and run process
-        pool = multiprocessing.Pool(threads)
-        write_lock = multiprocessing.Lock()
-        proc_args = [(file, f, k, dims, levels, orders_db, write_lock) for f, k in zip(fs, ks)]
-        result = pool.imap_unordered(process, proc_args)
-
-        for r in tqdm(result, desc='Building', total=len(fs)):
-            pass
-
-    except Exception as e:
-        print(e)
-
-    finally:
-
-        pool.terminate()
-        pool.close()
 
 
 ## COMMAND LINE INTERFACE ##

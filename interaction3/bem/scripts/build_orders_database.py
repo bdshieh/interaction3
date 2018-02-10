@@ -52,11 +52,17 @@ def breakdown_condition(amp_errors, phase_errors):
     return False
 
 
+def init_process(_write_lock):
+
+    global write_lock
+    write_lock = _write_lock
+
+
 def process(proc_args):
     '''
     Worker process. Runs FMA test.
     '''
-    f, k, l, dims, rho, c, file, tol, write_lock = proc_args
+    f, k, l, dims, rho, c, file, tol = proc_args
 
     xdim, ydim = dims
 
@@ -107,7 +113,6 @@ def process(proc_args):
     with write_lock:
         with closing(sql.connect(file)) as conn:
             update_orders_table(conn, f, k, l, raw_order, breakdown, passed)
-
 
 
 ## POSTPROCESS FUNCTIONS ##
@@ -215,6 +220,94 @@ def postprocess(conn, fs, levels):
         conn.executemany(query, zip(orders_list[i], fs, repeat(levels_list[i])))
 
     conn.commit()
+
+
+## ENTRY POINT ##
+
+def main(**kwargs):
+    '''
+    '''
+    threads = kwargs['threads']
+    freqs = kwargs['freqs']
+    f_cross = kwargs['fcrossover']
+    f_multi = kwargs['fmultiplier']
+    levels = kwargs['levels']
+    dims = kwargs['dims']
+    tol = kwargs['tolerance']
+    c = kwargs['sound_speed']
+    rho = kwargs['density']
+    file = kwargs['file']
+
+    # set default threads to logical core count
+    if threads is None:
+
+        threads = multiprocessing.cpu_count()
+        kwargs['threads'] = threads
+
+    # path to this module's directory
+    module_dir = os.path.dirname(os.path.realpath(__file__))
+
+    # set default file name for database
+    if file is None:
+
+        file = os.path.join(module_dir, 'orders_dims_{:0.4f}_{:0.4f}.db'.format(*dims))
+        kwargs['file'] = file
+
+    # determine frequencies and wavenumbers
+    f_start, f_stop, f_step = freqs
+    fs_coarse = np.arange(f_cross, f_stop + f_step, f_step)
+    fs_fine = np.arange(f_start, f_cross, f_step / f_multi)
+
+    fs = np.concatenate((fs_fine, fs_coarse), axis=0)
+    ks = 2 * np.pi * fs / c
+
+    minlevel, maxlevel = levels
+    ls = range(minlevel, maxlevel + 1)
+
+    # Check for existing file
+    if os.path.isfile(file):
+
+        response = input('Database ' + str(file) + ' already exists. \nOverwrite (y/n)?')
+        if response.lower() in ['y', 'yes']:
+            os.remove(file)
+        else:
+            raise Exception('Database already exists')
+
+    # Make directories if they do not exist
+    file_dir = os.path.dirname(file)
+    if not os.path.exists(file_dir):
+        os.makedirs(file_dir)
+
+    # create database
+    with closing(sql.connect(file)) as conn:
+
+        create_metadata_table(conn, **kwargs)
+        create_frequencies_table(conn, fs, ks)
+        create_levels_table(conn, levels)
+        create_orders_table(conn)
+
+    try:
+
+        # Start multiprocessing pool and run process
+        write_lock = multiprocessing.Lock()
+        pool = multiprocessing.Pool(max(threads, maxlevel - 1), initializer=init_process, initargs=(write_lock,))
+        proc_args = [(f, k, l, dims, rho, c, file, tol) for f, k in zip(fs, ks) for l in ls]
+        result = pool.imap_unordered(process, proc_args)
+
+        for r in tqdm(result, desc='Building', total=len(proc_args)):
+            pass
+
+        with closing(sql.connect(file)) as conn:
+            postprocess(conn, fs, levels)
+
+
+    except Exception as e:
+        print(e)
+
+    finally:
+
+        pool.terminate()
+        pool.close()
 
 
 ## DATABASE FUNCTIONS ##
@@ -333,94 +426,6 @@ def update_orders_table(conn, f, k, l, raw_order, breakdown, passed):
     conn.execute(query, (f, k, l, raw_order, breakdown, passed))
 
     conn.commit()
-
-
-## ENTRY POINT ##
-
-def main(**kwargs):
-    '''
-    '''
-    threads = kwargs['threads']
-    freqs = kwargs['freqs']
-    f_cross = kwargs['fcrossover']
-    f_multi = kwargs['fmultiplier']
-    levels = kwargs['levels']
-    dims = kwargs['dims']
-    tol = kwargs['tolerance']
-    c = kwargs['sound_speed']
-    rho = kwargs['density']
-    file = kwargs['file']
-
-    # set default threads to logical core count
-    if threads is None:
-
-        threads = multiprocessing.cpu_count()
-        kwargs['threads'] = threads
-
-    # path to this module's directory
-    module_dir = os.path.dirname(os.path.realpath(__file__))
-
-    # set default file name for database
-    if file is None:
-
-        file = os.path.join(module_dir, 'orders_dims_{:0.4f}_{:0.4f}.db'.format(*dims))
-        kwargs['file'] = file
-
-    # determine frequencies and wavenumbers
-    f_start, f_stop, f_step = freqs
-    fs_coarse = np.arange(f_cross, f_stop + f_step, f_step)
-    fs_fine = np.arange(f_start, f_cross, f_step / f_multi)
-
-    fs = np.concatenate((fs_fine, fs_coarse), axis=0)
-    ks = 2 * np.pi * fs / c
-
-    minlevel, maxlevel = levels
-    ls = range(minlevel, maxlevel + 1)
-
-    # Check for existing file
-    if os.path.isfile(file):
-
-        response = input('Database ' + str(file) + ' already exists. \nOverwrite (y/n)?')
-        if response.lower() in ['y', 'yes']:
-            os.remove(file)
-        else:
-            raise Exception('Database already exists')
-
-    # Make directories if they do not exist
-    file_dir = os.path.dirname(file)
-    if not os.path.exists(file_dir):
-        os.makedirs(file_dir)
-
-    # create database
-    with closing(sql.connect(file)) as conn:
-
-        create_metadata_table(conn, **kwargs)
-        create_frequencies_table(conn, fs, ks)
-        create_levels_table(conn, levels)
-        create_orders_table(conn)
-
-    try:
-
-        # Start multiprocessing pool and run process
-        pool = multiprocessing.Pool(max(threads, maxlevel - 1))
-        write_lock = multiprocessing.Lock()
-        proc_args = [(f, k, l, dims, rho, c, file, tol, write_lock) for f, k in zip(fs, ks) for l in ls]
-        result = pool.imap_unordered(process, proc_args)
-
-        for r in tqdm(result, desc='Building', total=len(proc_args)):
-            pass
-
-        with closing(sql.connect(file)) as conn:
-            postprocess(conn, fs, levels)
-
-
-    except Exception as e:
-        print(e)
-
-    finally:
-
-        pool.terminate()
-        pool.close()
 
 
 ## COMMAND LINE INTERFACE ##
