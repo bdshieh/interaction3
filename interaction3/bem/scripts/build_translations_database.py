@@ -149,7 +149,7 @@ def main(**kwargs):
 
                 query = '''
                         SELECT (frequency, wavenumber) FROM frequencies 
-                        WHERE is_complete=False
+                        WHERE is_complete=0
                         '''
                 table = pd.read_sql(query, conn)
 
