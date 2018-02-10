@@ -10,7 +10,6 @@ from tqdm import tqdm
 
 from interaction3.bem.simulations.array_transmit_simulation import ArrayTransmitSimulation
 from interaction3.bem.simulations.array_transmit_simulation import connector, get_objects_from_spec
-from interaction3 import abstract
 
 # register adapters for sqlite to convert numpy types
 sql.register_adapter(np.float64, float)
@@ -149,6 +148,12 @@ def main(**args):
 
 ## DATABASE FUNCTIONS ##
 
+def table_exists(con, name):
+
+    query = '''SELECT count(*) FROM sqlite_master WHERE type='table' and name=?'''
+    return con.execute(query, name).fetchone()[0] != 0
+
+
 def create_metadata_table(con, **kwargs):
 
     table = [[str(v) for v in list(kwargs.values())]]
@@ -171,17 +176,6 @@ def create_frequencies_table(con, fs, ks):
         # insert values into table
         con.executemany('INSERT INTO frequencies VALUES (?, ?, ?)', zip(fs, ks, repeat(False)))
 
-
-def update_progress(con, f):
-
-    with con:
-        con.execute('UPDATE frequencies SET is_complete=1 WHERE frequency=?', [f,])
-
-
-def table_exists(con, name):
-
-    query = '''SELECT count(*) FROM sqlite_master WHERE type='table' and name=?'''
-    return con.execute(query, name).fetchone()[0] != 0
 
 def create_nodes_table(con, nodes, membrane_ids, element_ids, channel_ids):
 
@@ -227,6 +221,12 @@ def create_displacements_table(con):
 
         # create indexes
         con.execute('CREATE INDEX query_index ON displacements (frequency, x, y, z)')
+
+
+def update_progress(con, f):
+
+    with con:
+        con.execute('UPDATE frequencies SET is_complete=1 WHERE frequency=?', [f,])
 
 
 def update_displacements_table(con, f, k, nodes, displacements):

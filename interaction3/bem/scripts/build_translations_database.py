@@ -57,7 +57,7 @@ sql.register_adapter(np.int32, int)
 #     return orders_interp_funcs
 
 
-def generate_translations(file, f, k, dims, levels, orders_db):
+def generate_translations(file, f, k, dims, levels, orders_db, write_lock):
 
     xdim, ydim = dims
     minlevel, maxlevel = levels
@@ -82,18 +82,21 @@ def generate_translations(file, f, k, dims, levels, orders_db):
             cos_angle = rhat.dot(kcoordT)
 
             translation = np.ascontiguousarray(fma.mod_ff2nf_op(fma.mag(r), cos_angle, k, order))
-            with closing(sql.connect(file)) as conn:
-                update_translations_table(conn, f, k, l, order, tuple(coords), theta, phi, translation)
+
+            with write_lock:
+                with closing(sql.connect(file)) as conn:
+                    update_translations_table(conn, f, k, l, order, tuple(coords), theta, phi, translation)
 
 
 def process(proc_args):
 
-    file, f, k, dims, levels, orders_db = proc_args
+    file, f, k, dims, levels, orders_db, write_lock = proc_args
 
     generate_translations(file, f, k, dims, levels, orders_db)
 
-    with closing(sql.connect(file)) as conn:
-        update_progress(conn, f)
+    with write_lock:
+        with closing(sql.connect(file)) as conn:
+            update_progress(conn, f)
 
 
 ## DATABASE FUNCTIONS ##
@@ -365,7 +368,8 @@ def main(**kwargs):
 
         # start multiprocessing pool and run process
         pool = multiprocessing.Pool(threads)
-        proc_args = [(file, f, k, dims, levels, orders_db) for f, k in zip(fs, ks)]
+        write_lock = multiprocessing.Lock()
+        proc_args = [(file, f, k, dims, levels, orders_db, write_lock) for f, k in zip(fs, ks)]
         result = pool.imap_unordered(process, proc_args)
 
         for r in tqdm(result, desc='Building', total=len(fs)):

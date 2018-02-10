@@ -56,7 +56,7 @@ def process(proc_args):
     '''
     Worker process. Runs FMA test.
     '''
-    f, k, l, dims, rho, c, file, tol = proc_args
+    f, k, l, dims, rho, c, file, tol, write_lock = proc_args
 
     xdim, ydim = dims
 
@@ -104,8 +104,9 @@ def process(proc_args):
             breakdown = False
 
     # write raw order and other data to database
-    with closing(sql.connect(file)) as conn:
-        update_orders_table(conn, f, k, l, raw_order, breakdown, passed)
+    with write_lock:
+        with closing(sql.connect(file)) as conn:
+            update_orders_table(conn, f, k, l, raw_order, breakdown, passed)
 
 
 
@@ -402,7 +403,8 @@ def main(**kwargs):
 
         # Start multiprocessing pool and run process
         pool = multiprocessing.Pool(max(threads, maxlevel - 1))
-        proc_args = [(f, k, l, dims, rho, c, file, tol) for f, k in zip(fs, ks) for l in ls]
+        write_lock = multiprocessing.Lock()
+        proc_args = [(f, k, l, dims, rho, c, file, tol, write_lock) for f, k in zip(fs, ks) for l in ls]
         result = pool.imap_unordered(process, proc_args)
 
         for r in tqdm(result, desc='Building', total=len(proc_args)):
