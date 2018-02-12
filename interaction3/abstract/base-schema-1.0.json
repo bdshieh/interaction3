@@ -197,6 +197,7 @@
     "name": "bem_array_transmit_simulation",
     "properties": {
       "frequency": { "type": "number"},
+      "freqs": { "type": "array", "items": { "type": "number" }, "minItems": 3, "maxItems": 3},
       "sound_speed": { "type": "number"},
       "density": { "type": "number"},
       "tolerance": { "type": "number"},

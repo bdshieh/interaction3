@@ -13,6 +13,7 @@ class BaseList(list):
 
     _name = None
     _class_reference = None
+    depth = 1 # default depth for __str__
 
     def __init__(self, *args, **kwargs):
 
@@ -41,14 +42,20 @@ class BaseList(list):
     def __repr__(self):
         return self.__str__()
 
-    def __str__(self, indent=0):
+    def __str__(self, indent=0, depth=None):
+
+        if depth is None:
+            depth = self.depth
+
+        if depth <= 0:
+            return '[...]' + '\n'
 
         strings = list()
 
         for val in self:
 
             if isinstance(val, (BaseList, BaseDict)):
-                strings.append(val.__str__(indent))
+                strings.append(val.__str__(indent, depth=depth - 1))
             else:
                 strings.append(' ' * indent + str(val) + '\n')
 
@@ -136,6 +143,7 @@ class BaseDict(dict):
 
     _name = None
     _class_reference = None
+    depth = 1 # default depth for __str__
 
     def __init__(self, *args, **kwargs):
 
@@ -165,7 +173,10 @@ class BaseDict(dict):
     def __repr__(self):
         return self.__str__()
 
-    def __str__(self, indent=0):
+    def __str__(self, indent=0, depth=None):
+
+        if depth is None:
+            depth = self.depth
 
         strings = list()
         strings.append(' ' * indent + string_to_class_name(self._name) + '\n')
@@ -174,8 +185,10 @@ class BaseDict(dict):
 
             strings.append(' ' * (indent + 2) + str(key) + ': ')
 
-            if isinstance(val, (BaseList, BaseDict)):
-                strings.append('\n' + val.__str__(indent + 4))
+            if isinstance(val, BaseList) and depth == 0:
+                strings.append(val.__str__(indent + 4, depth=depth))
+            elif isinstance(val, (BaseList, BaseDict)):
+                strings.append('\n' + val.__str__(indent + 4, depth=depth))
             else:
                 strings.append(str(val) + '\n')
 
@@ -249,10 +262,12 @@ class ObjectFactory(object):
 
         kwargs['_name'] = name
 
-        if name in ARRAYS:
-            return BaseList(*args, **kwargs)
-        elif name in OBJECTS:
-            return BaseDict(*args, **kwargs)
+        return globals()[string_to_class_name(name)](*args, **kwargs)
+
+        # if name in ARRAYS:
+        #     return BaseList(*args, **kwargs)
+        # elif name in OBJECTS:
+        #     return BaseDict(*args, **kwargs)
 
 
 ## JSON HELPER FUNCTIONS ##

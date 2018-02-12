@@ -5,6 +5,7 @@ import pandas as pd
 import sqlite3 as sql
 from scipy.interpolate import interp1d
 from contextlib import closing
+import os
 
 # register adapters for sqlite to convert numpy types
 sql.register_adapter(np.float64, float)
@@ -35,6 +36,9 @@ def get_orders_from_db(file, l):
 
 def get_order(file, f, l):
 
+    if not os.path.exists(os.path.abspath(file)):
+        raise FileNotFoundError
+
     interp_func = interp1d(*get_orders_from_db(file, l))
     order = int(interp_func(f))
     if order % 2 == 0:
@@ -44,6 +48,9 @@ def get_order(file, f, l):
 
 
 def get_translation(file, f, l, coord):
+
+    if not os.path.exists(os.path.abspath(file)):
+        raise FileNotFoundError
 
     x, y, z = coord
 
@@ -58,7 +65,7 @@ def get_translation(file, f, l, coord):
                 AND z=?
                 ORDER BY theta, phi
                 '''
-        table = pd.read_sql(query, conn, params=[f, l, x, y, z])
+        table = pd.read_sql(query, conn, params=(f, l, x, y, z))
 
     if len(table) == 0:
         raise Exception('Could not retrieve translation from database')

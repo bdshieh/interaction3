@@ -4,11 +4,11 @@
 {
     "distutils": {
         "depends": [
-            "D:\\Anaconda3\\lib\\site-packages\\numpy\\core\\include\\numpy\\arrayobject.h",
-            "D:\\Anaconda3\\lib\\site-packages\\numpy\\core\\include\\numpy\\ufuncobject.h"
+            "C:\\Bernie\\Anaconda3\\lib\\site-packages\\numpy\\core\\include\\numpy\\arrayobject.h",
+            "C:\\Bernie\\Anaconda3\\lib\\site-packages\\numpy\\core\\include\\numpy\\ufuncobject.h"
         ],
         "include_dirs": [
-            "D:\\Anaconda3\\lib\\site-packages\\numpy\\core\\include"
+            "C:\\Bernie\\Anaconda3\\lib\\site-packages\\numpy\\core\\include"
         ],
         "language": "c++",
         "name": "interaction3.bem.core.fma_functions",

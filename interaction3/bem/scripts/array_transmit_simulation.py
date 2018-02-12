@@ -10,6 +10,7 @@ from tqdm import tqdm
 
 from interaction3.bem.simulations.array_transmit_simulation import ArrayTransmitSimulation
 from interaction3.bem.simulations.array_transmit_simulation import connector, get_objects_from_spec
+from interaction3 import abstract
 
 # register adapters for sqlite to convert numpy types
 sql.register_adapter(np.float64, float)
@@ -20,9 +21,19 @@ sql.register_adapter(np.int32, int)
 
 ## PROCESS FUNCTIONS ##
 
+def init_process(_write_lock):
+
+    global write_lock
+    write_lock = _write_lock
+
+
 def process(args):
 
     file, f, k, sim, array = args
+
+    # deserialize json objects
+    sim = abstract.loads(sim)
+    array = abstract.loads(array)
 
     sim['frequency'] = f
     kwargs, meta = connector(sim, array)
@@ -36,16 +47,16 @@ def process(args):
     channel_ids = meta['channel_id']
     displacement = simulation.result['displacement']
 
-    with closing(sql.connect(file)) as con:
+    with write_lock:
+        with closing(sql.connect(file)) as con:
 
-        if not table_exists(con, 'nodes'):
-            create_nodes_table(con, nodes, membrane_ids, element_ids, channel_ids)
+            if not table_exists(con, 'nodes'):
+                create_nodes_table(con, nodes, membrane_ids, element_ids, channel_ids)
+            if not table_exists(con, 'displacements'):
+                create_displacements_table(con)
 
-        if not table_exists(con, 'displacements'):
-            create_displacements_table(con)
-
-        update_displacements_table(con, f, k, nodes, displacement)
-        update_progress(con, f)
+            update_displacements_table(con, f, k, nodes, displacement)
+            update_progress(con, f)
 
 
 ## ENTRY POINT ##
@@ -97,9 +108,7 @@ def main(**args):
 
             with closing(sql.connect(file)) as con:
 
-                query = '''
-                        SELECT (frequency, wavenumber) FROM frequencies WHERE is_complete=False
-                        '''
+                query = 'SELECT frequency, wavenumber FROM frequencies WHERE is_complete=0'
                 table = pd.read_sql(query, con)
 
             fs = np.array(table['frequency'])
@@ -111,7 +120,7 @@ def main(**args):
     else:
 
         # Make directories if they do not exist
-        file_dir = os.path.dirname(file)
+        file_dir = os.path.dirname(os.path.abspath(file))
         if not os.path.exists(file_dir):
             os.makedirs(file_dir)
 
@@ -130,8 +139,9 @@ def main(**args):
     try:
 
         # start multiprocessing pool and run process
-        pool = multiprocessing.Pool(threads)
-        proc_args = [(file, f, k, simulation, array) for f, k in zip(fs, ks)]
+        write_lock = multiprocessing.Lock()
+        pool = multiprocessing.Pool(threads, initializer=init_process, initargs=(write_lock,))
+        proc_args = [(file, f, k, abstract.dumps(simulation), abstract.dumps(array)) for f, k in zip(fs, ks)]
         result = pool.imap_unordered(process, proc_args)
 
         for r in tqdm(result, desc='Simulating', total=len(fs)):
@@ -151,7 +161,7 @@ def main(**args):
 def table_exists(con, name):
 
     query = '''SELECT count(*) FROM sqlite_master WHERE type='table' and name=?'''
-    return con.execute(query, name).fetchone()[0] != 0
+    return con.execute(query, (name,)).fetchone()[0] != 0
 
 
 def create_metadata_table(con, **kwargs):
@@ -190,7 +200,7 @@ def create_nodes_table(con, nodes, membrane_ids, element_ids, channel_ids):
         con.execute('CREATE UNIQUE INDEX node_index ON nodes (x, y, z)')
         con.execute('CREATE INDEX membrane_id_index ON nodes (membrane_id)')
         con.execute('CREATE INDEX element_id_index ON nodes (element_id)')
-        con.execute('CREATE INDEX channel_id_index ON channel_id_index (channel_id)')
+        con.execute('CREATE INDEX channel_id_index ON nodes (channel_id)')
 
         # insert values into table
         query = 'INSERT INTO nodes VALUES (?, ?, ?, ?, ?, ?)'
@@ -226,7 +236,7 @@ def create_displacements_table(con):
 def update_progress(con, f):
 
     with con:
-        con.execute('UPDATE frequencies SET is_complete=1 WHERE frequency=?', [f,])
+        con.execute('UPDATE frequencies SET is_complete=1 WHERE frequency=?', (f,))
 
 
 def update_displacements_table(con, f, k, nodes, displacements):
@@ -234,9 +244,12 @@ def update_displacements_table(con, f, k, nodes, displacements):
     x, y, z = nodes.T
 
     with con:
-        query = 'INSERT INTO displacements VALUES (?, ?, ?, ?, ?, ?, ?)'
-        con.executemany(query, zip(repeat(f), repeat(k), repeat(x), repeat(y), repeat(z),
-                                    np.real(displacements.ravel()), np.imag(displacements.ravel())))
+        query = '''
+                INSERT INTO displacements (frequency, wavenumber, x, y, z, displacement_real, displacement_imag) 
+                VALUES (?, ?, ?, ?, ?, ?, ?)
+                '''
+        con.executemany(query, zip(repeat(f), repeat(k), x, y, z, np.real(displacements.ravel()),
+                                   np.imag(displacements.ravel())))
 
 
 ## COMMAND LINE INTERFACE ##
@@ -252,7 +265,7 @@ if __name__ == '__main__':
     import argparse
 
     # default arguments
-    nthreads = multiprocessing.cpu_count
+    nthreads = multiprocessing.cpu_count()
     freqs = 50e3, 50e6, 50e3
     file = None
     specification = None
