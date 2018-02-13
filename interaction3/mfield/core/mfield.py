@@ -2,7 +2,7 @@
 
 import numpy as np
 import matlab.engine
-# import StringIO
+import io.StringIO
 #import sys
 import os
 
@@ -44,7 +44,7 @@ class MField(object):
         self._mateng.field_init(suppress, nargout=0)
 
     def field_end(self):
-        self._mateng.field_end(nargout=0, stdout=StringIO.StringIO())
+        self._mateng.field_end(nargout=0, stdout=io.StringIO.StringIO())
 
     def set_field(self, option_name, value):
         self._mateng.set_field(option_name, value, nargout=0)
@@ -196,7 +196,7 @@ class MField(object):
         return ret
         
     def xdc_2d_array(self):
-        pass
+        raise NotImplementedError
 
     def xdc_apodization(self, Th, times, values):
 
@@ -206,13 +206,13 @@ class MField(object):
         self._mateng.xdc_apodization(Th, times_mat, values_mat, nargout=0)
 
     def xdc_concave(self):
-        pass
+        raise NotImplementedError
 
     def xdc_convex_array(self):
-        pass
+        raise NotImplementedError
 
     def xdc_convex_focused_array(self):
-        pass
+        raise NotImplementedError
 
 
 if __name__ == '__main__':
@@ -247,8 +247,7 @@ if __name__ == '__main__':
     #field.field_info()
     #field.xdc_show(tx)
 
-    scat, t0 = field.calc_scat_multi(tx, tx, np.array([0, 0, 0.03]),
-        np.array([1]))
+    scat, t0 = field.calc_scat_multi(tx, tx, np.array([0, 0, 0.03]), np.array([1]))
 
     field.field_end()
 
