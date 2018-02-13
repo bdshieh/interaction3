@@ -12,11 +12,26 @@ class BeamplotTransmitSimulation(object):
     frequency = attr.ib()
     density = attr.ib()
     sound_speed = attr.ib()
+    attenuation = attr.ib()
+    frequency_attenuation = attr.ib()
+    use_attenuation = attr.ib()
+
+    excitation_center_frequecy = attr.ib()
+    excitation_fractional_bandwidth = attr.ib()
+    excitation_sample_frequency = attr.ib()
+
+    _field = attr.ib()
+
+    @_field.default
+    def _field_default(self):
+        pass
+
+
+    def __attr_post_init__(self):
+        pass
+
 
     def solve(self):
-
-        fieldpos, idx = inargs
-
 
         field = mfield.MField()
 

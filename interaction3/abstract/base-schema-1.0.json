@@ -82,7 +82,7 @@
     ]
   },
 
-    "circular_pmut_membrane": {
+  "circular_pmut_membrane": {
     "name": "circular_pmut_membrane",
     "allOf": [
       { "$ref": "#/pmut_membrane" },
