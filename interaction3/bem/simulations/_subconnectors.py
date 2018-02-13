@@ -315,7 +315,7 @@ def generate_square_nodes(length_x, length_y, electrode_x, electrode_y, nnodes_x
     # define nodes on x-y plane
     xv = np.linspace(-length_x / 2, length_x / 2, nnodes_x)
     yv = np.linspace(-length_y / 2, length_y / 2, nnodes_y)
-    zv = 0.
+    zv = 0
     x, y, z = np.meshgrid(xv[1:-1], yv[1:-1], zv) # remove boundary nodes
     nodes = np.c_[x.ravel(), y.ravel(), z.ravel()]
     nnodes = len(nodes)
