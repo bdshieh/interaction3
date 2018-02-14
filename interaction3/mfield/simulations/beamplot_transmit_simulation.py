@@ -2,12 +2,13 @@
 
 import numpy as np
 import attr
-
+from scipy.signal import gausspulse
 from interaction3 import abstract
 from .. core import mfield
 
 @attr.s
 class BeamplotTransmitSimulation(object):
+
 
     frequency = attr.ib()
     density = attr.ib()
@@ -15,39 +16,44 @@ class BeamplotTransmitSimulation(object):
     attenuation = attr.ib()
     frequency_attenuation = attr.ib()
     use_attenuation = attr.ib()
+    use_element_factor = attr.ib()
+    field_pos = attr.ib(default=None)
 
     excitation_center_frequecy = attr.ib()
-    excitation_fractional_bandwidth = attr.ib()
+    excitation_bandwidth = attr.ib()
     excitation_sample_frequency = attr.ib()
 
-    _field = attr.ib()
+    rectangles = attr.ib()
+    channel_centers = attr.ib()
+    delays = attr.ib()
+    apodization = attr.ib()
+
+    _field = attr.ib(init=False, repr=False)
+    _result = attr.ib(init=False, default=attr.Factory(dict), repr=False)
 
     @_field.default
     def _field_default(self):
-        pass
+
+        field = mfield.MField()
+        field.field_init()
+        field.set_field('c', self.sound_speed)
+        field.set_field('fs', self.sample_frequency)
+        field.set_field('att', self.attenuation)
+        field.set_field('freq_att', self.frequency_attenuation)
+        field.set_field('att_f0', self.attenuation_center_frequency)
+        field.set_field('use_att', self.use_attenuation)
+
+        return field
 
 
     def __attr_post_init__(self):
-        pass
 
-
-    def solve(self):
-
-        field = mfield.MField()
-
-        field.field_init()
-
-        field.set_field('c', sound_speed)
-        field.set_field('fs', sample_frequency)
-        field.set_field('att', attenuation)
-        field.set_field('freq_att', frequency_attenuation)
-        field.set_field('att_f0', attenuation_center_frequency)
-        field.set_field('use_att', use_attenuation)
+        field = self._field
 
         # create excitation signal
-        fc = center_frequency
-        fbw = bandwidth / fc
-        fs = sample_frequency
+        fc = self.excitation_center_frequency
+        fbw = self.excitation_bandwidth / fc
+        fs = self.excitation_sample_frequency
 
         cutoff = gausspulse('cutoff', fc=fc, bw=fbw, tpr=-100, bwr=-3)
         adj_cutoff = np.ceil(cutoff * fs) / fs
@@ -55,38 +61,36 @@ class BeamplotTransmitSimulation(object):
         impulse_response, _ = gausspulse(t, fc=fc, bw=fbw, retquad=True, bwr=-3)
 
         # get transmit channel positions
-        txpos = np.array([ch['center'] for ch in transducer.get_channel('tx')])
+        rect = self.rectangles
+        cc = self.channel_centers
+        delays = self.delays
+        apod = self.apodization
 
-        # set transducer apodization
-        if use_tx_apod:
-            transducer.set_apodization(tx_apod_r, tx_atype, 'tx')
-
-        # set transducer focus
-        if use_tx_focus:
-            transducer.set_focus(tx_focus_r, 'tx', norm=0)
-
-        tx_rect, tx_cc, tx_delays, tx_apod = transducer.generate_fieldii('tx')
-
-        tx = field.xdc_rectangles(tx_rect, tx_cc, np.array([[0, 0, 300]]))
+        tx = field.xdc_rectangles(rect, cc, np.array([[0, 0, 300]]))
         field.xdc_impulse(tx, impulse_response)
-        # field.xdc_excitation(tx, impulse_response)
         field.xdc_excitation(tx, np.array([1]))
-        field.xdc_focus_times(tx, np.zeros((1, 1)), tx_delays)
-        field.xdc_apodization(tx, np.zeros((1, 1)), tx_apod)
+        field.xdc_focus_times(tx, np.zeros((1, 1)), delays)
+        field.xdc_apodization(tx, np.zeros((1, 1)), apod)
+
+    def solve(self, field_pos=None):
+
+        field = self._field
+
+        if field_pos is None:
+            field_pos = self.field_pos
 
         rf_data = list()
         t0s = list()
-        image_data = np.zeros(len(fieldpos), dtype=np.float64)
+        image_data = np.zeros(len(field_pos), dtype=np.float64)
 
-        for i, pos in enumerate(fieldpos):
+        for i, pos in enumerate(field_pos):
 
             if use_element_factor:
                 # calculate element factor corrections
                 r_tx = np.atleast_2d(pos) - np.atleast_2d(txpos)
 
                 r, a, b = cart2sec(r_tx).T
-                tx_correction = interpolator(np.rad2deg(np.abs(a)),
-                                             np.rad2deg(np.abs(b)), fcubic)
+                tx_correction = interpolator(np.rad2deg(np.abs(a)), np.rad2deg(np.abs(b)), fcubic)
 
                 # apply correction as apodization
                 field.xdc_apodization(tx, np.zeros((1, 1)), tx_apod * tx_correction)
@@ -95,7 +99,7 @@ class BeamplotTransmitSimulation(object):
 
             rf_data.append(rf)
             t0s.append(t0)
-            image_data[i] = np.max(envelope(rf))
+            # image_data[i] = np.max(envelope(rf))
 
         return rf_data, t0s, image_data, idx
 
