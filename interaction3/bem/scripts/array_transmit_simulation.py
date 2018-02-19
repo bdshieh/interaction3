@@ -38,7 +38,7 @@ def process(args):
     sim['frequency'] = f
     kwargs, meta = connector(sim, array)
 
-    simulation= ArrayTransmitSimulation(**kwargs)
+    simulation = ArrayTransmitSimulation(**kwargs)
     simulation.solve()
 
     nodes = simulation.nodes

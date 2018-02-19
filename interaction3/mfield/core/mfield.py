@@ -1,9 +1,10 @@
 # mfield / mfield.py
 
 import numpy as np
+import matlab
 import matlab.engine
-import io.StringIO
-#import sys
+import time
+import io
 import os
 
 
@@ -13,14 +14,27 @@ class MField(object):
     '''
     def __init__(self, path=None):
 
-        # make sure to set MATLAB engine path to location of m-files
+        # set default path to location of m-files (where this module is)
         if path is None:
             path = os.path.dirname(os.path.abspath(__file__))
 
-        self._mateng = matlab.engine.start_matlab()
+        # try, for at most 1 minute, to start MATLAB engine
+        for i in range(6):
+            try:
+                self._mateng = matlab.engine.start_matlab()
+                break
+            except (matlab.engine.EngineError, TypeError):
+                time.sleep(10)
+
+        # set MATLAB engine path to location of m-files
         self._mateng.cd(str(os.path.normpath(path)), nargout=0)
 
-    def numpy_to_mat(self, array, orient='row'):
+    def __del__(self):
+
+        self.field_end() # end FIELD II
+        self.close() # shutdown MATLAB engine
+
+    def _numpy_to_mat(self, array, orient='row'):
 
         if array.ndim == 1:
             if orient.lower() == 'row':
@@ -34,17 +48,19 @@ class MField(object):
 
         return ret
 
-    def close(self):
-        self._mateng.quit()
-
-    def mat_to_numpy(self, array):
+    def _mat_to_numpy(self, array):
         return np.array(array).squeeze()
+
+    # def close(self):
+    #     self._mateng.quit()
+
+    ## FIELD FUNCTIONS ##
 
     def field_init(self, suppress=-1):
         self._mateng.field_init(suppress, nargout=0)
 
     def field_end(self):
-        self._mateng.field_end(nargout=0, stdout=io.StringIO.StringIO())
+        self._mateng.field_end(nargout=0, stdout=io.StringIO())
 
     def set_field(self, option_name, value):
         self._mateng.set_field(option_name, value, nargout=0)
@@ -52,92 +68,96 @@ class MField(object):
     def field_info(self):
         self._mateng.field_info(nargout=0)
 
+    ## CALC FUNCTIONS ##
+
     def calc_scat(self, Th1, Th2, points, amplitudes):
 
-        points_mat = self.numpy_to_mat(points, orient='row')
-        amplitudes_mat = self.numpy_to_mat(amplitudes, orient='col')
+        points_mat = self._numpy_to_mat(points, orient='row')
+        amplitudes_mat = self._numpy_to_mat(amplitudes, orient='col')
 
         ret = self._mateng.calc_scat(Th1, Th2, points_mat, amplitudes_mat,
             nargout=2)
 
-        scat = self.mat_to_numpy(ret[0])
+        scat = self._mat_to_numpy(ret[0])
         t0 = ret[1]
 
         return scat, t0
 
     def calc_scat_all(self, Th1, Th2, points, amplitudes, dec_factor):
 
-        points_mat = self.numpy_to_mat(points, orient='row')
-        amplitudes_mat = self.numpy_to_mat(amplitudes, orient='col')
+        points_mat = self._numpy_to_mat(points, orient='row')
+        amplitudes_mat = self._numpy_to_mat(amplitudes, orient='col')
 
         ret = self._mateng.calc_scat_all(Th1, Th2, points_mat, amplitudes_mat,
             dec_factor, nargout=2)
 
-        scat = self.mat_to_numpy(ret[0])
+        scat = self._mat_to_numpy(ret[0])
         t0 = ret[1]
 
         return scat, t0
 
     def calc_scat_multi(self, Th1, Th2, points, amplitudes):
 
-        points_mat = self.numpy_to_mat(points, orient='row')
-        amplitudes_mat = self.numpy_to_mat(amplitudes, orient='col')
+        points_mat = self._numpy_to_mat(points, orient='row')
+        amplitudes_mat = self._numpy_to_mat(amplitudes, orient='col')
 
         ret = self._mateng.calc_scat_multi(Th1, Th2, points_mat, amplitudes_mat,
             nargout=2)
 
-        scat = self.mat_to_numpy(ret[0])
+        scat = self._mat_to_numpy(ret[0])
         t0 = ret[1]
 
         return scat, t0
 
     def calc_h(self, Th, points):
 
-        points_mat = self.numpy_to_mat(points, orient='row')
+        points_mat = self._numpy_to_mat(points, orient='row')
 
         ret = self._mateng.calc_h(Th, points_mat, nargout=2)
 
-        h = self.mat_to_numpy(ret[0])
+        h = self._mat_to_numpy(ret[0])
         t0 = ret[1]
 
         return h, t0
 
     def calc_hp(self, Th, points):
 
-        points_mat = self.numpy_to_mat(points, orient='row')
+        points_mat = self._numpy_to_mat(points, orient='row')
 
         ret = self._mateng.calc_hp(Th, points_mat, nargout=2)
 
-        hp = self.mat_to_numpy(ret[0])
+        hp = self._mat_to_numpy(ret[0])
         t0 = ret[1]
 
         return hp, t0
 
     def calc_hhp(self, Th1, Th2, points):
 
-        points_mat = self.numpy_to_mat(points, orient='row')
+        points_mat = self._numpy_to_mat(points, orient='row')
 
         ret = self._mateng.calc_hhp(Th1, Th2, points_mat, nargout=2)
 
-        hhp = self.mat_to_numpy(ret[0])
+        hhp = self._mat_to_numpy(ret[0])
         t0 = ret[1]
 
         return hhp, t0
 
+    ## XDC FUNCTIONS ##
+
     def xdc_impulse(self, Th, pulse):
 
-        pulse_mat = self.numpy_to_mat(pulse, orient='row')
+        pulse_mat = self._numpy_to_mat(pulse, orient='row')
         self._mateng.xdc_impulse(Th, pulse_mat, nargout=0)
 
     def xdc_excitation(self, Th, pulse):
 
-        pulse_mat = self.numpy_to_mat(pulse, orient='row')
+        pulse_mat = self._numpy_to_mat(pulse, orient='row')
         self._mateng.xdc_excitation(Th, pulse_mat, nargout=0)
 
     def xdc_linear_array(self, no_elements, width, height, kerf, no_sub_x,
         no_sub_y, focus):
 
-        focus_mat = self.numpy_to_mat(focus, orient='row')
+        focus_mat = self._numpy_to_mat(focus, orient='row')
         ret = self._mateng.xdc_linear_array(no_elements, width, height, kerf,
             no_sub_x, no_sub_y, focus_mat, nargout=1)
 
@@ -148,15 +168,15 @@ class MField(object):
     
     def xdc_focus(self, Th, times, points):
 
-        times_mat = self.numpy_to_mat(times, orient='col')
-        points_mat = self.numpy_to_mat(points, orient='row')
+        times_mat = self._numpy_to_mat(times, orient='col')
+        points_mat = self._numpy_to_mat(points, orient='row')
 
         self._mateng.xdc_focus(Th, times_mat, points_mat, nargout=0)   
 
     def xdc_focus_times(self, Th, times, delays):
 
-        times_mat = self.numpy_to_mat(times, orient='col')
-        delays_mat = self.numpy_to_mat(delays, orient='row')
+        times_mat = self._numpy_to_mat(times, orient='col')
+        delays_mat = self._numpy_to_mat(delays, orient='row')
 
         self._mateng.xdc_focus_times(Th, times_mat, delays_mat, nargout=0)
 
@@ -165,24 +185,23 @@ class MField(object):
 
     def xdc_get(self, Th, info_type='rect'):
 
-        ret = self.mat_to_numpy(self._mateng.xdc_get(Th, info_type, nargout=1))
+        ret = self._mat_to_numpy(self._mateng.xdc_get(Th, info_type, nargout=1))
         return ret
 
     def xdc_rectangles(self, rect, center, focus):
 
-        rect_mat = self.numpy_to_mat(rect, orient='row')
-        center_mat = self.numpy_to_mat(center, orient='row')
-        focus_mat = self.numpy_to_mat(focus, orient='row')
+        rect_mat = self._numpy_to_mat(rect, orient='row')
+        center_mat = self._numpy_to_mat(center, orient='row')
+        focus_mat = self._numpy_to_mat(focus, orient='row')
 
         ret = self._mateng.xdc_rectangles(rect_mat, center_mat, focus_mat,
             nargout=1)
 
         return ret
 
-    def xdc_focused_array(self, no_elements, width, height, kerf, rfocus,
-        no_sub_x, no_sub_y, focus):
+    def xdc_focused_array(self, no_elements, width, height, kerf, rfocus, no_sub_x, no_sub_y, focus):
 
-        focus_mat = self.numpy_to_mat(focus, orient='row')
+        focus_mat = self._numpy_to_mat(focus, orient='row')
 
         ret = self._mateng.xdc_focused_array(no_elements, width, height, kerf,
             rfocus, no_sub_x, no_sub_y, focus_mat, nargout=1)
@@ -194,16 +213,16 @@ class MField(object):
         ret = self._mateng.xdc_piston(radius, ele_size)
         
         return ret
-        
-    def xdc_2d_array(self):
-        raise NotImplementedError
 
     def xdc_apodization(self, Th, times, values):
 
-        times_mat = self.numpy_to_mat(times, orient='col')
-        values_mat = self.numpy_to_mat(values, orient='row')
+        times_mat = self._numpy_to_mat(times, orient='col')
+        values_mat = self._numpy_to_mat(values, orient='row')
 
         self._mateng.xdc_apodization(Th, times_mat, values_mat, nargout=0)
+
+    def xdc_2d_array(self):
+        raise NotImplementedError
 
     def xdc_concave(self):
         raise NotImplementedError
@@ -214,15 +233,34 @@ class MField(object):
     def xdc_convex_focused_array(self):
         raise NotImplementedError
 
+    ## ELE FUNCTIONS ##
+
+    def ele_apodization(self, Th, element_no, apo):
+
+        element_no_mat = self._numpy_to_mat(element_no, orient='col')
+        apo_mat = self._numpy_to_mat(apo, orient='row')
+
+        self._mateng.ele_apodization(Th, element_no_mat, apo_mat, nargout=0)
+
+    def ele_delays(self, Th, element_no, delays):
+
+        element_no_mat = self._numpy_to_mat(element_no, orient='col')
+        delays_mat = self._numpy_to_mat(delays, orient='row')
+
+        self._mateng.ele_delays(Th, element_no_mat, delays_mat, nargout=0)
+
+
+## TEST ##
 
 if __name__ == '__main__':
 
-    from scipy.signal import gausspulse
+    # from scipy.signal import gausspulse
+    from .. simulations import sim_functions as sim
 
     field = MField()
 
     field.field_init()
-    field.set_field('c', 1540)
+    field.set_field('c', 1500)
     field.set_field('fs', 100e6)
     field.set_field('att', 0)
     field.set_field('freq_att', 10e6)
@@ -233,22 +271,16 @@ if __name__ == '__main__':
     fbw = 1.0
     fs = 100e6
 
-    cutoff = gausspulse('cutoff', fc=fc, bw=fbw, tpr=-60, bwr=-3)
-    adj_cutoff = np.ceil(cutoff*fs)/fs
-    t = np.arange(-adj_cutoff, adj_cutoff + 1/fs, 1/fs)
-    _, impulse_response = gausspulse(t, fc=fc, bw=fbw, retquad=True, bwr=-3)
-    excitation = impulse_response.copy()
+    pulse, t = sim.gausspulse(fc, fbw, fs)
 
-    tx = field.xdc_linear_array(64, 0.0002, 0.001, 300e-6, 1, 2,
-        np.array([0,0,0.03]))
-    field.xdc_impulse(tx, impulse_response)
-    field.xdc_excitation(tx, excitation)
+    tx = field.xdc_linear_array(64, 0.0002, 0.001, 300e-6, 1, 2, np.array([0, 0, 0.03]))
+    field.xdc_impulse(tx, pulse)
+    field.xdc_excitation(tx, np.array([1]))
 
-    #field.field_info()
-    #field.xdc_show(tx)
+    field.field_info()
+    # field.xdc_show(tx)
 
     scat, t0 = field.calc_scat_multi(tx, tx, np.array([0, 0, 0.03]), np.array([1]))
 
     field.field_end()
-
     field.close()
