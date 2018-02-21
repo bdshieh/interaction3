@@ -1,10 +1,18 @@
+## interaction3 / abstract / classes.py
+
+# names to export
+__all__ = ['SquareCmutMembrane', 'CircularCmutMembrane', 'SquarePmutMembrane', 'CircularPmutMembrane',
+           'Channel', 'DefocusedChannel', 'Element', 'Membranes', 'Elements', 'Channels', 'Array', 'Simulation',
+           'BemTransmitCrosstalk', 'BemReceiveCrosstalk', 'BemTransmitBeamplot', 'MfieldTransmitBeamplot', 'dump',
+           'dumps', 'load', 'loads']
+
 
 import json
 import jsonschema
 import os
 import re
 
-SCHEMA_FILENAME = 'base-schema-1.0.json' # relative path to schema json file
+SCHEMA_FILENAME = 'base-schema-1.1.json' # relative path to schema json file
 
 
 ## BASE CLASSES ##
@@ -444,8 +452,8 @@ def generate_objects_from_json(var):
         return var
 
 
-def dump(obj, fp, indent=2, *args, **kwargs):
-    json.dump(generate_json_object_with_name(obj), open(fp, 'x'), indent=indent, *args, **kwargs)
+def dump(obj, fp, indent=2, mode='x', *args, **kwargs):
+    json.dump(generate_json_object_with_name(obj), open(fp, mode), indent=indent, *args, **kwargs)
 
 
 def dumps(obj, indent=2, *args, **kwargs):
@@ -474,8 +482,8 @@ OBJECTS, ARRAYS = get_classes_from_reference(BASE_REFERENCE)
 
 ## CLASS DEFINITIONS ##
 
-class Membrane(BaseDict):
-    _name = 'membrane'
+# class Membrane(BaseDict):
+    # _name = 'membrane'
 
 
 class SquareCmutMembrane(BaseDict):
@@ -526,8 +534,24 @@ class Simulation(BaseDict):
     _name = 'simulation'
 
 
-class BemArrayTransmitSimulation(BaseDict):
-    _name = 'bem_array_transmit_simulation'
+class BemTransmitCrosstalk(BaseDict):
+    _name = 'bem_transmit_crosstalk'
+
+
+class BemReceiveCrosstalk(BaseDict):
+    _name = 'bem_receive_crosstalk'
+
+
+class BemTransmitBeamplot(BaseDict):
+    _name = 'bem_transmit_beamplot'
+
+
+class BemTransmitBeamplot(BaseDict):
+    _name = 'bem_transmit_beamplot'
+
+
+class MfieldTransmitBeamplot(BaseDict):
+    _name = 'mfield_transmit_beamplot'
 
 
 if __name__ == '__main__':

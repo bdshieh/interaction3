@@ -32,7 +32,7 @@ class MField(object):
     def __del__(self):
 
         self.field_end() # end FIELD II
-        self.close() # shutdown MATLAB engine
+        self._mateng.quit() # shutdown MATLAB engine
 
     def _numpy_to_mat(self, array, orient='row'):
 
@@ -51,8 +51,6 @@ class MField(object):
     def _mat_to_numpy(self, array):
         return np.array(array).squeeze()
 
-    # def close(self):
-    #     self._mateng.quit()
 
     ## FIELD FUNCTIONS ##
 
@@ -242,12 +240,12 @@ class MField(object):
 
         self._mateng.ele_apodization(Th, element_no_mat, apo_mat, nargout=0)
 
-    def ele_delays(self, Th, element_no, delays):
+    def ele_delay(self, Th, element_no, delays):
 
         element_no_mat = self._numpy_to_mat(element_no, orient='col')
         delays_mat = self._numpy_to_mat(delays, orient='row')
 
-        self._mateng.ele_delays(Th, element_no_mat, delays_mat, nargout=0)
+        self._mateng.ele_delay(Th, element_no_mat, delays_mat, nargout=0)
 
 
 ## TEST ##

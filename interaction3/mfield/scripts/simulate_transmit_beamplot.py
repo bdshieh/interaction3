@@ -8,9 +8,8 @@ from itertools import repeat
 from contextlib import closing
 from tqdm import tqdm
 
-from interaction3.mfield.simulations.transmit_beamplot import TransmitBeamplot
-from interaction3.mfield.simulations.transmit_beamplot import connector, get_objects_from_spec
-from interaction3 import abstract
+import interaction3.abstract as abstract
+from interaction3.mfield.simulations import TransmitBeamplot
 from interaction3.mfield.simulations import sim_functions as sim
 
 # register adapters for sqlite to convert numpy types
@@ -27,7 +26,10 @@ def init_process(_write_lock, sim, array):
     global write_lock, simulation
     write_lock = _write_lock
 
-    kwargs, meta = connector(sim, array)
+    sim = abstract.loads(sim)
+    array = abstract.loads(array)
+
+    kwargs, meta = TransmitBeamplot.connector(sim, array)
     simulation = TransmitBeamplot(**kwargs)
 
 
@@ -44,8 +46,8 @@ def process(args):
     with write_lock:
         with closing(sql.connect(file)) as con:
 
-            for rf, t0 in zip(rf_data, times):
-                update_pressures_table(con, field_pos, times, rf)
+            for rf, t in zip(rf_data, times):
+                update_pressures_table(con, field_pos, t, rf)
             update_progress(con, field_pos)
 
 
@@ -57,12 +59,12 @@ def main(**args):
     file = args['file']
     spec = args['specification']
 
-    simulation, array = get_objects_from_spec(*spec)
+    simulation, array = TransmitBeamplot.get_objects_from_spec(*spec)
 
     mode = simulation['mesh_mode']
-    v1 = np.linspace(*simulation['mesh_v1'])
-    v2 = np.linspace(*simulation['mesh_v2'])
-    v3 = np.linspace(*simulation['mesh_v3'])
+    v1 = np.linspace(*simulation['mesh_vector1'])
+    v2 = np.linspace(*simulation['mesh_vector2'])
+    v3 = np.linspace(*simulation['mesh_vector3'])
 
     # set arg defaults if not provided
     if 'threads' in simulation:
@@ -125,20 +127,26 @@ def main(**args):
 
         # start multiprocessing pool and run process
         write_lock = multiprocessing.Lock()
+        simulation = abstract.dumps(simulation)
+        array = abstract.dumps(array)
+
         pool = multiprocessing.Pool(threads, initializer=init_process, initargs=(write_lock, simulation, array))
-        proc_args = [(file, fp) for fp in sim.chunks(field_pos)]
+        proc_args = [(file, fp) for fp in sim.chunks(field_pos, 100)]
         result = pool.imap_unordered(process, proc_args)
 
-        for r in tqdm(result, desc='Simulating', total=len(field_pos)):
+        for r in tqdm(result, desc='Simulating', total=len(proc_args)):
             pass
 
+        pool.close()
+
     except Exception as e:
+
         print(e)
-
-    finally:
-
         pool.terminate()
         pool.close()
+
+
+
 
 
 ## DATABASE FUNCTIONS ##
@@ -174,8 +182,7 @@ def create_pressures_table(con):
                 y float,
                 z float,
                 time float,
-                pressure_real float,
-                pressure_imag float,
+                pressure float,
                 FOREIGN KEY (x, y, z) REFERENCES nodes (x, y, z),
                 FOREIGN KEY (time) REFERENCES times (time)
                 )
@@ -188,7 +195,7 @@ def create_pressures_table(con):
 
 def update_progress(con, field_pos):
 
-    x, y, z = field_pos.T
+    x, y, z = np.array(field_pos).T
 
     with con:
         con.executemany('UPDATE field_positions SET is_complete=1 WHERE x=? AND y=? AND z=?', zip(x, y, z))
@@ -196,14 +203,14 @@ def update_progress(con, field_pos):
 
 def update_pressures_table(con, field_pos, times, pressures):
 
-    x, y, z = field_pos.T
+    x, y, z = np.array(field_pos).T
 
     with con:
         query = '''
-                INSERT INTO pressures (x, y, z, time, pressure_real, pressure_imag) 
-                VALUES (?, ?, ?, ?, ?, ?)
+                INSERT INTO pressures (x, y, z, time, pressure) 
+                VALUES (?, ?, ?, ?, ?)
                 '''
-        con.executemany(query, zip(x, y, z, times, np.real(pressures.ravel()), np.imag(pressures.ravel())))
+        con.executemany(query, zip(x, y, z, times, pressures.ravel()))
 
 
 ## COMMAND LINE INTERFACE ##
@@ -224,7 +231,6 @@ if __name__ == '__main__':
     parser.add_argument('file', nargs='?', default=file)
     parser.add_argument('-s', '--specification', nargs='+', default=specification)
     parser.add_argument('-t', '--threads', type=int, default=nthreads)
-    # parser.add_argument('-f', '--freqs', nargs=3, type=float, default=freqs)
 
     args = vars(parser.parse_args())
     main(**args)

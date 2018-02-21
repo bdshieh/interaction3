@@ -1,58 +1,66 @@
+## interaction3 / abstract/ arrays/ matrix_array.py
 
-from interaction3.abstract.classes import *
-from interaction3.abstract.manipulations import *
+import numpy as np
 
+from ... abstract import *
 
 # default parameters
-mempitch_x = 52e-6
-mempitch_y = 52e-6
-nmem_x = 2
-nmem_y = 2
-elempitch_x = 104e-6
-elempitch_y = 104e-6
-nelem_x = 7
-nelem_y = 7
-length_x = 40e-6
-length_y = 40e-6
-electrode_x = 40e-6
-electrode_y = 40e-6
-nnodes_x = 9
-nnodes_y = 9
-thickness = [2.2e-6,]
-density = [2040,]
-y_modulus = [110e9,]
-p_ratio = [0.22,]
-isolation = 220e-9
-permittivity = 6.3
-gap = 100e-9
-att_mech = 0
+defaults = dict()
+
+# membrane properties
+defaults['mempitch'] = [50e-6, 50e-6]
+defaults['nmem'] = [2, 2]
+defaults['length'] = [40e-6, 40e-6]
+defaults['electrode'] = [40e-6, 40e-6]
+defaults['nnodes'] = [9, 9]
+defaults['thickness'] = [2.2e-6,]
+defaults['density'] = [2040,]
+defaults['y_modulus'] = [110e9,]
+defaults['p_ratio'] = [0.22,]
+defaults['isolation'] = 200e-9
+defaults['permittivity'] = 6.3
+defaults['gap'] = 100e-9
+defaults['att_mech'] = 0
+defaults['ndiv'] = [2, 2]
+
+# array properties
+defaults['elempitch'] = [100e-6, 100e-6]
+defaults['nelem'] = [7, 7]
 
 
+def init(**kwargs):
 
-def init(nmem=(nmem_x, nmem_y),
-         mempitch=(mempitch_x, mempitch_y),
-         nelem=(nelem_x, nelem_y),
-         elempitch=(elempitch_x, elempitch_y),
-         length=(length_x, length_y),
-         electrode=(electrode_x, electrode_y),
-         nnodes=(nnodes_x, nnodes_y),
-         y_modulus=y_modulus,
-         p_ratio=p_ratio,
-         isolation=isolation,
-         permittivity=permittivity,
-         gap=gap,
-         thickness=thickness,
-         density=density,
-         att_mech=att_mech
-         ):
+    # set defaults if not in kwargs:
+    for k, v in defaults.items():
+        kwargs.setdefault(k, v)
 
-    nmem_x, nmem_y = nmem
-    mempitch_x, mempitch_y = mempitch
-    nelem_x, nelem_y = nelem
-    elempitch_x, elempitch_y = elempitch
-    length_x, length_y = length
-    electrode_x, electrode_y = electrode
-    nnodes_x, nnodes_y = nnodes
+    nmem_x, nmem_y = kwargs['nmem']
+    mempitch_x, mempitch_y = kwargs['mempitch']
+    length_x, length_y = kwargs['length']
+    electrode_x, electrode_y = kwargs['electrode']
+    nnodes_x, nnodes_y = kwargs['nnodes']
+    ndiv_x, ndiv_y = kwargs['ndiv']
+    nelem_x, nelem_y = kwargs['nelem']
+    elempitch_x, elempitch_y = kwargs['elempitch']
+
+    # membrane properties
+    mem_properties = dict()
+    mem_properties['length_x'] = length_x
+    mem_properties['length_y'] = length_y
+    mem_properties['electrode_x'] = electrode_x
+    mem_properties['electrode_y'] = electrode_y
+    mem_properties['y_modulus'] = kwargs['y_modulus']
+    mem_properties['p_ratio'] = kwargs['p_ratio']
+    mem_properties['isolation'] = kwargs['isolation']
+    mem_properties['permittivity'] = kwargs['permittivity']
+    mem_properties['gap'] = kwargs['gap']
+    mem_properties['nnodes_x'] = nnodes_x
+    mem_properties['nnodes_y'] = nnodes_y
+    mem_properties['thickness'] = kwargs['thickness']
+    mem_properties['density'] = kwargs['density']
+    mem_properties['att_mech'] = kwargs['att_mech']
+    mem_properties['ndiv_x'] = ndiv_x
+    mem_properties['ndiv_y'] = ndiv_y
 
     # calculate membrane positions
     xx, yy, zz = np.meshgrid(np.linspace(0, (nmem_x - 1) * mempitch_x, nmem_x),
@@ -83,20 +91,7 @@ def init(nmem=(nmem_x, nmem_y),
             # construct membrane
             membranes.append(SquareCmutMembrane(id=(i * len(mem_pos) + j),
                                                 position=(epos + mpos).tolist(),
-                                                length_x=length_x,
-                                                length_y=length_y,
-                                                electrode_x=electrode_x,
-                                                electrode_y=electrode_y,
-                                                y_modulus=y_modulus,
-                                                p_ratio=p_ratio,
-                                                isolation=isolation,
-                                                permittivity=permittivity,
-                                                gap=gap,
-                                                nnodes_x=nnodes_x,
-                                                nnodes_y=nnodes_y,
-                                                thickness=thickness,
-                                                density=density,
-                                                att_mech=att_mech))
+                                                **mem_properties))
 
         # construct element
         elem = Element(id=i,
@@ -111,6 +106,7 @@ def init(nmem=(nmem_x, nmem_y),
                        position=epos.tolist(),
                        elements=elements,
                        dc_bias=5,
+                       active=True,
                        delay=0)
 
         # channel_position_from_elements(chan)
@@ -123,22 +119,25 @@ def init(nmem=(nmem_x, nmem_y),
     return array
 
 
+## COMMAND LINE INTERFACE ##
+
 if __name__ == '__main__':
 
     import argparse
 
     parser = argparse.ArgumentParser()
-    parser.add_argument('-nmem', '--nmem', nargs=2, type=int, default=[nmem_x, nmem_y])
-    parser.add_argument('-mempitch', '--mempitch', nargs=2, type=float, default=[mempitch_x, mempitch_y])
-    parser.add_argument('-nelem', '--nelem', nargs=2, type=int, default=[nelem_x, nelem_y])
-    parser.add_argument('-elempitch', '--elempitch', nargs=2, type=float, default=[elempitch_x, elempitch_y])
+    parser.add_argument('-nmem', '--nmem', nargs=2, type=int)
+    parser.add_argument('-mempitch', '--mempitch', nargs=2, type=float)
+    parser.add_argument('-nelem', '--nelem', nargs=2, type=int)
+    parser.add_argument('-elempitch', '--elempitch', nargs=2, type=float)
     parser.add_argument('-d', '--dump-json', nargs='?', default=None)
+    parser.set_defaults(**defaults)
 
     args = vars(parser.parse_args())
     filename = args.pop('dump_json')
 
-    array = init(**args)
-    print(array)
+    spec = init(**args)
+    print(spec)
 
     if filename is not None:
-        dump(array, filename)
+        dump(spec, filename)

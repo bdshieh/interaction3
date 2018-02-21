@@ -1,6 +1,13 @@
+## interaction3 / abstract / manipulations.py
 
-# from .classes import *
+# names to export
+__all__ = ['move_membrane', 'translate_membrane', 'rotate_membrane', 'move_element', 'translate_element',
+           'rotate_element', 'element_position_from_membranes', 'channel_position_from_elements', 'focus_channel',
+           'defocus_channel', 'bias_channel', 'activate_channel', 'deactivate_channel', 'move_array',
+           'translate_array', 'rotate_array']
+
 import numpy as np
+
 
 ## DECORATORS ##
 
@@ -47,7 +54,7 @@ def move_membrane(m, pos):
 
 @vectorize
 def translate_membrane(m, vec):
-   m['position'] = [i + j for i, j in zip(m['position'], vec)]
+    m['position'] = [i + j for i, j in zip(m['position'], vec)]
 
 
 @vectorize
@@ -112,6 +119,22 @@ def element_position_from_membranes(e):
 ## CHANNEL MANIPULATIONS ##
 
 @vectorize
+def move_channel(ch, pos):
+
+    vec = [i - j for i, j in zip(pos, ch['position'])]
+    translate_channel(ch, vec)
+
+
+@vectorize
+def translate_channel(ch, vec):
+
+    ch['position'] = [i + j for i, j in zip(ch['position'], vec)]
+
+    for e in ch['elements']:
+        translate_element(e, vec)
+
+
+@vectorize
 def channel_position_from_elements(ch):
 
     elements = ch['elements']
@@ -125,12 +148,12 @@ def channel_position_from_elements(ch):
 
 @vectorize
 def focus_channel(ch, pos):
-    pass
+    raise NotImplementedError
 
 
 @vectorize
 def defocus_channel(ch, pos):
-    pass
+    raise NotImplementedError
 
 
 @vectorize
@@ -151,18 +174,20 @@ def deactivate_channel(ch):
 ## ARRAY MANIPLUATIONS ##
 
 @vectorize
-def move_array(e, pos):
-    pass
+def move_array(a, pos):
+
+    for ch in a['channels']:
+        move_ch
 
 
 @vectorize
-def translate_array(e, vec):
-    pass
+def translate_array(a, vec):
+    raise NotImplementedError
 
 
 @vectorize
-def rotate_array(e, origin, vec, angle):
-    pass
+def rotate_array(a, origin, vec, angle):
+    raise NotImplementedError
 
 
 if __name__ == '__main__':
