@@ -7,6 +7,7 @@ __all__ = ['move_membrane', 'translate_membrane', 'rotate_membrane', 'move_eleme
            'translate_array', 'rotate_array']
 
 import numpy as np
+import math
 
 
 ## DECORATORS ##
@@ -135,6 +136,21 @@ def translate_channel(ch, vec):
 
 
 @vectorize
+def rotate_channel(ch, origin, vec, angle):
+
+    org = np.array(origin)
+    pos = np.array(ch['position'])
+
+    # determine new element position
+    newpos = rotation_matrix(vec, angle).dot(pos - org) + org
+    ch['position'] = newpos.tolist()
+
+    # rotate membranes
+    for e in ch['elements']:
+        rotate_element(e, origin, vec, angle)
+
+
+@vectorize
 def channel_position_from_elements(ch):
 
     elements = ch['elements']
@@ -146,9 +162,20 @@ def channel_position_from_elements(ch):
     ch['position'] = [np.mean(x), np.mean(y), np.mean(z)]
 
 
+def distance(x, y):
+    return math.sqrt(math.sum([(i - j) ** 2 for i, j in zip(x, y)]))
+
+
 @vectorize
-def focus_channel(ch, pos):
-    raise NotImplementedError
+def focus_channel(ch, pos, sound_speed, quantization=None):
+
+    d = distance(ch['position'], pos)
+    if quantization is None:
+        t = d / sound_speed
+    else:
+        t = round(d / sound_speed / quantization) * quantization
+
+    ch['delay'] = -t
 
 
 @vectorize
@@ -176,30 +203,49 @@ def deactivate_channel(ch):
 @vectorize
 def move_array(a, pos):
 
-    for ch in a['channels']:
-        move_ch
+    vec = [i - j for i, j in zip(pos, a['position'])]
+    translate_array(a, vec)
 
 
 @vectorize
 def translate_array(a, vec):
-    raise NotImplementedError
+
+    a['position'] = [i + j for i, j in zip(a['position'], vec)]
+
+    if 'vertices' in a:
+        new_vertices = list()
+        for v in a['vertices']:
+            new_vertices.append([i + j for i, j in zip(v, vec)])
+        a['vertices'] = new_vertices
+
+    for ch in a['channels']:
+        translate_channel(ch, vec)
 
 
 @vectorize
 def rotate_array(a, origin, vec, angle):
-    raise NotImplementedError
+
+    org = np.array(origin)
+    pos = np.array(a['position'])
+
+    # determine new array position
+    newpos = rotation_matrix(vec, angle).dot(pos - org) + org
+    a['position'] = newpos.tolist()
+
+    if 'vertices' in a:
+        new_vertices = list()
+        for v in a['vertices']:
+            newpos = rotation_matrix(vec, angle).dot(np.array(v) - org) + org
+            new_vertices.append(newpos.tolist())
+        a['vertices'] = new_vertices
+
+    # rotate channels
+    for ch in a['channels']:
+        rotate_channel(ch, origin, vec, angle)
 
 
 if __name__ == '__main__':
 
-    m1 = dict()
-    m2 = dict()
-    m1['position'] = [1,0,0]
-    m2['position'] = [0,2,0]
-
-    e = dict()
-    e['membranes'] = [m1, m2]
-
-    element_position_from_membranes(e)
+    pass
 
 
