@@ -77,6 +77,6 @@ ENV/
 
 # project specific
 *.json
-!/interaction3/bem/abstract/*.json 
+!interaction3/abstract/*.json 
 *.m
 *.mex[aw]64

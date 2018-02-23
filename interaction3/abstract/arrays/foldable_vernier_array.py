@@ -3,7 +3,7 @@
 import numpy as np
 from scipy.spatial.distance import cdist as distance
 
-from ... abstract import *
+from interaction3.abstract import *
 
 
 # default parameters
@@ -101,47 +101,59 @@ def init(**kwargs):
                                                           0]
 
     # taper transmit corner elements
-    dist = distance(tx_pos, [[0, 0, 0]])
+    dist = distance(tx_pos, np.array([[0, 0, 0]]))
     mask = dist <= tx_r
     tx_pos = tx_pos[mask.squeeze(), :]
 
     # taper receive corner elements
-    dist = distance(rx_pos, [[0, 0, 0]])
+    dist = distance(rx_pos, np.array([[0, 0, 0]]))
     mask = dist <= rx_r
     rx_pos = rx_pos[mask.squeeze(), :]
 
     # create arrays, bounding box and rotation points are hard-coded
-    bbox0 = [-3.75e-3, -3.75e-3, -1.25e-3, 3.75e-3]
-    x0, y0, x1, y1 = bbox0
+    vertices = [[-3.75e-3, -3.75e-3, 0],
+                [-3.75e-3, 3.75e-3, 0],
+                [-1.25e-3, 3.75e-3, 0],
+                [-1.25e-3, -3.75e-3, 0]]
+    x0, y0, _ = vertices[0]
+    x1, y1, _ = vertices[2]
     xx, yy, zz = tx_pos.T
     tx_mask = np.logical_and(np.logical_and(np.logical_and(xx >= x0, xx < x1), yy >= y0), yy < y1)
     xx, yy, zz = rx_pos.T
     rx_mask = np.logical_and(np.logical_and(np.logical_and(xx >= x0, xx < x1), yy >= y0), yy < y1)
-    array0 = _construct_array(0, np.array([-1.25e-3, 0, 0]), bbox0, tx_pos[tx_mask, :], rx_pos[rx_mask, :], mem_pos,
+    array0 = _construct_array(0, np.array([-1.25e-3, 0, 0]), vertices, tx_pos[tx_mask, :], rx_pos[rx_mask, :], mem_pos,
                               mem_properties)
 
-    bbox1 = [-1.25e-3, -3.75e-3, 1.25e-3, 3.75e-3]
-    x0, y0, x1, y1 = bbox1
+    vertices = [[-1.25e-3, -3.75e-3, 0],
+                [-1.25e-3, 3.75e-3, 0],
+                [1.25e-3, 3.75e-3, 0],
+                [1.25e-3, -3.75e-3, 0]]
+    x0, y0, _ = vertices[0]
+    x1, y1, _ = vertices[2]
     xx, yy, zz = tx_pos.T
     tx_mask = np.logical_and(np.logical_and(np.logical_and(xx >= x0, xx < x1), yy >= y0), yy < y1)
     xx, yy, zz = rx_pos.T
     rx_mask = np.logical_and(np.logical_and(np.logical_and(xx >= x0, xx < x1), yy >= y0), yy < y1)
-    array1 = _construct_array(1, np.array([0, 0, 0]), bbox1, tx_pos[tx_mask, :], rx_pos[rx_mask, :], mem_pos,
+    array1 = _construct_array(1, np.array([0, 0, 0]), vertices, tx_pos[tx_mask, :], rx_pos[rx_mask, :], mem_pos,
                               mem_properties)
 
-    bbox2 = [1.25e-3, -3.75e-3, 3.75e-3, 3.75e-3]
-    x0, y0, x1, y1 = bbox2
+    vertices = [[1.25e-3, -3.75e-3, 0],
+                [1.25e-3, 3.75e-3, 0],
+                [3.75e-3, 3.75e-3, 0],
+                [3.75e-3, -3.75e-3, 0]]
+    x0, y0, _ = vertices[0]
+    x1, y1, _ = vertices[2]
     xx, yy, zz = tx_pos.T
     tx_mask = np.logical_and(np.logical_and(np.logical_and(xx >= x0, xx < x1), yy >= y0), yy < y1)
     xx, yy, zz = rx_pos.T
     rx_mask = np.logical_and(np.logical_and(np.logical_and(xx >= x0, xx < x1), yy >= y0), yy < y1)
-    array2 = _construct_array(2, np.array([1.25e-3, 0, 0]), bbox2, tx_pos[tx_mask, :], rx_pos[rx_mask, :], mem_pos,
+    array2 = _construct_array(2, np.array([1.25e-3, 0, 0]), vertices, tx_pos[tx_mask, :], rx_pos[rx_mask, :], mem_pos,
                               mem_properties)
 
     return array0, array1, array2
 
 
-def _construct_array(id, rotation_origin, bbox, tx_pos, rx_pos, mem_pos, mem_properties):
+def _construct_array(id, rotation_origin, vertices, tx_pos, rx_pos, mem_pos, mem_properties):
 
     if rotation_origin is None:
         rotation_origin = np.array([0,0,0])
@@ -160,9 +172,13 @@ def _construct_array(id, rotation_origin, bbox, tx_pos, rx_pos, mem_pos, mem_pro
         for m_pos in mem_pos:
 
             # construct membrane
-            membranes.append(SquareCmutMembrane(id=mem_counter,
-                                                position=(e_pos + m_pos).tolist(),
-                                                **mem_properties))
+            m = SquareCmutMembrane(**mem_properties)
+            m['id'] = mem_counter
+            m['position'] = (e_pos + m_pos).tolist()
+            membranes.append(m)
+            # membranes.append(SquareCmutMembrane(id=mem_counter,
+            #                                     position=(e_pos + m_pos).tolist(),
+            #                                     **mem_properties))
             mem_counter += 1
 
         # construct element
@@ -193,9 +209,13 @@ def _construct_array(id, rotation_origin, bbox, tx_pos, rx_pos, mem_pos, mem_pro
         for m_pos in mem_pos:
 
             # construct membrane
-            membranes.append(SquareCmutMembrane(id=mem_counter,
-                                                position=(e_pos + m_pos).tolist(),
-                                                **mem_properties))
+            m = SquareCmutMembrane(**mem_properties)
+            m['id'] = mem_counter
+            m['position'] = (e_pos + m_pos).tolist()
+            membranes.append(m)
+            # membranes.append(SquareCmutMembrane(id=mem_counter,
+            #                                     position=(e_pos + m_pos).tolist(),
+            #                                     **mem_properties))
             mem_counter += 1
 
         # construct element
@@ -222,7 +242,8 @@ def _construct_array(id, rotation_origin, bbox, tx_pos, rx_pos, mem_pos, mem_pro
     array = Array(id=id,
                   channels=channels,
                   rotation_origin=rotation_origin.tolist(),
-                  bounding_box=bbox)
+                  vertices=vertices)
+    array_position_from_vertices(array)
 
     return array
 

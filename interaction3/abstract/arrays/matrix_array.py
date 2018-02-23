@@ -2,7 +2,7 @@
 
 import numpy as np
 
-from ... abstract import *
+from interaction3.abstract import *
 
 # default parameters
 defaults = dict()
@@ -89,9 +89,13 @@ def init(**kwargs):
         for j, mpos in enumerate(mem_pos):
 
             # construct membrane
-            membranes.append(SquareCmutMembrane(id=(i * len(mem_pos) + j),
-                                                position=(epos + mpos).tolist(),
-                                                **mem_properties))
+            m = SquareCmutMembrane(**mem_properties)
+            m['id'] = i * len(mem_pos) + j
+            m['position'] = position=(epos + mpos).tolist()
+            membranes.append(m)
+            # membranes.append(SquareCmutMembrane(id=(i * len(mem_pos) + j),
+            #                                     position=(epos + mpos).tolist(),
+            #                                     **mem_properties))
 
         # construct element
         elem = Element(id=i,
@@ -114,7 +118,8 @@ def init(**kwargs):
 
     # construct array
     array = Array(id=0,
-                  channels=channels)
+                  channels=channels,
+                  position=[0, 0, 0])
 
     return array
 

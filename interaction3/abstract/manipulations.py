@@ -4,7 +4,8 @@
 __all__ = ['move_membrane', 'translate_membrane', 'rotate_membrane', 'move_element', 'translate_element',
            'rotate_element', 'element_position_from_membranes', 'channel_position_from_elements', 'focus_channel',
            'defocus_channel', 'bias_channel', 'activate_channel', 'deactivate_channel', 'move_array',
-           'translate_array', 'rotate_array']
+           'translate_array', 'rotate_array', 'array_position_from_vertices', 'get_channel_positions_from_array',
+           'get_element_positions_from_array', 'get_membrane_positions_from_array']
 
 import numpy as np
 import math
@@ -69,7 +70,10 @@ def rotate_membrane(m, origin, vec, angle):
     m['position'] = newpos.tolist()
 
     # update membrane rotation list
-    m['rotations'].append([vec, angle])
+    if 'rotations' in m:
+        m['rotations'].append([vec, angle])
+    else:
+        m['rotations'] = [[vec, angle]]
 
 
 ## ELEMENT MANIPULATIONS ##
@@ -223,7 +227,10 @@ def translate_array(a, vec):
 
 
 @vectorize
-def rotate_array(a, origin, vec, angle):
+def rotate_array(a, vec, angle, origin=None):
+
+    if origin is None:
+        origin = a['rotation_origin']
 
     org = np.array(origin)
     pos = np.array(a['position'])
@@ -242,6 +249,26 @@ def rotate_array(a, origin, vec, angle):
     # rotate channels
     for ch in a['channels']:
         rotate_channel(ch, origin, vec, angle)
+
+
+@vectorize
+def array_position_from_vertices(a):
+    a['position'] = np.mean(np.array(a['vertices']), axis=0).tolist()
+
+
+@vectorize
+def get_channel_positions_from_array(a):
+    return np.array([ch['position'] for ch in a['channels']])
+
+
+@vectorize
+def get_element_positions_from_array(a):
+    return np.array([e['position'] for ch in a['channels'] for e in ch['elements']])
+
+
+@vectorize
+def get_membrane_positions_from_array(a):
+    return np.array([m['position'] for ch in a['channels'] for e in ch['elements'] for m in e['membranes']])
 
 
 if __name__ == '__main__':

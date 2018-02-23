@@ -1,18 +1,39 @@
 ## interaction3 / abstract / classes.py
 
 # names to export
+# __all__ = ['SquareCmutMembrane', 'CircularCmutMembrane', 'SquarePmutMembrane', 'CircularPmutMembrane',
+#            'Channel', 'DefocusedChannel', 'Element', 'Membranes', 'Elements', 'Channels', 'Array', 'Simulation',
+#            'BemTransmitCrosstalk', 'BemReceiveCrosstalk', 'BemTransmitBeamplot', 'MfieldTransmitBeamplot', 'dump',
+#            'dumps', 'load', 'loads']
 __all__ = ['SquareCmutMembrane', 'CircularCmutMembrane', 'SquarePmutMembrane', 'CircularPmutMembrane',
-           'Channel', 'DefocusedChannel', 'Element', 'Membranes', 'Elements', 'Channels', 'Array', 'Simulation',
-           'BemTransmitCrosstalk', 'BemReceiveCrosstalk', 'BemTransmitBeamplot', 'MfieldTransmitBeamplot', 'dump',
-           'dumps', 'load', 'loads']
-
+           'Channel', 'DefocusedChannel', 'Element', 'Array', 'Simulation', 'BemTransmitCrosstalk',
+           'BemReceiveCrosstalk', 'BemTransmitBeamplot', 'MfieldTransmitBeamplot', 'dump', 'dumps', 'load', 'loads']
 
 import json
 import jsonschema
 import os
 import re
+from copy import deepcopy, copy
 
-SCHEMA_FILENAME = 'base-schema-1.1.json' # relative path to schema json file
+SCHEMA_FILENAME = 'base-schema-1.2.json' # relative path to schema json file
+
+
+def memoize(func):
+
+    memo = dict()
+
+    def decorator(*args, **kwargs):
+
+        key = json.dumps((args, kwargs))
+
+        if key not in memo:
+            memo[key] = func(*args, **kwargs)
+        # else:
+            # print('memo!')
+
+        return deepcopy(memo[key])
+
+    return decorator
 
 
 ## BASE CLASSES ##
@@ -20,32 +41,10 @@ SCHEMA_FILENAME = 'base-schema-1.1.json' # relative path to schema json file
 class BaseList(list):
 
     _name = None
-    _class_reference = None
     depth = 1 # default depth for __str__
 
     def __init__(self, *args, **kwargs):
-
-        super()
-
-        # check if name is specified
-        if '_name' in kwargs:
-            self._name = kwargs['_name']
-
-        object_name = self._name
-
-        # base class not intended to be instantiated
-        if object_name is None:
-            raise Exception
-
-        # set class reference for lookup and validation
-        self._class_reference = BASE_REFERENCE[object_name]
-
-        # set items which will be partially validated
-        for index, value in enumerate(list(*args)):
-            self.append(value)
-
-        # validate entire object
-        self.validate()
+        super().__init__(*args, **kwargs)
 
     def __repr__(self):
         return self.__str__()
@@ -75,18 +74,12 @@ class BaseList(list):
     def __setitem__(self, index, value):
 
         val = self._get_object_from_value(index, value)
-
-        self.partial_validate(index, value)
-
         super().__setitem__(index, val)
 
     def append(self, value):
 
         index = len(self)
         val = self._get_object_from_value(index, value)
-
-        self.partial_validate(index, value)
-
         super().append(val)
 
     def extend(self, iterable):
@@ -95,62 +88,23 @@ class BaseList(list):
     def insert(self, index, value):
         super().insert(index, value)
 
-    def _get_item_name(self, index=None):
-
-        # check if object at (optional) index has name property, otherwise return None
-        class_reference = self._class_reference
-        items = class_reference['items']
-
-        # if items is an object, schema applies to entire list
-        if isinstance(items, dict):
-            if 'name' in items:
-                return items['name']
-
-        # if items is an array, only use schema at index
-        elif isinstance(items, list):
-            if 'name' in items[index]:
-                return items[index]['name']
-
-        return
-
     def _get_object_from_value(self, index, value):
 
         # if value is already object, do nothing
         if isinstance(value, (BaseList, BaseDict)):
             return value
 
-        name = self._get_item_name(index)
-
-        if name is not None:
-            return ObjectFactory.create(name, value)
+        if isinstance(value, (list, tuple)):
+            return BaseList(value)
 
         return value
-
-    def validate(self):
-
-        class_reference = self._class_reference
-        jsonschema.validate(self, class_reference)
-
-    def partial_validate(self, index, value):
-
-        class_reference = self._class_reference
-        items = class_reference['items']
-
-        # if items is an object, schema applies to entire list
-        if isinstance(items, dict):
-            schema = items
-
-        # if items is an array, only use schema at index
-        elif isinstance(items, list):
-            schema = items[index]
-
-        jsonschema.validate(value, schema)
 
 
 class BaseDict(dict):
 
     _name = None
     _class_reference = None
+    _validator = None
     depth = 1 # default depth for __str__
 
     def __init__(self, *args, **kwargs):
@@ -159,8 +113,7 @@ class BaseDict(dict):
 
         # check if name is specified
         if '_name' in kwargs:
-            self._name = kwargs['_name']
-
+            self._name = kwargs.pop('_name')
         object_name = self._name
 
         # base class not intended to be instantiated
@@ -169,14 +122,23 @@ class BaseDict(dict):
 
         # set class reference for lookup and validation
         self._class_reference = BASE_REFERENCE[object_name]
+        self._validator = jsonschema.Draft4Validator(self._class_reference)
 
-        # set key/value pairs which will be partially validated
-        d = dict(*args, **kwargs)
-        for key, val in d.items():
-            self.__setitem__(key, val)
+        _skip_validation = kwargs.pop('_skip_validation', False)
 
-        # validate entire object
-        self.validate()
+        if _skip_validation:
+            d = dict(*args, **kwargs)
+            for key, val in d.items():
+                super().__setitem__(key, val)
+
+        else:
+            # set key/value pairs which will be partially validated
+            d = dict(*args, **kwargs)
+            for key, val in d.items():
+                self.__setitem__(key, val)
+
+            # validate entire object
+            self.validate()
 
     def __repr__(self):
         return self.__str__()
@@ -237,30 +199,51 @@ class BaseDict(dict):
 
     def _get_object_from_value(self, key, value):
 
-        # if value is already object, do nothing
+        # if value is already BaseList or BaseDict, do nothing
         if isinstance(value, (BaseList, BaseDict)):
             return value
 
-        name = self._get_attribute_name(key)
+        # if value is python list, turn into a BaseList
+        if isinstance(value, (list, tuple)):
+            return BaseList(value)
 
+        # try to create object from value
+        name = self._get_attribute_name(key)
         if name is not None:
             return ObjectFactory.create(name, value)
 
+        # if none of the above, return value unchanged
         return value
 
     def validate(self):
 
-        class_reference = self._class_reference
-        jsonschema.validate(self, class_reference)
+        # class_reference = self._class_reference
+        # jsonschema.validate(self, class_reference)
+        self._validator.validate(self)
 
     def partial_validate(self, key, value):
 
         class_reference = self._class_reference
         schema = class_reference['properties'][key]
-        jsonschema.validate(value, schema)
+        # jsonschema.validate(value, schema)
+        jsonschema.Draft4Validator(schema).validate(value)
 
-    # def __copy__(self):
-        # pass
+    def __copy__(self):
+        # print('copy!')
+        return type(self)(_skip_validation=True, **self)
+
+    def __deepcopy__(self, memo):
+        # print('deepcopy!')
+
+        # newcopy = type(self)(_skip_validation=True)
+        # for k, v in self.items():
+        #
+        #     if isinstance(v, BaseDict):
+        #         newcopy[k] = v.__deepcopy__(memo)
+        #     else:
+        #         newcopy[k] = deepcopy(v)
+        # return newcopy
+        return type(self)(_skip_validation=True, **deepcopy(dict(self), memo=memo))
 
 
 class ObjectFactory(object):
@@ -272,10 +255,6 @@ class ObjectFactory(object):
 
         return globals()[string_to_class_name(name)](*args, **kwargs)
 
-        # if name in ARRAYS:
-        #     return BaseList(*args, **kwargs)
-        # elif name in OBJECTS:
-        #     return BaseDict(*args, **kwargs)
 
 
 ## JSON HELPER FUNCTIONS ##
@@ -363,16 +342,13 @@ def parse_json_allof(var):
 def get_classes_from_reference(ref):
 
     objects = []
-    arrays = []
 
     for key, val in ref.items():
         if 'name' in val:
             if val['type'] == 'object':
                 objects.append(key)
-            elif val['type'] == 'array':
-                arrays.append(key)
 
-    return objects, arrays
+    return objects
 
 
 def string_to_class_name(string):
@@ -477,7 +453,7 @@ schema_resolver_path = 'file://' + schema_path
 BASE_SCHEMA = get_base_schema(schema_path)
 RESOLVER = jsonschema.RefResolver(schema_resolver_path, BASE_SCHEMA)
 BASE_REFERENCE = parse_json_allof(resolve_json_refs(BASE_SCHEMA))
-OBJECTS, ARRAYS = get_classes_from_reference(BASE_REFERENCE)
+OBJECTS = get_classes_from_reference(BASE_REFERENCE)
 
 
 ## CLASS DEFINITIONS ##
@@ -485,19 +461,22 @@ OBJECTS, ARRAYS = get_classes_from_reference(BASE_REFERENCE)
 # class Membrane(BaseDict):
     # _name = 'membrane'
 
-
+@memoize
 class SquareCmutMembrane(BaseDict):
     _name = 'square_cmut_membrane'
 
 
+@memoize
 class CircularCmutMembrane(BaseDict):
     _name = 'circular_cmut_membrane'
 
 
+@memoize
 class SquarePmutMembrane(BaseDict):
     _name = 'square_pmut_membrane'
 
 
+@memoize
 class CircularPmutMembrane(BaseDict):
     _name = 'circular_pmut_membrane'
 
@@ -516,18 +495,6 @@ class Channel(BaseDict):
 
 class DefocusedChannel(BaseDict):
     _name = 'defocused_channel'
-
-
-class Membranes(BaseList):
-    _name = 'membranes'
-
-
-class Elements(BaseList):
-    _name = 'elements'
-
-
-class Channels(BaseList):
-    _name = 'channels'
 
 
 class Simulation(BaseDict):
