@@ -109,7 +109,7 @@ def init(**kwargs):
                        kind='both',
                        position=epos.tolist(),
                        elements=elements,
-                       dc_bias=5,
+                       dc_bias=0,
                        active=True,
                        delay=0)
 

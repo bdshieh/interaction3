@@ -56,8 +56,8 @@
       "permittivity": { "type": "number" },
       "gap": { "type": "number" }
       },
-    "required": [ "id", "position", "radius", "electrode_r", "density", "thickness", "nnodes_x", "nnodes_y",
-      "isolation", "permittivity", "gap" ]
+    "required": [ "radius", "electrode_r", "density", "thickness", "nnodes_x", "nnodes_y", "isolation", "permittivity",
+      "gap" ]
   },
 
   "square_cmut_membrane": {
@@ -82,8 +82,8 @@
       "permittivity": { "type": "number" },
       "gap": { "type": "number" }
       },
-    "required": [ "length_x", "length_y", "electrode_x", "electrode_y", "density", "thickness",
-      "nnodes_x", "nnodes_y", "isolation", "permittivity", "gap" ]
+    "required": [ "length_x", "length_y", "electrode_x", "electrode_y", "density", "thickness", "nnodes_x", "nnodes_y",
+      "isolation", "permittivity", "gap" ]
   },
 
   "circular_pmut_membrane": {
@@ -100,7 +100,7 @@
       "nnodes_x": { "type": "integer" },
       "nnodes_y": { "type": "integer" }
       },
-    "required": [ "id", "position", "radius", "electrode_r", "density", "thickness", "nnodes_x", "nnodes_y" ]
+    "required": [ "radius", "electrode_r", "density", "thickness", "nnodes_x", "nnodes_y" ]
   },
 
   "square_pmut_membrane": {
@@ -118,7 +118,7 @@
       "nnodes_x": { "type": "integer" },
       "nnodes_y": { "type": "integer" }
       },
-    "required": [ "id", "position", "length_x", "length_y", "density", "thickness", "nnodes_x", "nnodes_y" ]
+    "required": [ "length_x", "length_y", "density", "thickness", "nnodes_x", "nnodes_y" ]
   },
 
   "element": {

@@ -1,10 +1,6 @@
 ## interaction3 / abstract / classes.py
 
 # names to export
-# __all__ = ['SquareCmutMembrane', 'CircularCmutMembrane', 'SquarePmutMembrane', 'CircularPmutMembrane',
-#            'Channel', 'DefocusedChannel', 'Element', 'Membranes', 'Elements', 'Channels', 'Array', 'Simulation',
-#            'BemTransmitCrosstalk', 'BemReceiveCrosstalk', 'BemTransmitBeamplot', 'MfieldTransmitBeamplot', 'dump',
-#            'dumps', 'load', 'loads']
 __all__ = ['SquareCmutMembrane', 'CircularCmutMembrane', 'SquarePmutMembrane', 'CircularPmutMembrane',
            'Channel', 'DefocusedChannel', 'Element', 'Array', 'Simulation', 'BemTransmitCrosstalk',
            'BemReceiveCrosstalk', 'BemTransmitBeamplot', 'MfieldTransmitBeamplot', 'dump', 'dumps', 'load', 'loads']
@@ -19,7 +15,9 @@ SCHEMA_FILENAME = 'base-schema-1.2.json' # relative path to schema json file
 
 
 def memoize(func):
-
+    '''
+    Class memoization using json serialization as the key and deepcopy.
+    '''
     memo = dict()
 
     def decorator(*args, **kwargs):
@@ -28,9 +26,6 @@ def memoize(func):
 
         if key not in memo:
             memo[key] = func(*args, **kwargs)
-        # else:
-            # print('memo!')
-
         return deepcopy(memo[key])
 
     return decorator
@@ -39,7 +34,9 @@ def memoize(func):
 ## BASE CLASSES ##
 
 class BaseList(list):
-
+    '''
+    Base class for Lists.
+    '''
     _name = None
     depth = 1 # default depth for __str__
 
@@ -54,32 +51,32 @@ class BaseList(list):
         if depth is None:
             depth = self.depth
 
-        if depth <= 0:
+        if depth <= 0: # if max depth is reached
             return '[...]' + '\n'
+        elif len(self) == 0: # if empty
+            return '[]' + '\n'
+        elif isinstance(self[0], (BaseList, BaseDict)): # if list contains BaseList or BaseDict
 
-        strings = list()
-
-        for val in self:
-
-            if isinstance(val, (BaseList, BaseDict)):
+            strings = list('\n')
+            for val in self:
                 strings.append(val.__str__(indent, depth=depth - 1))
-            else:
-                strings.append(' ' * indent + str(val) + '\n')
 
-        return ''.join(strings)
+            return ''.join(strings)
+        else: # if list contains anything else (int, str, etc.)
+            return str(list(self)) + '\n'
 
     def __getitem__(self, index):
         return super().__getitem__(index)
 
     def __setitem__(self, index, value):
 
-        val = self._get_object_from_value(index, value)
+        val = self._get_object_from_value(value)
         super().__setitem__(index, val)
 
     def append(self, value):
 
         index = len(self)
-        val = self._get_object_from_value(index, value)
+        val = self._get_object_from_value(value)
         super().append(val)
 
     def extend(self, iterable):
@@ -88,20 +85,20 @@ class BaseList(list):
     def insert(self, index, value):
         super().insert(index, value)
 
-    def _get_object_from_value(self, index, value):
+    def _get_object_from_value(self, value):
 
-        # if value is already object, do nothing
-        if isinstance(value, (BaseList, BaseDict)):
+        if isinstance(value, (BaseList, BaseDict)): # if value is already object, do nothing
             return value
-
-        if isinstance(value, (list, tuple)):
+        elif isinstance(value, (list, tuple)): # convert lists and tuples
             return BaseList(value)
-
-        return value
+        else:
+            return value # do nothing
 
 
 class BaseDict(dict):
-
+    '''
+    Base class for Objects.
+    '''
     _name = None
     _class_reference = None
     _validator = None
@@ -124,9 +121,11 @@ class BaseDict(dict):
         self._class_reference = BASE_REFERENCE[object_name]
         self._validator = jsonschema.Draft4Validator(self._class_reference)
 
+        # option to skip validation for faster init
         _skip_validation = kwargs.pop('_skip_validation', False)
 
         if _skip_validation:
+            # set key/value pairs without any validation
             d = dict(*args, **kwargs)
             for key, val in d.items():
                 super().__setitem__(key, val)
@@ -137,7 +136,7 @@ class BaseDict(dict):
             for key, val in d.items():
                 self.__setitem__(key, val)
 
-            # validate entire object
+            # validate entire object (to make sure required attributes are set)
             self.validate()
 
     def __repr__(self):
@@ -149,16 +148,17 @@ class BaseDict(dict):
             depth = self.depth
 
         strings = list()
-        strings.append(' ' * indent + string_to_class_name(self._name) + '\n')
+        strings.append(' ' * indent + string_to_class_name(self._name) + '\n') # header with object name
 
+        # determine string representation of each key, value pair
         for idx, (key, val) in enumerate(self.items()):
 
             strings.append(' ' * (indent + 2) + str(key) + ': ')
 
             if isinstance(val, BaseList) and depth == 0:
                 strings.append(val.__str__(indent + 4, depth=depth))
-            elif isinstance(val, (BaseList, BaseDict)):
-                strings.append('\n' + val.__str__(indent + 4, depth=depth))
+            elif isinstance(val, (BaseList, BaseDict)): # ? this needs to be fixed for rare case of dict in dict
+                strings.append(val.__str__(indent + 4, depth=depth))
             else:
                 strings.append(str(val) + '\n')
 
@@ -216,33 +216,20 @@ class BaseDict(dict):
         return value
 
     def validate(self):
-
-        # class_reference = self._class_reference
-        # jsonschema.validate(self, class_reference)
         self._validator.validate(self)
 
     def partial_validate(self, key, value):
 
         class_reference = self._class_reference
         schema = class_reference['properties'][key]
-        # jsonschema.validate(value, schema)
         jsonschema.Draft4Validator(schema).validate(value)
 
     def __copy__(self):
-        # print('copy!')
+        # skip validation in init to speed up shallow copy
         return type(self)(_skip_validation=True, **self)
 
     def __deepcopy__(self, memo):
-        # print('deepcopy!')
-
-        # newcopy = type(self)(_skip_validation=True)
-        # for k, v in self.items():
-        #
-        #     if isinstance(v, BaseDict):
-        #         newcopy[k] = v.__deepcopy__(memo)
-        #     else:
-        #         newcopy[k] = deepcopy(v)
-        # return newcopy
+        # skip validation in init to speed up deep copy
         return type(self)(_skip_validation=True, **deepcopy(dict(self), memo=memo))
 
 
@@ -252,9 +239,7 @@ class ObjectFactory(object):
     def create(name, *args, **kwargs):
 
         kwargs['_name'] = name
-
         return globals()[string_to_class_name(name)](*args, **kwargs)
-
 
 
 ## JSON HELPER FUNCTIONS ##
@@ -264,7 +249,8 @@ def get_base_schema(path):
 
 
 def resolve_json_refs(var):
-    ''''''
+    '''
+    '''
     if type(var) is dict:
 
         d = {}
@@ -293,7 +279,8 @@ def resolve_json_refs(var):
 
 
 def parse_json_allof(var):
-    ''''''
+    '''
+    '''
     if isinstance(var, dict):
 
         d = {}
@@ -378,12 +365,12 @@ def generate_json_object_with_name(var):
 
         return d
 
-    elif isinstance(var, (BaseList, list)):
+    elif isinstance(var, (BaseList, list, tuple)):
 
         l = list()
 
-        if isinstance(var, BaseList):
-            l.append(var._name)
+        # if isinstance(var, BaseList):
+            # l.append(var._name)
 
         for i in var:
             l.append(generate_json_object_with_name(i))
@@ -417,10 +404,10 @@ def generate_objects_from_json(var):
         for i in var:
             l.append(generate_objects_from_json(i))
 
-        if isinstance(l[0], str):
+        # if isinstance(l[0], str):
 
-            object_name = l.pop(0)
-            return ObjectFactory.create(object_name, l)
+            # object_name = l.pop(0)
+            # return ObjectFactory.create(object_name, l)
 
         return l
 
@@ -457,9 +444,7 @@ OBJECTS = get_classes_from_reference(BASE_REFERENCE)
 
 
 ## CLASS DEFINITIONS ##
-
-# class Membrane(BaseDict):
-    # _name = 'membrane'
+# Membrane classes are memoized to speed up their creation since they are instantiated frequently
 
 @memoize
 class SquareCmutMembrane(BaseDict):
