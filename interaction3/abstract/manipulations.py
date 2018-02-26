@@ -5,7 +5,7 @@ __all__ = ['move_membrane', 'translate_membrane', 'rotate_membrane', 'move_eleme
            'rotate_element', 'element_position_from_membranes', 'channel_position_from_elements', 'focus_channel',
            'defocus_channel', 'bias_channel', 'activate_channel', 'deactivate_channel', 'move_array',
            'translate_array', 'rotate_array', 'array_position_from_vertices', 'get_channel_positions_from_array',
-           'get_element_positions_from_array', 'get_membrane_positions_from_array']
+           'get_element_positions_from_array', 'get_membrane_positions_from_array', 'focus_array']
 
 import numpy as np
 import math
@@ -26,9 +26,24 @@ def vectorize(f):
     return vf
 
 
-## ROTATION MATH ##
+## HELPER FUNCTIONS ##
 
 def rotation_matrix(vec, angle):
+
+    if isinstance(vec, str):
+        string = vec.lower()
+        if string == 'x':
+            vec = [1, 0, 0]
+        elif string == '-x':
+            vec = [-1, 0, 0]
+        elif string == 'y':
+            vec = [0, 1, 0]
+        elif string == '-y':
+            vec = [0, -1, 0]
+        elif string == 'z':
+            vec = [0, 0, 1]
+        elif string == '-x':
+            vec = [0, 0, -1]
 
     x, y, z = vec
     a = angle
@@ -45,6 +60,10 @@ def rotation_matrix(vec, angle):
     r[2, 2] = np.cos(a) + z**2 * (1 - np.cos(a))
 
     return r
+
+
+def distance(x, y):
+    return math.sqrt(math.sum([(i - j) ** 2 for i, j in zip(x, y)]))
 
 
 ## MEMBRANE MANIPLUATIONS ##
@@ -166,10 +185,6 @@ def channel_position_from_elements(ch):
     ch['position'] = [np.mean(x), np.mean(y), np.mean(z)]
 
 
-def distance(x, y):
-    return math.sqrt(math.sum([(i - j) ** 2 for i, j in zip(x, y)]))
-
-
 @vectorize
 def focus_channel(ch, pos, sound_speed, quantization=None):
 
@@ -269,6 +284,20 @@ def get_element_positions_from_array(a):
 @vectorize
 def get_membrane_positions_from_array(a):
     return np.array([m['position'] for ch in a['channels'] for e in ch['elements'] for m in e['membranes']])
+
+
+@vectorize
+def focus_array(a, pos, sound_speed, quantization=None, kind=None):
+
+    if kind.lower() in ['tx', 'transmit']:
+        channels = [ch for ch in a['channels'] if ch['kind'].lower() in ['tx', 'transmit', 'both', 'txrx']]
+    elif kind.lower() in ['rx', 'receive']:
+        channels = [ch for ch in a['channels'] if ch['kind'].lower() in ['rx', 'receive', 'both', 'txrx']]
+    elif kind.lower() in ['txrx', 'both']:
+        channels = a['channels']
+
+    for ch in channels:
+        focus_channel(ch, pos, sound_speed, quantization)
 
 
 if __name__ == '__main__':

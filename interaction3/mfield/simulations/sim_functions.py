@@ -3,6 +3,7 @@
 import numpy as np
 import pandas as pd
 import scipy.signal
+import itertools
 
 
 def meshview(v1, v2, v3, mode='cartesian', as_list=True):
@@ -115,6 +116,10 @@ def gausspulse(fc, fbw, fs):
     return pulse, t
 
 
+def envelope(rf_data, axis=-1):
+    return np.abs(scipy.signal.hilbert(np.atleast_2d(rf_data), axis=axis))
+
+
 def chunks(iterable, n):
 
     res = []
@@ -127,7 +132,55 @@ def chunks(iterable, n):
         yield res
 
 
+def create_jobs(*args, mode='zip', is_complete=None):
+
+    repeat_args = list()
+    repeat_idx = list()
+    product_args = list()
+    product_idx = list()
+
+    for arg_no, arg in enumerate(args):
+        if isinstance(arg, (tuple, list)):
+
+            iterable, chunksize = arg
+            product_args.append(chunks(iterable, chunksize))
+            product_idx.append(arg_no)
+        else:
+            repeat_args.append(itertools.repeat(arg))
+            repeat_idx.append(arg_no)
+
+    product = itertools.product(*product_args)
+    repeat = zip(*repeat_args)
+
+    for r, p in zip(repeat, product):
+        res = [None, ] * len(args)
+
+        for i, j in zip(repeat_idx, r):
+            res[i] = j
+        for i, j in zip(product_idx, p):
+            res[i] = j
+
+        yield res
+
+
+
+
 def rotation_matrix(vec, angle):
+
+    if isinstance(vec, str):
+        string = vec.lower()
+        if string == 'x':
+            vec = [1, 0, 0]
+        elif string == '-x':
+            vec = [-1, 0, 0]
+        elif string == 'y':
+            vec = [0, 1, 0]
+        elif string == '-y':
+            vec = [0, -1, 0]
+        elif string == 'z':
+            vec = [0, 0, 1]
+        elif string == '-x':
+            vec = [0, 0, -1]
 
     x, y, z = vec
     a = angle
