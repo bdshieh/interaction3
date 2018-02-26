@@ -97,7 +97,7 @@ class TransmitBeamplot(object):
 
         field = self._field
         tx = self._tx
-        apododizations = self.apodizations
+        apodizations = self.apodizations
         centers = self.centers
         use_element_factor = self.use_element_factor
         interpolator = self._interpolator
@@ -123,7 +123,7 @@ class TransmitBeamplot(object):
                 tx_correction = interpolator(np.rad2deg(np.abs(a)), np.rad2deg(np.abs(b)))
 
                 # apply correction as apodization
-                field.xdc_apodization(tx, np.zeros((1, 1)), apododizations * tx_correction)
+                field.xdc_apodization(tx, np.zeros((1, 1)), apodizations * tx_correction)
 
             rf, t0 = field.calc_hp(tx, pos)
 
