@@ -14,7 +14,7 @@ sim = Simulation(transmit_focus=[0, 0, 0.05],
                  delay_quantization=0,
                  threads=4,
                  rotations=[[0, 'y'], [2, '-y']],
-                 angles=[0, 5, 1],
+                 angles=[0, 1, 1],
                  sampling_frequency=100e6,
                  sound_speed=1500,
                  use_attenuation=True,
@@ -25,8 +25,8 @@ sim = Simulation(transmit_focus=[0, 0, 0.05],
                  use_element_factor=False,
                  element_factor_file='',
                  mesh_mode='cartesian',
-                 mesh_vector1=[-0.01, 0.01, 51],
-                 mesh_vector2=[-0.01, 0.01, 51],
+                 mesh_vector1=[-0.02, 0.02, 41],
+                 mesh_vector2=[-0.02, 0.02, 41],
                  mesh_vector3=[0.05, 0.06, 1],
                  save_image_data_only=False
                  )
@@ -39,3 +39,12 @@ command = '''
           -s spec.json
           '''
 subprocess.run(command.split())
+
+import sqlite3 as sql
+import pandas as pd
+from matplotlib import pyplot as plt
+
+con = sql.connect('test.db')
+image = np.array(pd.read_sql('SELECT brightness FROM image WHERE angle=0 ORDER BY x, y, z', con))
+plt.imshow(20*np.log10(np.abs(image)).reshape((41,41)).T)
+plt.show()

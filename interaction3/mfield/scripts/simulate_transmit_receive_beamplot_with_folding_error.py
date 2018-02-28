@@ -72,15 +72,15 @@ def process(args):
     with write_lock:
         with closing(sql.connect(file)) as con:
 
-            for rf, t in zip(rf_data, times):
+            for i, (rf, t) in enumerate(zip(rf_data, times)):
 
                 # save image data
                 b = np.max(simfuncs.envelope(rf))
-                update_image_table(con, angle, field_pos, b)
+                update_image_table(con, angle, field_pos[i], b)
 
                 # save pressure data
                 if not sim['save_image_data_only']:
-                    update_pressures_table(con, angle, field_pos, t, rf)
+                    update_pressures_table(con, angle, field_pos[i], t, rf)
 
             update_progress(con, job_id)
 
@@ -282,20 +282,20 @@ def update_progress(con, job_id):
 
 def update_pressures_table(con, angle, field_pos, times, pressures):
 
-    x, y, z = np.atleast_2d(field_pos).T
+    x, y, z = field_pos
 
     with con:
         query = 'INSERT INTO pressures (angle, x, y, z, time, pressure) VALUES (?, ?, ?, ?, ?, ?)'
-        con.executemany(query, zip(repeat(angle), x, y, z, times, pressures.ravel()))
+        con.executemany(query, zip(repeat(angle), repeat(x), repeat(y), repeat(z), times, pressures.ravel()))
 
 
 def update_image_table(con, angle, field_pos, image_data):
 
-    x, y, z = np.atleast_2d(field_pos).T
+    x, y, z = field_pos
 
     with con:
         query = 'INSERT INTO image (angle, x, y, z, brightness) VALUES (?, ?, ?, ?, ?)'
-        con.executemany(query, zip(repeat(angle), x, y, z, image_data.ravel()))
+        con.executemany(query, zip(repeat(angle), repeat(x), repeat(y), repeat(z), image_data.ravel()))
 
 
 ## COMMAND LINE INTERFACE ##
