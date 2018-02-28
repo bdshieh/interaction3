@@ -134,35 +134,39 @@ def chunks(iterable, n):
 
 def create_jobs(*args, mode='zip', is_complete=None):
 
-    repeat_args = list()
-    repeat_idx = list()
-    product_args = list()
-    product_idx = list()
+    static_args = list()
+    static_idx = list()
+    iterable_args = list()
+    iterable_idx = list()
 
     for arg_no, arg in enumerate(args):
         if isinstance(arg, (tuple, list)):
 
             iterable, chunksize = arg
-            product_args.append(chunks(iterable, chunksize))
-            product_idx.append(arg_no)
+            iterable_args.append(chunks(iterable, chunksize))
+            iterable_idx.append(arg_no)
         else:
-            repeat_args.append(itertools.repeat(arg))
-            repeat_idx.append(arg_no)
 
-    product = itertools.product(*product_args)
-    repeat = zip(*repeat_args)
+            static_args.append(itertools.repeat(arg))
+            static_idx.append(arg_no)
 
-    for r, p in zip(repeat, product):
-        res = [None, ] * len(args)
+    if mode.lower() == 'product':
+        combos = itertools.product(*iterable_args)
+    elif mode.lower() == 'zip':
+        combos = zip(*iterable_args)
+    elif mode.lower() == 'zip_longest':
+        combos = itertools.zip_longest(*iterable_args)
+    repeats = zip(*static_args)
 
-        for i, j in zip(repeat_idx, r):
-            res[i] = j
-        for i, j in zip(product_idx, p):
-            res[i] = j
+    for job_id, (r, p) in enumerate(zip(repeats, combos), 1):
 
-        yield res
+        # skip jobs that have been completed
+        if is_complete is not None and is_complete[job_id - 1]:
+            continue
 
-
+        res = r + p
+        # reorder vals according to input order
+        yield job_id, [res[i] for i in np.argsort(static_idx + iterable_idx)]
 
 
 def rotation_matrix(vec, angle):

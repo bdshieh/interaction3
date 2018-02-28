@@ -7,7 +7,7 @@
       "maxItems": 3 },
 
     "rotation" : { "type": "array",
-      "items": [ { "$ref": "#/definitions/position" }, { "type": "number" } ],
+      "items": [ { }, { } ],
       "minItems": 2,
       "maxItems": 2 },
 
@@ -244,5 +244,35 @@
   "mfield_transmit_receive_beamplot": {
     "type": "object",
     "name": "mfield_transmit_receive_beamplot"
+  },
+
+  "mfield_transmit_receive_beamplot_with_folding_error": {
+    "type": "object",
+    "name": "mfield_transmit_receive_beamplot_with_folding_error",
+    "properties": {
+      "transmit_focus": { "$ref": "#/definitions/position" },
+      "receive_focus": { "$ref": "#/definitions/position" },
+      "delay_quantization": { "type": "number" },
+      "save_image_data_only": { "type": "boolean" },
+      "threads": { "type": "integer" },
+      "file": { "type": "string" },
+      "rotations": { "$ref": "#/definitions/rotations" },
+      "angles": { "$ref": "#/definitions/position" },
+      "sampling_frequency": { "type": "number" },
+      "sound_speed": { "type": "number" },
+      "use_attenuation": { "type": "boolean" },
+      "attenuation": { "type": "number" },
+      "frequency_attenuation": { "type": "number" },
+      "attenuation_center_frequency": { "type": "number" },
+      "excitation_center_frequecy": { "type": "number"},
+      "excitation_bandwidth": { "type": "number"},
+      "use_element_factor": { "type": "boolean"},
+      "element_factor_file": { "type": "string" },
+      "field_positions": { },
+      "mesh_mode": { "type": "string" },
+      "mesh_vector1": { "$ref": "#/definitions/linspace" },
+      "mesh_vector2": { "$ref": "#/definitions/linspace" },
+      "mesh_vector3": { "$ref": "#/definitions/linspace" }
+    }
   }
 }

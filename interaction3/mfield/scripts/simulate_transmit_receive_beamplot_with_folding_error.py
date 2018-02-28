@@ -10,7 +10,7 @@ from tqdm import tqdm
 
 import interaction3.abstract as abstract
 from interaction3.mfield.simulations import MultiArrayTransmitReceiveBeamplot
-from interaction3.mfield.simulations import sim_functions as sim
+from interaction3.mfield.simulations import sim_functions as simfuncs
 
 # register adapters for sqlite to convert numpy types
 sql.register_adapter(np.float64, float)
@@ -20,10 +20,10 @@ sql.register_adapter(np.int32, int)
 
 defaults = dict()
 defaults['threads'] = multiprocessing.cpu_count()
-defaults['spec'] = None
-defaults['file'] = None
-defaults['rotation'] = None
-defaults['angles'] = None
+# defaults['spec'] = None
+# defaults['file'] = None
+# defaults['rotation'] = None
+# defaults['angles'] = None
 
 
 ## PROCESS FUNCTIONS ##
@@ -36,7 +36,9 @@ def init_process(_write_lock):
 
 def process(args):
 
-    file, field_pos, rotation_rule, sim, arrays = args
+    job_id, (file, sim, arrays, field_pos, rotation_rule) = args
+
+    rotation_rule = rotation_rule[0] # remove enclosing list
 
     sim = abstract.loads(sim)
     arrays = abstract.loads(arrays)
@@ -53,17 +55,9 @@ def process(args):
 
     # rotate arrays based on rotation rule
     for array_id, dir, angle in rotation_rule:
-
-        if dir.lower() == 'x':
-            vec = [1, 0, 0]
-        elif dir.lower() == 'y':
-            vec = [0, 1, 0]
-        elif dir.lower() == 'z':
-            vec = [0, 0, 1]
-
         for array in arrays:
             if array['id'] == array_id:
-                abstract.rotate_array(array, vec, np.deg2rad(angle))
+                abstract.rotate_array(array, dir, np.deg2rad(angle))
 
     # create and run simulation
     kwargs, meta = MultiArrayTransmitReceiveBeamplot.connector(sim, *arrays)
@@ -73,16 +67,22 @@ def process(args):
     # extract results and save
     rf_data = simulation.result['rf_data']
     times = simulation.result['times']
+    angle = rotation_rule[0][2]
 
     with write_lock:
         with closing(sql.connect(file)) as con:
 
-            if sim['save_image_data_only']:
-                pass
-            else:
-                for rf, t in zip(rf_data, times):
-                    update_pressures_table(con, field_pos, t, rf)
-            update_progress(con, field_pos)
+            for rf, t in zip(rf_data, times):
+
+                # save image data
+                b = np.max(simfuncs.envelope(rf))
+                update_image_table(con, angle, field_pos, b)
+
+                # save pressure data
+                if not sim['save_image_data_only']:
+                    update_pressures_table(con, angle, field_pos, t, rf)
+
+            update_progress(con, job_id)
 
 
 ## ENTRY POINT ##
@@ -99,13 +99,18 @@ def main(**args):
     # set defaults with the following priority: command line arguments >> simulation object >> script defaults
     for k, v in simulation.items():
         args.setdefault(k, v)
+        if args[k] is None:
+            args[k] = v
     for k, v in defaults.items():
         args.setdefault(k, v)
+        if args[k] is None:
+            args[k] = v
 
+    print(args)
     # get args needed in main
     threads = args['threads']
     file = args['file']
-    rotations = args['rotation']
+    rotations = args['rotations']
     a_start, a_stop, a_step = args['angles']
 
     # create field positions
@@ -113,10 +118,10 @@ def main(**args):
     v1 = np.linspace(*simulation['mesh_vector1'])
     v2 = np.linspace(*simulation['mesh_vector2'])
     v3 = np.linspace(*simulation['mesh_vector3'])
-    field_pos = sim.meshview(v1, v2, v3, mode=mode)
+    field_pos = simfuncs.meshview(v1, v2, v3, mode=mode)
 
     # create angles
-    angles = np.linspace(a_start, a_stop + a_step, a_step)
+    angles = np.arange(a_start, a_stop + a_step, a_step)
 
     # create rotation rules which will be distributed by the pool
     array_ids = [id for id, _ in rotations]
@@ -127,8 +132,9 @@ def main(**args):
         zip_args.append(zip(repeat(id), repeat(dir), angles))
     rotation_rules = list(zip(*zip_args))
 
-    proc_args = enumerate([(file, fp, rule, simulation, arrays) for fp in sim.chunks(field_pos, 100)
-                            for rule in rotation_rules])
+    # determine total number of jobs and initialize progress
+    njobs = int(np.ceil(len(field_pos) / 100) * len(rotation_rules))
+    is_complete = [False,] * njobs
 
     # check for existing file
     if os.path.isfile(file):
@@ -145,17 +151,17 @@ def main(**args):
             with closing(sql.connect(file)) as con:
 
                 # create database tables
-                sim.create_metadata_table(con, **args, **simulation)
+                simfuncs.create_metadata_table(con, **args)
                 create_field_positions_table(con, field_pos)
-                create_progress_table(con, angles, field_pos)
+                create_progress_table(con, njobs)
                 create_pressures_table(con)
                 create_image_table(con)
 
         elif response.lower() in ['c', 'continue']:
 
             with closing(sql.connect(file)) as con:
-                table = pd.read_sql('SELECT a, x, y, z FROM field_position WHERE is_complete=0', con)
-            field_pos = np.atleast_2d(np.array(table))
+                table = pd.read_sql('SELECT is_complete FROM progress SORT BY job_id', con)
+            is_complete = np.array(table).squeeze()
 
         else:
             raise Exception('Database already exists')
@@ -171,9 +177,9 @@ def main(**args):
         with closing(sql.connect(file)) as con:
 
             # create database tables
-            sim.create_metadata_table(con, **args, **simulation)
+            simfuncs.create_metadata_table(con, **args)
             create_field_positions_table(con, field_pos)
-            create_progress_table(con, angles, field_pos)
+            create_progress_table(con, njobs)
             create_pressures_table(con)
             create_image_table(con)
 
@@ -185,9 +191,11 @@ def main(**args):
 
         simulation = abstract.dumps(simulation)
         arrays = abstract.dumps(arrays)
-        result = pool.imap_unordered(process, proc_args)
+        jobs = simfuncs.create_jobs(file, simulation, arrays, (field_pos, 100), (rotation_rules, 1), mode='product',
+                               is_complete=is_complete)
+        result = pool.imap_unordered(process, jobs)
 
-        for r in tqdm(result, desc='Simulating', total=len(proc_args)):
+        for r in tqdm(result, desc='Simulating', total=njobs):
             pass
 
         pool.close()
@@ -201,7 +209,7 @@ def main(**args):
 
 ## DATABASE FUNCTIONS ##
 
-# Tables: metadata, field_positions, pressures, progress, image_data
+# Tables: metadata, field_positions, pressures, image_data, progress
 
 def create_field_positions_table(con, field_pos):
 
@@ -220,9 +228,9 @@ def create_progress_table(con, njobs):
 
     with con:
         # create table
-        con.execute('CREATE TABLE progress (job_id INTEGER KEY, is_complete boolean)')
+        con.execute('CREATE TABLE progress (job_id INTEGER PRIMARY KEY, is_complete boolean)')
         # insert values
-        con.executemany('INSERT INTO progress VALUES (?)', repeat((False,), njobs))
+        con.executemany('INSERT INTO progress (is_complete) VALUES (?)', repeat((False,), njobs))
 
 
 def create_pressures_table(con):
@@ -266,13 +274,10 @@ def create_image_table(con):
         con.execute('CREATE INDEX image_index ON image (angle, x, y, z)')
 
 
-def update_progress(con, angle, field_pos):
-
-    x, y, z = np.atleast_2d(field_pos).T
+def update_progress(con, job_id):
 
     with con:
-        con.executemany('UPDATE progress SET is_complete=1 WHERE angle=? AND x=? AND y=? AND z=?',
-                        zip(repeat(angle), x, y, z))
+        con.execute('UPDATE progress SET is_complete=1 WHERE job_id=?', [job_id,])
 
 
 def update_pressures_table(con, angle, field_pos, times, pressures):
@@ -311,9 +316,9 @@ if __name__ == '__main__':
     parser.add_argument('file', nargs='?')
     parser.add_argument('-s', '--spec', nargs='+')
     parser.add_argument('-t', '--threads', type=int)
-    parser.add_argument('-r', '--rotation', nargs=2, action='append', type=parse_rotation)
+    parser.add_argument('-r', '--rotations', nargs=2, action='append', type=parse_rotation)
     parser.add_argument('-a', '--angles', nargs=3, type=float)
-    parser.set_defaults(**defaults)
+    # parser.set_defaults(**defaults)
 
     args = vars(parser.parse_args())
     main(**args)

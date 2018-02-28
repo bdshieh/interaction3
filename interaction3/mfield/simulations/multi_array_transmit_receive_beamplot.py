@@ -189,7 +189,7 @@ class MultiArrayTransmitReceiveBeamplot(object):
         for obj in spec:
             if isinstance(obj, abstract.Array):
                 arrays.append(obj)
-            elif isinstance(obj, abstract.MfieldTransmitBeamplot):
+            elif isinstance(obj, abstract.MfieldTransmitReceiveBeamplotWithFoldingError):
                 simulation = obj
 
         return [simulation,] + arrays
@@ -211,7 +211,7 @@ class MultiArrayTransmitReceiveBeamplot(object):
 
             tx_info = _construct_rectangles_info(array, kind='tx')
             rx_info = _construct_rectangles_info(array, kind='rx')
-            rectangles_info.append(dict(txinfo=tx_info, rx_info=rx_info))
+            rectangles_info.append(dict(tx_info=tx_info, rx_info=rx_info))
 
         output = dict()
         output['rectangles_info'] = rectangles_info

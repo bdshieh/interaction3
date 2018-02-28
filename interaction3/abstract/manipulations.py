@@ -17,12 +17,14 @@ def vectorize(f):
 
     def vf(m, *args, **kwargs):
 
-        if isinstance(m, list):
+        if isinstance(m, (list, tuple)):
+            res = list()
             for i in m:
-                f(i, *args, **kwargs)
+                res.append(f(i, *args, **kwargs))
+            return res
+        else:
 
-        else: return f(m, *args, **kwargs)
-
+            return f(m, *args, **kwargs)
     return vf
 
 
@@ -63,7 +65,7 @@ def rotation_matrix(vec, angle):
 
 
 def distance(x, y):
-    return math.sqrt(math.sum([(i - j) ** 2 for i, j in zip(x, y)]))
+    return math.sqrt(math.fsum([(i - j) ** 2 for i, j in zip(x, y)]))
 
 
 ## MEMBRANE MANIPLUATIONS ##
@@ -189,7 +191,7 @@ def channel_position_from_elements(ch):
 def focus_channel(ch, pos, sound_speed, quantization=None):
 
     d = distance(ch['position'], pos)
-    if quantization is None:
+    if quantization is None or quantization == 0:
         t = d / sound_speed
     else:
         t = round(d / sound_speed / quantization) * quantization
