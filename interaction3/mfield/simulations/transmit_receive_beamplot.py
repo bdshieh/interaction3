@@ -10,7 +10,7 @@ from . import sim_functions as sim
 
 
 @attr.s
-class TransmitBeamplot(object):
+class TransmitReceiveBeamplot(object):
 
     # INSTANCE VARIABLES, FIELD II PARAMETERS
     c = attr.ib()
@@ -19,16 +19,7 @@ class TransmitBeamplot(object):
     att = attr.ib()
     freq_att = attr.ib()
     att_f0 = attr.ib()
-    tx_rectangles = attr.ib(repr=False)
-    tx_centers = attr.ib(repr=False)
-    tx_delays = attr.ib(repr=False)
-    tx_apodizations = attr.ib(repr=False)
-    tx_ele_delays = attr.ib(repr=False)
-    rx_rectangles = attr.ib(repr=False)
-    rx_centers = attr.ib(repr=False)
-    rx_delays = attr.ib(repr=False)
-    rx_apodizations = attr.ib(repr=False)
-    rx_ele_delays = attr.ib(repr=False)
+    rectangles_info = attr.ib(repr=False)
 
     # INSTANCE VARIABLES, OTHER PARAMETERS
     use_element_factor = attr.ib()
@@ -58,30 +49,7 @@ class TransmitBeamplot(object):
 
         # create excitation
         pulse, _ = sim.gausspulse(self.excitation_fc, self.excitation_bw / self.excitation_fc, self.fs)
-
-        # create transmit aperture and set aperture parameters
-        tx = field.xdc_rectangles(self.tx_rectangles, self.tx_centers, np.array([[0, 0, 300]]))
-        field.xdc_impulse(tx, pulse)
-        field.xdc_excitation(tx, np.array([1]))
-        field.xdc_focus_times(tx, np.zeros((1, 1)), self.tx_delays)
-        field.xdc_apodization(tx, np.zeros((1, 1)), self.tx_apodizations)
-
-        # set mathematical element delays
-        field.ele_delay(tx, np.arange(len(self.tx_ele_delays)) + 1, self.tx_ele_delays)
-
-        self._tx = tx
-
-        # create receive aperture and set aperture parameters
-        rx = field.xdc_rectangles(self.rx_rectangles, self.rx_centers, np.array([[0, 0, 300]]))
-        field.xdc_impulse(rx, pulse)
-        field.xdc_excitation(rx, np.array([1]))
-        field.xdc_focus_times(rx, np.zeros((1, 1)), self.rx_delays)
-        field.xdc_apodization(rx, np.zeros((1, 1)), self.rx_apodizations)
-
-        # set mathematical element delays
-        field.ele_delay(rx, np.arange(len(self.rx_ele_delays)) + 1, self.rx_ele_delays)
-
-        self._rx = rx
+        self._pulse = pulse
 
         return field
 
@@ -113,12 +81,8 @@ class TransmitBeamplot(object):
     def solve(self, field_pos=None):
 
         field = self._field
-        tx = self._tx
-        tx_apod = self.tx_apodizations
-        tx_centers = self.tx_centers
-        rx = self._rx
-        rx_apod = self.rx_apodizations
-        rx_centers = self.rx_centers
+        rect_info = self.rectangles_info
+        pulse = self._pulse
         use_element_factor = self.use_element_factor
         interpolator = self._interpolator
         fs = self.fs
@@ -128,39 +92,87 @@ class TransmitBeamplot(object):
             field_pos = self.field_pos
         field_pos = np.atleast_2d(field_pos)
 
-        rf_data = list()
-        times = list()
-        # t0s = list()
+        array_rf = list()
+        array_t0s = list()
 
-        for i, pos in enumerate(field_pos):
+        for info in rect_info:
 
-            if use_element_factor:
+            tx_info = info['tx_info']
+            tx_rectangles = tx_info['rectangles']
+            tx_centers = tx_info['centers']
+            tx_delays = tx_info['delays']
+            tx_apod = tx_info['apodizations']
+            tx_ele_delays = tx_info['ele_delays']
 
-                # calculate element factor corrections
-                r_tx = np.atleast_2d(pos) - np.atleast_2d(tx_centers)
-                r, a, b = sim.cart2sec(r_tx).T
-                tx_correction = interpolator(np.rad2deg(np.abs(a)), np.rad2deg(np.abs(b)))
-                # apply correction as apodization
-                field.xdc_apodization(tx, np.zeros((1, 1)), tx_apod * tx_correction)
+            # create transmit aperture and set aperture parameters
+            tx = field.xdc_rectangles(tx_rectangles, tx_centers, np.array([[0, 0, 300]]))
+            field.xdc_impulse(tx, pulse)
+            field.xdc_excitation(tx, np.array([1]))
+            field.xdc_focus_times(tx, np.zeros((1, 1)), tx_delays)
+            field.xdc_apodization(tx, np.zeros((1, 1)), tx_apod)
 
-                # calculate element factor corrections
-                r_rx = np.atleast_2d(pos) - np.atleast_2d(rx_centers)
-                r, a, b = sim.cart2sec(r_rx).T
-                rx_correction = interpolator(np.rad2deg(np.abs(a)), np.rad2deg(np.abs(b)))
-                # apply correction as apodization
-                field.xdc_apodization(rx, np.zeros((1, 1)), rx_apod * rx_correction)
+            # set mathematical element delays
+            field.ele_delay(tx, np.arange(len(tx_ele_delays)) + 1, tx_ele_delays)
 
-            rf, t0 = field.calc_hhp(tx, rx, pos)
+            rx_info = info['rx_info']
+            rx_rectangles = rx_info['rectangles']
+            rx_centers = rx_info['centers']
+            rx_delays = rx_info['delays']
+            rx_apod = rx_info['apodizations']
+            rx_ele_delays = rx_info['ele_delays']
 
-            rf_data.append(rf)
-            times.append(t0 + np.arange(len(rf)) / fs)
+            # create receive aperture and set aperture parameters
+            rx = field.xdc_rectangles(rx_rectangles, rx_centers, np.array([[0, 0, 300]]))
+            field.xdc_impulse(rx, pulse)
+            field.xdc_excitation(rx, np.array([1]))
+            field.xdc_focus_times(rx, np.zeros((1, 1)), rx_delays)
+            field.xdc_apodization(rx, np.zeros((1, 1)), rx_apod)
+
+            # set mathematical element delays
+            field.ele_delay(rx, np.arange(len(rx_ele_delays)) + 1, rx_ele_delays)
+
+            pos_rf = list()
+            pos_t0s = list()
+
+            for i, pos in enumerate(field_pos):
+
+                if use_element_factor:
+
+                    # calculate element factor corrections
+                    r_tx = np.atleast_2d(pos) - np.atleast_2d(tx_centers)
+                    r, a, b = sim.cart2sec(r_tx).T
+                    tx_correction = interpolator(np.rad2deg(np.abs(a)), np.rad2deg(np.abs(b)))
+                    # apply correction as apodization
+                    field.xdc_apodization(tx, np.zeros((1, 1)), tx_apod * tx_correction)
+
+                    # calculate element factor corrections
+                    r_rx = np.atleast_2d(pos) - np.atleast_2d(rx_centers)
+                    r, a, b = sim.cart2sec(r_rx).T
+                    rx_correction = interpolator(np.rad2deg(np.abs(a)), np.rad2deg(np.abs(b)))
+                    # apply correction as apodization
+                    field.xdc_apodization(rx, np.zeros((1, 1)), rx_apod * rx_correction)
+
+                _rf, _t0 = field.calc_hhp(tx, rx, pos)
+
+                pos_rf.append(_rf)
+                pos_t0s.append(_t0)
+
+            _array_rf, _array_t0 = sim.concatenate_with_padding(pos_rf, pos_t0s, fs)
+
+            array_rf.append(_array_rf)
+            array_t0s.append(_array_t0)
+
+            field.xdc_free(tx)
+            field.xdc_free(rx)
+
+        rf_data, t0 = sim.sum_with_padding(array_rf, array_t0s, fs)
+        times = t0 + np.arange(rf_data.shape[1]) / fs
 
         result['rf_data'] = rf_data
-        result['times'] = times
+        result['times'] = [times,] * len(rf_data)
 
     @staticmethod
     def get_objects_from_spec(*files):
-
         spec = list()
 
         for file in files:
@@ -170,19 +182,20 @@ class TransmitBeamplot(object):
             else:
                 spec.append(obj)
 
-        if len(spec) != 2:
+        if len(spec) < 2:
             raise Exception
 
+        arrays = list()
         for obj in spec:
             if isinstance(obj, abstract.Array):
-                array = obj
-            elif isinstance(obj, abstract.MfieldTransmitBeamplot):
+                arrays.append(obj)
+            elif isinstance(obj, abstract.MfieldSimulation):
                 simulation = obj
 
-        return simulation, array
+        return [simulation,] + arrays
 
     @staticmethod
-    def connector(simulation, array):
+    def connector(simulation, *arrays):
 
         # set simulation defaults
         use_att = simulation.get('use_attenuation', False)
@@ -193,20 +206,15 @@ class TransmitBeamplot(object):
         element_factor_file = simulation.get('element_factor_file', None)
         field_pos = simulation.get('field_positions', None)
 
-        tx_rect, tx_centers, tx_delays, tx_apod, tx_ele_delays = _construct_rectangles_info(array, kind='tx')
-        rx_rect, rx_centers, rx_delays, rx_apod, rx_ele_delays = _construct_rectangles_info(array, kind='rx')
+        rectangles_info = list()
+        for array in arrays:
+
+            tx_info = _construct_rectangles_info(array, kind='tx')
+            rx_info = _construct_rectangles_info(array, kind='rx')
+            rectangles_info.append(dict(tx_info=tx_info, rx_info=rx_info))
 
         output = dict()
-        output['tx_rectangles'] = tx_rect
-        output['tx_centers'] = tx_centers
-        output['tx_delays'] = tx_delays
-        output['tx_apodizations'] = tx_apod
-        output['tx_ele_delays'] = tx_ele_delays
-        output['rx_rectangles'] = rx_rect
-        output['rx_centers'] = rx_centers
-        output['rx_delays'] = rx_delays
-        output['rx_apodizations'] = rx_apod
-        output['rx_ele_delays'] = rx_ele_delays
+        output['rectangles_info'] = rectangles_info
         output['c'] = simulation['sound_speed']
         output['fs'] = simulation['sampling_frequency']
         output['use_att'] = use_att
@@ -333,4 +341,12 @@ def _construct_rectangles_info(array, kind='tx'):
     channel_apodizations = np.array(channel_apodizations)
     ele_delays = np.array(ele_delays)
 
-    return rectangles, channel_centers, channel_delays, channel_apodizations, ele_delays
+    output = dict()
+    output['rectangles'] = rectangles
+    output['centers'] = channel_centers
+    output['delays'] = channel_delays
+    output['apodizations'] = channel_apodizations
+    output['ele_delays'] = ele_delays
+
+    return output
+

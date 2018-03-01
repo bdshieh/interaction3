@@ -4,7 +4,7 @@
 __all__ = ['SquareCmutMembrane', 'CircularCmutMembrane', 'SquarePmutMembrane', 'CircularPmutMembrane',
            'Channel', 'DefocusedChannel', 'Element', 'Array', 'Simulation', 'BemTransmitCrosstalk',
            'BemReceiveCrosstalk', 'BemTransmitBeamplot', 'MfieldTransmitBeamplot', 'dump', 'dumps', 'load', 'loads',
-           'MfieldTransmitReceiveBeamplotWithFoldingError']
+           'MfieldSimulation', 'BemSimulation']
 
 import json
 import jsonschema
@@ -509,6 +509,14 @@ class MfieldTransmitBeamplot(BaseDict):
 
 class MfieldTransmitReceiveBeamplotWithFoldingError(BaseDict):
     _name = 'mfield_transmit_receive_beamplot_with_folding_error'
+
+
+class MfieldSimulation(BaseDict):
+    _name = 'mfield_simulation'
+
+
+class BemSimulation(BaseDict):
+    _name = 'bem_simulation'
 
 
 if __name__ == '__main__':

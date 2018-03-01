@@ -10,7 +10,7 @@ from . import sim_functions as sim
 
 
 @attr.s
-class MultiArrayTransmitReceiveBeamplot(object):
+class ReceiveBeamplot(object):
 
     # INSTANCE VARIABLES, FIELD II PARAMETERS
     c = attr.ib()
@@ -97,23 +97,6 @@ class MultiArrayTransmitReceiveBeamplot(object):
 
         for info in rect_info:
 
-            tx_info = info['tx_info']
-            tx_rectangles = tx_info['rectangles']
-            tx_centers = tx_info['centers']
-            tx_delays = tx_info['delays']
-            tx_apod = tx_info['apodizations']
-            tx_ele_delays = tx_info['ele_delays']
-
-            # create transmit aperture and set aperture parameters
-            tx = field.xdc_rectangles(tx_rectangles, tx_centers, np.array([[0, 0, 300]]))
-            field.xdc_impulse(tx, pulse)
-            field.xdc_excitation(tx, np.array([1]))
-            field.xdc_focus_times(tx, np.zeros((1, 1)), tx_delays)
-            field.xdc_apodization(tx, np.zeros((1, 1)), tx_apod)
-
-            # set mathematical element delays
-            field.ele_delay(tx, np.arange(len(tx_ele_delays)) + 1, tx_ele_delays)
-
             rx_info = info['rx_info']
             rx_rectangles = rx_info['rectangles']
             rx_centers = rx_info['centers']
@@ -139,20 +122,13 @@ class MultiArrayTransmitReceiveBeamplot(object):
                 if use_element_factor:
 
                     # calculate element factor corrections
-                    r_tx = np.atleast_2d(pos) - np.atleast_2d(tx_centers)
-                    r, a, b = sim.cart2sec(r_tx).T
-                    tx_correction = interpolator(np.rad2deg(np.abs(a)), np.rad2deg(np.abs(b)))
-                    # apply correction as apodization
-                    field.xdc_apodization(tx, np.zeros((1, 1)), tx_apod * tx_correction)
-
-                    # calculate element factor corrections
                     r_rx = np.atleast_2d(pos) - np.atleast_2d(rx_centers)
                     r, a, b = sim.cart2sec(r_rx).T
                     rx_correction = interpolator(np.rad2deg(np.abs(a)), np.rad2deg(np.abs(b)))
                     # apply correction as apodization
                     field.xdc_apodization(rx, np.zeros((1, 1)), rx_apod * rx_correction)
 
-                _rf, _t0 = field.calc_hhp(tx, rx, pos)
+                _rf, _t0 = field.calc_hp(rx, pos)
 
                 pos_rf.append(_rf)
                 pos_t0s.append(_t0)
@@ -162,7 +138,6 @@ class MultiArrayTransmitReceiveBeamplot(object):
             array_rf.append(_array_rf)
             array_t0s.append(_array_t0)
 
-            field.xdc_free(tx)
             field.xdc_free(rx)
 
         rf_data, t0 = sim.sum_with_padding(array_rf, array_t0s, fs)
@@ -189,7 +164,7 @@ class MultiArrayTransmitReceiveBeamplot(object):
         for obj in spec:
             if isinstance(obj, abstract.Array):
                 arrays.append(obj)
-            elif isinstance(obj, abstract.MfieldTransmitReceiveBeamplotWithFoldingError):
+            elif isinstance(obj, abstract.MfieldSimulation):
                 simulation = obj
 
         return [simulation,] + arrays
@@ -209,9 +184,8 @@ class MultiArrayTransmitReceiveBeamplot(object):
         rectangles_info = list()
         for array in arrays:
 
-            tx_info = _construct_rectangles_info(array, kind='tx')
             rx_info = _construct_rectangles_info(array, kind='rx')
-            rectangles_info.append(dict(tx_info=tx_info, rx_info=rx_info))
+            rectangles_info.append(dict(rx_info=rx_info))
 
         output = dict()
         output['rectangles_info'] = rectangles_info

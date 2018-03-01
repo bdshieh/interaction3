@@ -71,6 +71,7 @@ ENV/
 
 # sqlite
 *.db
+*.db-journal
 
 # backup files
 *~
