@@ -12,6 +12,8 @@ import interaction3.abstract as abstract
 from interaction3.mfield.simulations import TransmitBeamplot
 from interaction3.mfield.simulations import sim_functions as simfuncs
 
+import traceback
+import sys
 # register adapters for sqlite to convert numpy types
 sql.register_adapter(np.float64, float)
 sql.register_adapter(np.float32, float)
@@ -81,6 +83,14 @@ def process(args):
                     update_pressures_table(con, angle, field_pos[i], t, rf)
 
             update_progress(con, job_id)
+
+
+def run_process(*args, **kwargs):
+
+    try:
+        return process(*args, **kwargs)
+    except:
+        raise Exception("".join(traceback.format_exception(*sys.exc_info())))
 
 
 ## ENTRY POINT ##
@@ -181,28 +191,28 @@ def main(**args):
             create_pressures_table(con)
             create_image_table(con)
 
-    try:
+    # try:
 
-        # start multiprocessing pool and run process
-        write_lock = multiprocessing.Lock()
-        pool = multiprocessing.Pool(threads, initializer=init_process, initargs=(write_lock,))
+    # start multiprocessing pool and run process
+    write_lock = multiprocessing.Lock()
+    pool = multiprocessing.Pool(threads, initializer=init_process, initargs=(write_lock,))
 
-        simulation = abstract.dumps(simulation)
-        arrays = abstract.dumps(arrays)
-        jobs = simfuncs.create_jobs(file, simulation, arrays, (field_pos, 100), (rotation_rules, 1), mode='product',
-                               is_complete=is_complete)
-        result = pool.imap_unordered(process, jobs)
+    simulation = abstract.dumps(simulation)
+    arrays = abstract.dumps(arrays)
+    jobs = simfuncs.create_jobs(file, simulation, arrays, (field_pos, 100), (rotation_rules, 1), mode='product',
+                           is_complete=is_complete)
+    result = pool.imap_unordered(run_process, jobs)
 
-        for r in tqdm(result, desc='Simulating', total=njobs):
-            pass
+    for r in tqdm(result, desc='Simulating', total=njobs):
+        pass
 
-        pool.close()
+    pool.close()
 
-    except Exception as e:
-
-        print(e)
-        pool.terminate()
-        pool.close()
+    # except Exception as e:
+    #
+    #     print(e)
+    #     pool.terminate()
+    #     pool.close()
 
 
 ## DATABASE FUNCTIONS ##

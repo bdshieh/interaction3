@@ -15,7 +15,7 @@ from copy import deepcopy, copy
 SCHEMA_FILENAME = 'base-schema-1.2.json' # relative path to schema json file
 
 
-def memoize(func):
+def memoize(f):
     '''
     Class memoization using json serialization as the key and deepcopy.
     '''
@@ -26,7 +26,7 @@ def memoize(func):
         key = json.dumps((args, kwargs))
 
         if key not in memo:
-            memo[key] = func(*args, **kwargs)
+            memo[key] = f(*args, **kwargs)
         return deepcopy(memo[key])
 
     return decorator

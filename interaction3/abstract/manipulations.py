@@ -15,7 +15,7 @@ import math
 
 def vectorize(f):
 
-    def vf(m, *args, **kwargs):
+    def decorator(m, *args, **kwargs):
 
         if isinstance(m, (list, tuple)):
             res = list()
@@ -25,7 +25,7 @@ def vectorize(f):
         else:
 
             return f(m, *args, **kwargs)
-    return vf
+    return decorator
 
 
 ## HELPER FUNCTIONS ##

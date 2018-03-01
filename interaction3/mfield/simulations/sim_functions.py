@@ -4,6 +4,9 @@ import numpy as np
 import pandas as pd
 import scipy.signal
 import itertools
+import traceback
+import sys
+import functools
 
 
 def meshview(v1, v2, v3, mode='cartesian', as_list=True):
@@ -69,6 +72,9 @@ def cart2sec(xyz):
 
 def concatenate_with_padding(rf_data, t0s, fs):
 
+    if len(rf_data) <= 1:
+        return np.atleast_2d(rf_data), t0s[0]
+
     rf_data = np.atleast_2d(*rf_data)
 
     mint0 = min(t0s)
@@ -76,7 +82,7 @@ def concatenate_with_padding(rf_data, t0s, fs):
     maxlen = max([fpad + rf.shape[1] for fpad, rf in zip(frontpads, rf_data)])
     backpads = [maxlen - (fpad + rf.shape[1]) for fpad, rf in zip(frontpads, rf_data)]
 
-    new_data = []
+    new_data = list()
 
     for rf, fpad, bpad in zip(rf_data, frontpads, backpads):
 
@@ -88,6 +94,9 @@ def concatenate_with_padding(rf_data, t0s, fs):
 
 def sum_with_padding(rf_data, t0s, fs):
 
+    if len(rf_data) <= 1:
+        return np.atleast_2d(rf_data), t0s[0]
+
     rf_data = np.atleast_2d(*rf_data)
 
     mint0 = min(t0s)
@@ -95,7 +104,7 @@ def sum_with_padding(rf_data, t0s, fs):
     maxlen = max([fpad + rf.shape[1] for fpad, rf in zip(frontpads, rf_data)])
     backpads = [maxlen - (fpad + rf.shape[1]) for fpad, rf in zip(frontpads, rf_data)]
 
-    new_data = []
+    new_data = list()
 
     for rf, fpad, bpad in zip(rf_data, frontpads, backpads):
 
@@ -133,7 +142,10 @@ def chunks(iterable, n):
 
 
 def create_jobs(*args, mode='zip', is_complete=None):
-
+    '''
+    Convenience function for creating jobs (sets of input arguments) for multiprocessing Pool. Supports zip and product
+    combinations, and automatic chunking of iterables.
+    '''
     static_args = list()
     static_idx = list()
     iterable_args = list()
@@ -150,23 +162,33 @@ def create_jobs(*args, mode='zip', is_complete=None):
             static_args.append(itertools.repeat(arg))
             static_idx.append(arg_no)
 
+    if not iterable_args and not static_args:
+        return
+
+    if not iterable_args:
+        yield 1, tuple(args[i] for i in static_idx)
+
+    if not static_args:
+        repeats = itertools.repeat(())
+    else:
+        repeats = zip(*static_args)
+
     if mode.lower() == 'product':
         combos = itertools.product(*iterable_args)
     elif mode.lower() == 'zip':
         combos = zip(*iterable_args)
     elif mode.lower() == 'zip_longest':
         combos = itertools.zip_longest(*iterable_args)
-    repeats = zip(*static_args)
 
-    for job_id, (r, p) in enumerate(zip(repeats, combos), 1):
+    for job_id, (r, p) in enumerate(zip(repeats, combos)):
 
         # skip jobs that have been completed
-        if is_complete is not None and is_complete[job_id - 1]:
+        if is_complete is not None and is_complete[job_id]:
             continue
 
         res = r + p
         # reorder vals according to input order
-        yield job_id, [res[i] for i in np.argsort(static_idx + iterable_idx)]
+        yield job_id, tuple(res[i] for i in np.argsort(static_idx + iterable_idx))
 
 
 def rotation_matrix(vec, angle):
