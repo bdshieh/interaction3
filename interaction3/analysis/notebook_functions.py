@@ -12,6 +12,10 @@ from scipy.interpolate import griddata
 from matplotlib import pyplot as plt
 import mpl_toolkits.mplot3d
 import h5py
+import sqlite3 as sql
+import pandas as pd
+from contextlib import closing
+import os.path
 
 colors = plt.rcParams['axes.prop_cycle'].by_key()['color']
 blue = colors[0]
@@ -43,99 +47,33 @@ def save_file_dialog():
     return filenames
 
 
-def read_h5_data(filepath, save_key, add_zero_freq=False, minimal=False):
+def get_beamplot(file, angle, reshape=False):
 
-    def is_float(s):
-        try:
-            float(s)
-            return True
-        except ValueError:
-            return False
+    if _file_exists(file):
+        with closing(sql.connect(file)) as con:
+            query = 'SELECT x, y, z, brightness FROM image WHERE angle=? ORDER BY x, y, z'
+            table = pd.read_sql(query, con, params=(angle,))
+    else:
+        raise IOError('File not found.')
 
-    with h5py.File(filepath, 'r') as root:
+    field_pos = np.array(table[['x', 'y', 'z']])
+    brightness = np.array(table['brightness'])
 
-        freqs = np.sort(np.array([float(x) for x in root[save_key].keys()
-                                  if is_float(x)]))
-        nfreqs = freqs.shape[0]
+    if reshape:
 
-        nodes = root[save_key]['nodes'][:]
-        node_area = root[save_key]['nodes'].attrs['node_area']
+        x, y, z = np.atleast_2d(field_pos).T
+        nx = len(np.unique(x))
+        ny = len(np.unique(y))
+        nz = len(np.unique(z))
 
-        nnodes = root[save_key][str(freqs[0])]['x'].shape[0]
-        nchannels = root[save_key][str(freqs[0])]['x_ch'].shape[0]
-        nmems = root[save_key][str(freqs[0])]['x_mem'].shape[0]
+        field_pos = field_pos.reshape((nx, ny, nz, -1), order='F')
+        brightness = brightness.reshape((nx, ny, nz), order='F')
 
-    x = np.zeros((nnodes, nfreqs), dtype=np.complex128)
-    
-    if not minimal:
-        
-        x_ch = np.zeros((nchannels, nfreqs), dtype=np.complex128)
-        x_mem = np.zeros((nmems, nfreqs), dtype=np.complex128)
+    return brightness, field_pos
 
-        solve_time = np.zeros(nfreqs)
-        setup_time = np.zeros(nfreqs)
-        niter = np.zeros(nfreqs)
-        ram_usage = np.zeros(nfreqs)
 
-    with h5py.File(filepath, 'r') as root:
-
-        for idx, f in enumerate(freqs):
-
-            x_key = save_key + '/' + str(f) + '/' + 'x'
-            x[:, idx] = root[x_key][:]
-            
-            if not minimal:
-                
-                x_ch_key = save_key + '/' + str(f) + '/' + 'x_ch'
-                x_mem_key = save_key + '/' + str(f) + '/' + 'x_mem'
-
-                x_ch[:, idx] = root[x_ch_key][:]
-                x_mem[:, idx] = root[x_mem_key][:]
-
-                if 'solve_time' in root[x_key].attrs.keys():
-                    solve_time[idx] = root[x_key].attrs['solve_time']
-                if 'setup_time' in root[x_key].attrs.keys():
-                    setup_time[idx] = root[x_key].attrs['setup_time']
-                if 'niter' in root[x_key].attrs.keys():
-                    niter[idx] = root[x_key].attrs['niter']
-                if 'ram_usage' in root[x_key].attrs.keys():
-                    ram_usage[idx] = root[x_key].attrs['ram_usage']
-
-    nnodes_per_mem = int(nnodes / nmems)
-
-    if add_zero_freq: # Insert DC component
-
-        freqs = np.insert(freqs, 0, values=0)
-        x = np.insert(x, 0, values=0, axis=-1)
-        
-        if not minimal:
-            x_ch = np.insert(x_ch, 0, values=0, axis=-1)
-            x_mem = np.insert(x_mem, 0, values=0, axis=-1)
-
-    nfreqs = freqs.shape[0]
-    
-    if not minimal:
-        x_seq = x.reshape((nnodes_per_mem, nmems, nfreqs), order='F')
-        nodes_seq = nodes.reshape((nnodes_per_mem, nmems, -1), order='F')
-
-    res = {}
-    res['freqs'] = freqs
-    res['nodes'] = nodes
-    res['node_area'] = node_area
-    res['x'] = x
-    
-    if not minimal:
-        
-        res['nodes_seq'] = nodes_seq
-        res['x_ch'] = x_ch
-        res['x_mem'] = x_mem
-        res['x_seq'] = x_seq
-        res['solve_time'] = solve_time
-        res['setup_time'] = setup_time
-        res['niter'] = niter
-        res['ram_usage'] = ram_usage
-
-    return res
+def _file_exists(file):
+    return os.path.isfile(file)
 
 
 def interpolate_surfaces(meminfo, freqs, f, grid=(20,20)):

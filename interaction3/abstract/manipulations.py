@@ -44,7 +44,7 @@ def rotation_matrix(vec, angle):
             vec = [0, -1, 0]
         elif string == 'z':
             vec = [0, 0, 1]
-        elif string == '-x':
+        elif string == '-z':
             vec = [0, 0, -1]
 
     x, y, z = vec
@@ -57,7 +57,7 @@ def rotation_matrix(vec, angle):
     r[1, 0] = y * x * (1 - np.cos(a)) + z * np.sin(a)
     r[1, 1] = np.cos(a) + y**2 * (1 - np.cos(a))
     r[1, 2] = y * z * (1 - np.cos(a)) - x * np.sin(a)
-    r[2, 0] = z * x * (1 - np.cos(a)) - z * np.sin(a)
+    r[2, 0] = z * x * (1 - np.cos(a)) - y * np.sin(a)
     r[2, 1] = z * y * (1 - np.cos(a)) + x * np.sin(a)
     r[2, 2] = np.cos(a) + z**2 * (1 - np.cos(a))
 
