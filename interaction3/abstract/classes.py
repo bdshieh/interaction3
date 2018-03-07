@@ -11,6 +11,7 @@ import jsonschema
 import os
 import re
 from copy import deepcopy, copy
+import functools
 
 SCHEMA_FILENAME = 'base-schema-1.2.json' # relative path to schema json file
 
@@ -21,6 +22,7 @@ def memoize(f):
     '''
     memo = dict()
 
+    @functools.wraps(f)
     def decorator(*args, **kwargs):
 
         key = json.dumps((args, kwargs))
@@ -95,6 +97,11 @@ class BaseList(list):
         else:
             return value # do nothing
 
+    # def __getstate__(self):
+    #     return dumps(self)
+    #
+    # def __setstate__(self, state):
+    #     self.__dict__ = loads(state).__dict__
 
 class BaseDict(dict):
     '''
@@ -233,6 +240,11 @@ class BaseDict(dict):
         # skip validation in init to speed up deep copy
         return type(self)(_skip_validation=True, **deepcopy(dict(self), memo=memo))
 
+    # def __getstate__(self):
+    #     return dumps(self, indent=0)
+    #
+    # def __setstate__(self, state):
+    #     self.__dict__.update(loads(state).__dict__)
 
 class ObjectFactory(object):
 
