@@ -1,21 +1,23 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Thu Nov 16 12:22:23 2017
-
-@author: bshieh3
-"""
 
 from PyQt5.QtWidgets import QWidget, QApplication, QFileDialog
 import sys
-import numpy as np
-from scipy.interpolate import griddata
-from matplotlib import pyplot as plt
-import mpl_toolkits.mplot3d
-import h5py
-import sqlite3 as sql
-import pandas as pd
 from contextlib import closing
 import os.path
+
+import numpy as np
+import scipy as sp
+from scipy.interpolate import griddata
+import sqlite3 as sql
+
+# import h5py
+import pandas as pd
+
+import matplotlib.pyplot as plt
+import mpl_toolkits.mplot3d
+from matplotlib.gridspec import GridSpec
+import ipywidgets as widgets
+from IPython.display import display, HTML, Markdown
+import tabulate
 
 colors = plt.rcParams['axes.prop_cycle'].by_key()['color']
 blue = colors[0]
@@ -45,6 +47,20 @@ def save_file_dialog():
     widget = QWidget()
     filenames, _ = QFileDialog.getSaveFileName(widget, None, None, 'All Files (*)')
     return filenames
+
+
+from mpl_toolkits import axes_grid1
+
+def add_colorbar(im, aspect=20, pad_fraction=0.5, **kwargs):
+    
+    divider = axes_grid1.make_axes_locatable(im.axes)
+    width = axes_grid1.axes_size.AxesY(im.axes, aspect=1./aspect)
+    pad = axes_grid1.axes_size.Fraction(pad_fraction, width)
+    current_ax = plt.gca()
+    cax = divider.append_axes("right", size=width, pad=pad)
+    plt.sca(current_ax)
+    
+    return im.axes.figure.colorbar(im, cax=cax, **kwargs)
 
 
 def get_beamplot(file, angle, reshape=False):
