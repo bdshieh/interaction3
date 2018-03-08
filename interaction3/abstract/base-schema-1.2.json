@@ -297,6 +297,7 @@
       "file": { "type": "string" },
       "rotations": { "$ref": "#/definitions/rotations" },
       "angles": { "$ref": "#/definitions/position" },
+      "angle_tolerance": { "type": "number" },
       "sampling_frequency": { "type": "number" },
       "sound_speed": { "type": "number" },
       "use_attenuation": { "type": "boolean" },
