@@ -18,6 +18,7 @@ from matplotlib.gridspec import GridSpec
 import ipywidgets as widgets
 from IPython.display import display, HTML, Markdown
 import tabulate
+from mpl_toolkits import axes_grid1
 
 colors = plt.rcParams['axes.prop_cycle'].by_key()['color']
 blue = colors[0]
@@ -49,7 +50,24 @@ def save_file_dialog():
     return filenames
 
 
-from mpl_toolkits import axes_grid1
+def export_widget(figs, format='png', **kwargs):
+    
+    def export(b):
+        # print('export!')
+        filename = save_file_dialog()
+        if isinstance(figs, (list, tuple)):
+            for i, fig in enumerate(figs):
+                fig.savefig(filename + str(i), format=format, bbox_inches='tight', **kwargs)
+        elif isinstance(figs, matplotlib.figure.Figure):
+            figs.savefig(filename, format=format, bbox_inces='tight', **kwargs)
+        else:
+            raise ValueError
+    
+    button = widgets.Button(description='Export figures')
+    button.on_click(export)
+    
+    return button
+
 
 def add_colorbar(im, aspect=20, pad_fraction=0.5, **kwargs):
     
