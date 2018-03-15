@@ -21,9 +21,35 @@ import tabulate
 from mpl_toolkits import axes_grid1
 
 colors = plt.rcParams['axes.prop_cycle'].by_key()['color']
-blue = colors[0]
-orange = colors[1]
-red = colors[2]
+blue, orange, green, red, purple, brown, pink, olive, yellow, cyan = colors
+
+display(HTML('''
+<script>
+  function code_toggle() {
+    if (code_shown){
+      $('div.input').hide('500');
+      $('#toggleButton').val('Show Code')
+    } else {
+      $('div.input').show('500');
+      $('#toggleButton').val('Hide Code')
+    }
+    code_shown = !code_shown
+  }
+
+  $( document ).ready(function(){
+    code_shown=false;
+    $('div.input').hide()
+  });
+</script>
+<form action="javascript:code_toggle()"><input type="submit" id="toggleButton" value="Show Code"></form>
+<style>
+.output_png {
+    display: table-cell;
+    text-align: center;
+    vertical-align: middle;
+}
+</style>
+'''))
 
 
 def open_file_dialog():
@@ -53,13 +79,13 @@ def save_file_dialog():
 def export_widget(figs, format='png', **kwargs):
     
     def export(b):
-        # print('export!')
+
         filename = save_file_dialog()
         if isinstance(figs, (list, tuple)):
             for i, fig in enumerate(figs):
-                fig.savefig(filename + str(i), format=format, bbox_inches='tight', **kwargs)
+                fig.savefig(filename + str(i) + '.' + format, format=format, bbox_inches='tight', **kwargs)
         elif isinstance(figs, matplotlib.figure.Figure):
-            figs.savefig(filename, format=format, bbox_inces='tight', **kwargs)
+            figs.savefig(filename + '.' + format, format=format, bbox_inches='tight', **kwargs)
         else:
             raise ValueError
     
@@ -247,7 +273,3 @@ def directivity_plot(dr, angles, freqs, f, ax=None, lines=None, update=False):
     else:
         
         lines[0].set_data(theta, d)
-
-
-if __name__ == '__main__':
-    pass

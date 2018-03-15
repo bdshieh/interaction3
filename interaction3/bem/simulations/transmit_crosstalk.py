@@ -37,7 +37,7 @@ class TransmitCrosstalk(object):
     max_level = attr.ib(default=6)
     Ginv = attr.ib(default=None, repr=False)
     use_preconditioner = attr.ib(default=True)
-    use_pressure_load = attr.ib(default=False)
+    # use_pressure_load = attr.ib(default=False)
     tolerance = attr.ib(default=0.01)
     max_iterations = attr.ib(default=100)
 
@@ -326,7 +326,7 @@ class TransmitCrosstalk(object):
         output['translations_db'] = simulation['translations_db']
         output['max_level'] = max_level
         output['use_preconditioner'] = use_preconditioner
-        output['use_pressure_load'] = use_pressure_load
+        # output['use_pressure_load'] = use_pressure_load
         output['tolerance'] = tolerance
         output['max_iterations'] = max_iterations
 

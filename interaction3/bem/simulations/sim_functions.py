@@ -1,6 +1,8 @@
 ## bem / simulations / functions.py
 
 import numpy as np
+import itertools
+import pandas as pd
 
 from .. core import bem_functions as bem
 
@@ -365,6 +367,21 @@ def generate_circular_nodes(radius, electrode_r, nnodes_x, nnodes_y):
 
 def rotation_matrix(vec, angle):
 
+    if isinstance(vec, str):
+        string = vec.lower()
+        if string == 'x':
+            vec = [1, 0, 0]
+        elif string == '-x':
+            vec = [-1, 0, 0]
+        elif string == 'y':
+            vec = [0, 1, 0]
+        elif string == '-y':
+            vec = [0, -1, 0]
+        elif string == 'z':
+            vec = [0, 0, 1]
+        elif string == '-x':
+            vec = [0, 0, -1]
+
     x, y, z = vec
     a = angle
 
@@ -386,3 +403,124 @@ def rotate_nodes(nodes, vec, angle):
 
     rmatrix = rotation_matrix(vec, angle)
     return rmatrix.dot(nodes.T).T
+
+
+def meshview(v1, v2, v3, mode='cartesian', as_list=True):
+
+    if mode.lower() in ('cart', 'cartesian', 'rect'):
+
+        x, y, z = np.meshgrid(v1, v2, v3, indexing='ij')
+
+    elif mode.lower() in ('spherical', 'sphere', 'polar'):
+
+        r, theta, phi = np.meshgrid(v1, v2, v3, indexing='ij')
+
+        x = r * np.cos(theta) * np.sin(phi)
+        y = r * np.sin(theta) * np.sin(phi)
+        z = r * np.cos(phi)
+
+    elif mode.lower() in ('sector', 'sec'):
+
+        r, py, px = np.meshgrid(v1, v2, v3, indexing='ij')
+
+        px = -px
+        pyp = np.arctan(np.cos(px) * np.sin(py) / np.cos(py))
+
+        x = r * np.sin(pyp)
+        y = -r * np.cos(pyp) * np.sin(px)
+        z = r * np.cos(px) * np.cos(pyp)
+
+    if as_list:
+        return np.c_[x.ravel(order='F'), y.ravel(order='F'), z.ravel(order='F')]
+    else:
+        return x, y, z
+
+
+def cart2sec(xyz):
+
+    x, y, z = np.atleast_2d(xyz).T
+
+    r = np.sqrt(x ** 2 + y ** 2 + z ** 2)
+    pyp = np.arcsin(x / r)
+    px = np.arcsin(-y / r / np.cos(pyp))
+    py = np.arctan(np.tan(pyp) / np.cos(px))
+
+    return np.c_[r, py, -px]
+
+
+def chunks(iterable, n):
+
+    res = []
+    for el in iterable:
+        res.append(el)
+        if len(res) == n:
+            yield res
+            res = []
+    if res:
+        yield res
+
+
+def create_jobs(*args, mode='zip', is_complete=None):
+    '''
+    Convenience function for creating jobs (sets of input arguments) for multiprocessing Pool. Supports zip and product
+    combinations, and automatic chunking of iterables.
+    '''
+    static_args = list()
+    static_idx = list()
+    iterable_args = list()
+    iterable_idx = list()
+
+    for arg_no, arg in enumerate(args):
+        if isinstance(arg, (tuple, list)):
+
+            iterable, chunksize = arg
+            iterable_args.append(chunks(iterable, chunksize))
+            iterable_idx.append(arg_no)
+        else:
+
+            static_args.append(itertools.repeat(arg))
+            static_idx.append(arg_no)
+
+    if not iterable_args and not static_args:
+        return
+
+    if not iterable_args:
+        yield 1, tuple(args[i] for i in static_idx)
+
+    if not static_args:
+        repeats = itertools.repeat(())
+    else:
+        repeats = zip(*static_args)
+
+    if mode.lower() == 'product':
+        combos = itertools.product(*iterable_args)
+    elif mode.lower() == 'zip':
+        combos = zip(*iterable_args)
+    elif mode.lower() == 'zip_longest':
+        combos = itertools.zip_longest(*iterable_args)
+
+    for job_id, (r, p) in enumerate(zip(repeats, combos)):
+
+        # skip jobs that have been completed
+        if is_complete is not None and is_complete[job_id]:
+            continue
+
+        res = r + p
+        # reorder vals according to input order
+        yield job_id, tuple(res[i] for i in np.argsort(static_idx + iterable_idx))
+
+
+## DATABASE FUNCTIONS ##
+
+def table_exists(con, name):
+
+    query = '''SELECT count(*) FROM sqlite_master WHERE type='table' and name=?'''
+    return con.execute(query, (name,)).fetchone()[0] != 0
+
+
+def create_metadata_table(con, **kwargs):
+
+    table = [[str(v) for v in list(kwargs.values())]]
+    columns = list(kwargs.keys())
+
+    pd.DataFrame(table, columns=columns, dtype=str).to_sql('metadata', con, if_exists='replace', index=False)

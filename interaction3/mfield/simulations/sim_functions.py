@@ -4,9 +4,6 @@ import numpy as np
 import pandas as pd
 import scipy.signal
 import itertools
-import traceback
-import sys
-import functools
 
 
 def meshview(v1, v2, v3, mode='cartesian', as_list=True):
@@ -231,7 +228,7 @@ def rotate_nodes(nodes, vec, angle):
     return rmatrix.dot(nodes.T).T
 
 
-## DATABSE FUNCTIONS ##
+## DATABASE FUNCTIONS ##
 
 def table_exists(con, name):
 
