@@ -8,7 +8,7 @@ from itertools import repeat
 from contextlib import closing
 from tqdm import tqdm
 
-from interaction3.bem.simulations import TransmitCrosstalk
+from interaction3.bem.simulations import ReceiveCrosstalk, sim_functions as sim
 from interaction3 import abstract
 
 # register adapters for sqlite to convert numpy types
@@ -35,9 +35,9 @@ def process(args):
     array = abstract.loads(array)
 
     sim['frequency'] = f
-    kwargs, meta = TransmitCrosstalk.connector(sim, array)
+    kwargs, meta = ReceiveCrosstalk.connector(sim, array)
 
-    simulation = TransmitCrosstalk(**kwargs)
+    simulation = ReceiveCrosstalk(**kwargs)
     simulation.solve()
 
     nodes = simulation.nodes
@@ -49,9 +49,9 @@ def process(args):
     with write_lock:
         with closing(sql.connect(file)) as con:
 
-            if not table_exists(con, 'nodes'):
+            if not sim.table_exists(con, 'nodes'):
                 create_nodes_table(con, nodes, membrane_ids, element_ids, channel_ids)
-            if not table_exists(con, 'displacements'):
+            if not sim.table_exists(con, 'displacements'):
                 create_displacements_table(con)
 
             update_displacements_table(con, f, k, nodes, displacement)
@@ -67,7 +67,7 @@ def main(**args):
     file = args['file']
     spec = args['specification']
 
-    simulation, array = TransmitCrosstalk.get_objects_from_spec(*spec)
+    simulation, array = ReceiveCrosstalk.get_objects_from_spec(*spec)
 
     # set arg defaults if not provided
     if 'threads' in simulation:
@@ -100,7 +100,7 @@ def main(**args):
             with closing(sql.connect(file)) as con:
 
                 # create database tables
-                create_metadata_table(con, **args, **simulation)
+                sim.create_metadata_table(con, **args, **simulation)
                 create_frequencies_table(con, fs, ks)
 
         elif response.lower() in ['c', 'continue']:
@@ -132,7 +132,7 @@ def main(**args):
         with closing(sql.connect(file)) as con:
 
             # create database tables
-            create_metadata_table(con, **args)
+            sim.create_metadata_table(con, **args)
             create_frequencies_table(con, fs, ks)
 
     try:
@@ -140,7 +140,9 @@ def main(**args):
         # start multiprocessing pool and run process
         write_lock = multiprocessing.Lock()
         pool = multiprocessing.Pool(threads, initializer=init_process, initargs=(write_lock,))
-        proc_args = [(file, f, k, abstract.dumps(simulation), abstract.dumps(array)) for f, k in zip(fs, ks)]
+        # jobs = simfuncs.create_jobs(file, simulation, arrays, (field_pos, 100), (rotation_rules, 1), mode='product',
+                                    # is_complete=is_complete)
+        # proc_args = [(file, f, k, abstract.dumps(simulation), abstract.dumps(array)) for f, k in zip(fs, ks)]
         result = pool.imap_unordered(process, proc_args)
 
         for r in tqdm(result, desc='Simulating', total=len(fs)):
@@ -156,20 +158,6 @@ def main(**args):
 
 
 ## DATABASE FUNCTIONS ##
-
-def table_exists(con, name):
-
-    query = '''SELECT count(*) FROM sqlite_master WHERE type='table' and name=?'''
-    return con.execute(query, (name,)).fetchone()[0] != 0
-
-
-def create_metadata_table(con, **kwargs):
-
-    table = [[str(v) for v in list(kwargs.values())]]
-    columns = list(kwargs.keys())
-
-    pd.DataFrame(table, columns=columns, dtype=str).to_sql('metadata', con, if_exists='replace', index=False)
-
 
 def create_frequencies_table(con, fs, ks):
 
@@ -254,12 +242,6 @@ def update_displacements_table(con, f, k, nodes, displacements):
 ## COMMAND LINE INTERFACE ##
 
 if __name__ == '__main__':
-
-    # command line ideas ...
-    # interaction3 abstract matrix_array myarray.json --options ...
-    # interaction3 abstract simulation mysim.json --options ...
-    # interaction3 bem array_transmit_simulation myoutput.db -i myarray.json mysim.json ...
-    # interaction3 bem array_transmit_simulation myoutput.db -i myspecification.json
 
     import argparse
 

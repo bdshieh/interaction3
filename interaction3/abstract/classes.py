@@ -13,7 +13,7 @@ import re
 from copy import deepcopy, copy
 import functools
 
-SCHEMA_FILENAME = 'base-schema-1.2.json' # relative path to schema json file
+SCHEMA_FILENAME = 'base-schema-1.3.json' # relative path to schema json file
 
 
 def memoize(f):

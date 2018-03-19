@@ -31,15 +31,11 @@ class TransmitCrosstalk(object):
     sound_speed = attr.ib()
     Gmech = attr.ib(repr=False)
     P = attr.ib(repr=False)
-
-    ## INSTANCE ATTRIBUTES, INIT, OPTIONAL ##
-
-    max_level = attr.ib(default=6)
-    Ginv = attr.ib(default=None, repr=False)
-    use_preconditioner = attr.ib(default=True)
-    # use_pressure_load = attr.ib(default=False)
-    tolerance = attr.ib(default=0.01)
-    max_iterations = attr.ib(default=100)
+    max_level = attr.ib()
+    Ginv = attr.ib(repr=False)
+    use_preconditioner = attr.ib()
+    tolerance = attr.ib()
+    max_iterations = attr.ib()
 
     ## INSTANCE ATTRIBUTES, NO INIT ##
 

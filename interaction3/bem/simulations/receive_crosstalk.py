@@ -31,14 +31,11 @@ class ReceiveCrosstalk(object):
     sound_speed = attr.ib()
     Gmech = attr.ib(repr=False)
     P = attr.ib(repr=False)
-
-    ## INSTANCE ATTRIBUTES, INIT, OPTIONAL ##
-
-    max_level = attr.ib(default=6)
-    Ginv = attr.ib(default=None, repr=False)
-    use_preconditioner = attr.ib(default=True)
-    tolerance = attr.ib(default=0.01)
-    max_iterations = attr.ib(default=100)
+    max_level = attr.ib()
+    Ginv = attr.ib(repr=False)
+    use_preconditioner = attr.ib()
+    tolerance = attr.ib()
+    max_iterations = attr.ib()
 
     ## INSTANCE ATTRIBUTES, NO INIT ##
 
@@ -173,6 +170,8 @@ class ReceiveCrosstalk(object):
 
         # set simulation defaults
         use_preconditioner = simulation.get('use_preconditioner', True)
+        pressure = simulation.get('pressure', 1)
+        plane_wave_vector = simulation.get('plane_wave_vector', [0, 0, -1])
         use_pressure_load = simulation.get('use_pressure_load', False)
         tolerance = simulation.get('tolerance', 0.01)
         max_iterations = simulation.get('max_iterations', 100)
@@ -220,25 +219,25 @@ class ReceiveCrosstalk(object):
         for ch in array['channels']:
 
             dc_bias = ch['dc_bias']
-            delay = ch['delay']
+
+            kwargs = dict()
+            kwargs['frequency'] = f
+            kwargs['density'] = rho
+            kwargs['sound_speed'] = c
+            kwargs['dc_bias'] = dc_bias
+            kwargs['use_preconditioner'] = use_preconditioner
 
             for elem in ch['elements']:
                 for mem in elem['membranes']:
 
                     if isinstance(mem, abstract.SquareCmutMembrane):
-                        subc = sim.connector_square_cmut_membrane(mem, frequency=f, density=rho, sound_speed=c,
-                                                                  dc_bias=dc_bias,
-                                                                  use_preconditioner=use_preconditioner)
+                        subc = sim.connector_square_cmut_membrane(mem, **kwargs)
                     elif isinstance(mem, abstract.CircularCmutMembrane):
-                        subc = sim.connector_circular_cmut_membrane(mem, frequency=f, density=rho, sound_speed=c,
-                                                                    dc_bias=dc_bias,
-                                                                    use_preconditioner=use_preconditioner)
+                        subc = sim.connector_circular_cmut_membrane(mem, **kwargs)
                     elif isinstance(mem, abstract.SquarePmutMembrane):
-                        subc = sim.connector_square_pmut_membrane(mem, frequency=f, density=rho, sound_speed=c,
-                                                                  use_preconditioner=use_preconditioner)
+                        subc = sim.connector_square_pmut_membrane(mem, **kwargs)
                     elif isinstance(mem, abstract.CircularPmutMembrane):
-                        subc = sim.connector_circular_pmut_membrane(mem, frequency=f, density=rho, sound_speed=c,
-                                                                    use_preconditioner=use_preconditioner)
+                        subc = sim.connector_circular_pmut_membrane(mem, **kwargs)
 
                     # add general matrices
                     M_list.append(subc['M'])
@@ -261,31 +260,20 @@ class ReceiveCrosstalk(object):
                         u0_list.append(subc['static_displacement'])
 
                     # determine node excitations
-                    if ch['active'] and ch['kind'].lower() in ['tx', 'transmit', 'both', 'txrx']:
-
-                        if use_pressure_load:
-                            P_list.append(np.ones(nnodes) * np.exp(-1j * omega * delay))
-
-                        elif is_cmut:
-                            t_ratios = subc['transformer_ratios']
-                            P_list.append(t_ratios * np.exp(-1j * omega * delay))
-
-                        elif is_pmut:
-                            pass
-                    else:
-                        P_list.append(np.zeros(nnodes))
+                    x, y, z = subc['nodes'].T
+                    dx, dy, dz = plane_wave_vector
+                    P_list.append(pressure * np.exp(-1j * omega / c * (dx * x + dy * y + dz * z)))
 
         s_n = subc['node_area']
 
         if is_cmut:
             Gmech_list = [-omega ** 2 * M + 1j * omega * B + K - Kss for M, B, K, Kss in
                           zip(M_list, B_list, K_list, Kss_list)]
-
         elif is_pmut:
-            Gmech_list = [-omega ** 2 * M + 1j * omega * B + K for M, B, K in
-                          zip(M_list, B_list, K_list)]
+            Gmech_list = [-omega ** 2 * M + 1j * omega * B + K for M, B, K in zip(M_list, B_list, K_list)]
 
         if use_preconditioner:
+
             G1_list = [G1 + 1j * omega * Zr1 for G1, Zr1 in zip(Gmech_list, Zr1_list)]
             G1inv_list = [bem.g1inv_matrix(G1) for G1 in G1_list]
 
