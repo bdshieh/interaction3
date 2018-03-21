@@ -144,7 +144,9 @@ def main(**args):
         if args[k] is None:
             args[k] = v
 
-    print(args)
+    for k, v in args.items():
+        print(k, '-->', v)
+
     # get args needed in main
     threads = args['threads']
     file = args['file']
@@ -250,9 +252,7 @@ def main(**args):
 # Tables: metadata, field_positions, pressures, image_data, progress
 
 def create_field_positions_table(con, field_pos):
-
     x, y, z = np.atleast_2d(field_pos).T
-
     with con:
         # create table
         con.execute('CREATE TABLE field_positions (x float, y float, z float)')
@@ -263,7 +263,6 @@ def create_field_positions_table(con, field_pos):
 
 
 def create_progress_table(con, njobs):
-
     with con:
         # create table
         con.execute('CREATE TABLE progress (job_id INTEGER PRIMARY KEY, is_complete boolean)')
@@ -272,7 +271,6 @@ def create_progress_table(con, njobs):
 
 
 def create_pressures_table(con):
-
     with con:
         # create table
         query = '''
@@ -295,7 +293,6 @@ def create_pressures_table(con):
 
 
 def create_image_table(con):
-
     with con:
         # create table
         query = '''
@@ -317,15 +314,12 @@ def create_image_table(con):
 
 
 def update_progress(con, job_id):
-
     with con:
         con.execute('UPDATE progress SET is_complete=1 WHERE job_id=?', [job_id,])
 
 
 def update_pressures_table(con, angle, angle_tol, error_type, field_pos, times, pressures):
-
     x, y, z = field_pos
-
     with con:
         query = '''
                 INSERT INTO pressures (angle, angle_tolerance, error_type, x, y, z, time, pressure) 
@@ -336,9 +330,7 @@ def update_pressures_table(con, angle, angle_tol, error_type, field_pos, times, 
 
 
 def update_image_table(con, angle, angle_tol, error_type, field_pos, image_data):
-
     x, y, z = field_pos
-
     with con:
         query = '''
                 INSERT INTO image (angle, angle_tolerance, error_type, x, y, z, brightness)

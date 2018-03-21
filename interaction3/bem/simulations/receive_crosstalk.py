@@ -1,3 +1,4 @@
+## interaction3 / bem / simulations / receive_crosstalk.py
 
 import numpy as np
 import scipy.sparse as sps
@@ -170,9 +171,8 @@ class ReceiveCrosstalk(object):
 
         # set simulation defaults
         use_preconditioner = simulation.get('use_preconditioner', True)
-        pressure = simulation.get('pressure', 1)
+        plane_wave_pressure = simulation.get('plane_wave_pressure', 1)
         plane_wave_vector = simulation.get('plane_wave_vector', [0, 0, -1])
-        use_pressure_load = simulation.get('use_pressure_load', False)
         tolerance = simulation.get('tolerance', 0.01)
         max_iterations = simulation.get('max_iterations', 100)
         max_level = simulation.get('max_level', 6)
@@ -262,7 +262,7 @@ class ReceiveCrosstalk(object):
                     # determine node excitations
                     x, y, z = subc['nodes'].T
                     dx, dy, dz = plane_wave_vector
-                    P_list.append(pressure * np.exp(-1j * omega / c * (dx * x + dy * y + dz * z)))
+                    P_list.append(plane_wave_pressure * np.exp(-1j * omega / c * (dx * x + dy * y + dz * z)))
 
         s_n = subc['node_area']
 
@@ -315,7 +315,6 @@ class ReceiveCrosstalk(object):
         output['translations_db'] = simulation['translations_db']
         output['max_level'] = max_level
         output['use_preconditioner'] = use_preconditioner
-        output['use_pressure_load'] = use_pressure_load
         output['tolerance'] = tolerance
         output['max_iterations'] = max_iterations
 

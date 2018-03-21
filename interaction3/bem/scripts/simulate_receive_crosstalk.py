@@ -7,6 +7,8 @@ import pandas as pd
 from itertools import repeat
 from contextlib import closing
 from tqdm import tqdm
+import traceback
+import sys
 
 from interaction3.bem.simulations import ReceiveCrosstalk, sim_functions as sim
 from interaction3 import abstract
@@ -16,6 +18,9 @@ sql.register_adapter(np.float64, float)
 sql.register_adapter(np.float32, float)
 sql.register_adapter(np.int64, int)
 sql.register_adapter(np.int32, int)
+
+defaults = dict()
+defaults['threads'] = multiprocessing.cpu_count()
 
 
 ## PROCESS FUNCTIONS ##
@@ -58,43 +63,60 @@ def process(args):
             update_progress(con, f)
 
 
+def run_process(*args, **kwargs):
+
+    try:
+        return process(*args, **kwargs)
+    except:
+        raise Exception("".join(traceback.format_exception(*sys.exc_info())))
+
+
 ## ENTRY POINT ##
 
 def main(**args):
 
-    threads = args['threads']
-    freqs = args['freqs']
+    # get abstract objects from specification
+    spec = args['spec']
+
+    simulation, object = ReceiveCrosstalk.get_objects_from_spec(*spec)
+
+    # set defaults with the following priority: command line arguments >> simulation object >> script defaults
+    for k, v in simulation.items():
+        args.setdefault(k, v)
+        if args[k] is None:
+            args[k] = v
+
+    for k, v in defaults.items():
+        args.setdefault(k, v)
+        if args[k] is None:
+            args[k] = v
+
+    print('simulation parameters as key --> value:')
+    for k, v in args.items():
+        print(k, '-->', v)
+
+    # get args needed in main
+    c = args['sound_speed']
     file = args['file']
-    spec = args['specification']
+    threads = args['threads']
+    f_start, f_stop, f_step = args['freqs']
 
-    simulation, array = ReceiveCrosstalk.get_objects_from_spec(*spec)
+    # create frequencies/wavenumbers
+    fs = np.arange(f_start, f_stop + f_step, f_step)
+    ks = 2 * np.pi * fs / c
 
-    # set arg defaults if not provided
-    if 'threads' in simulation:
-        threads = simulation.pop('threads')
-        args['threads'] = threads
-
-    if 'freqs' in simulation:
-        freqs = simulation.pop('freqs')
-        args['freqs'] = freqs
-
-    c = simulation['sound_speed']
+    njobs = len(fs)
 
     # check for existing file
     if os.path.isfile(file):
 
         # con = sql.connect(file)
-        response = input('File ' + str(file) + ' already exists. \nContinue (c), Overwrite (o), or Do nothing ('
-                                                   'any other key)?')
+        response = input('File ' + str(file) + ' already exists.\n' +
+                         'Continue (c), overwrite (o), or do nothing (any other key)?')
 
         if response.lower() in ['o', 'overwrite']:
 
             os.remove(file)
-
-            # determine frequencies and wavenumbers
-            f_start, f_stop, f_step = freqs
-            fs = np.arange(f_start, f_stop + f_step, f_step)
-            ks = 2 * np.pi * fs / c
 
             # create database
             with closing(sql.connect(file)) as con:
@@ -102,6 +124,7 @@ def main(**args):
                 # create database tables
                 sim.create_metadata_table(con, **args, **simulation)
                 create_frequencies_table(con, fs, ks)
+                create_progress_table(con, njobs)
 
         elif response.lower() in ['c', 'continue']:
 
@@ -140,8 +163,8 @@ def main(**args):
         # start multiprocessing pool and run process
         write_lock = multiprocessing.Lock()
         pool = multiprocessing.Pool(threads, initializer=init_process, initargs=(write_lock,))
-        # jobs = simfuncs.create_jobs(file, simulation, arrays, (field_pos, 100), (rotation_rules, 1), mode='product',
-                                    # is_complete=is_complete)
+        jobs = sim.create_jobs(file, simulation, arrays, (field_pos, 100), (rotation_rules, 1), mode='product',
+                                    is_complete=is_complete)
         # proc_args = [(file, f, k, abstract.dumps(simulation), abstract.dumps(array)) for f, k in zip(fs, ks)]
         result = pool.imap_unordered(process, proc_args)
 
@@ -160,44 +183,41 @@ def main(**args):
 ## DATABASE FUNCTIONS ##
 
 def create_frequencies_table(con, fs, ks):
-
     with con:
-
         # create table
-        con.execute('CREATE TABLE frequencies (frequency float, wavenumber float, is_complete boolean)')
-
+        con.execute('CREATE TABLE frequencies (frequency float, wavenumber float)')
         # create indexes
         con.execute('CREATE UNIQUE INDEX frequency_index ON frequencies (frequency)')
         con.execute('CREATE UNIQUE INDEX wavenumber_index ON frequencies (wavenumber)')
-
         # insert values into table
-        con.executemany('INSERT INTO frequencies VALUES (?, ?, ?)', zip(fs, ks, repeat(False)))
+        con.executemany('INSERT INTO frequencies VALUES (?, ?)', zip(fs, ks))
+
+
+def create_progress_table(con, njobs):
+    with con:
+        # create table
+        con.execute('CREATE TABLE progress (job_id INTEGER PRIMARY KEY, is_complete boolean)')
+        # insert values
+        con.executemany('INSERT INTO progress (is_complete) VALUES (?)', repeat((False,), njobs))
 
 
 def create_nodes_table(con, nodes, membrane_ids, element_ids, channel_ids):
-
     x, y, z = nodes.T
-
     with con:
-
         # create table
         con.execute('CREATE TABLE nodes (x float, y float, z float, membrane_id, element_id, channel_id)')
-
         # create indexes
         con.execute('CREATE UNIQUE INDEX node_index ON nodes (x, y, z)')
         con.execute('CREATE INDEX membrane_id_index ON nodes (membrane_id)')
         con.execute('CREATE INDEX element_id_index ON nodes (element_id)')
         con.execute('CREATE INDEX channel_id_index ON nodes (channel_id)')
-
         # insert values into table
         query = 'INSERT INTO nodes VALUES (?, ?, ?, ?, ?, ?)'
         con.executemany(query, zip(x, y, z, membrane_ids, element_ids, channel_ids))
 
 
 def create_displacements_table(con):
-
     with con:
-
         # create table
         query = '''
                 CREATE TABLE displacements (
@@ -215,15 +235,13 @@ def create_displacements_table(con):
                 )
                 '''
         con.execute(query)
-
         # create indexes
         con.execute('CREATE INDEX query_index ON displacements (frequency, x, y, z)')
 
 
-def update_progress(con, f):
-
+def update_progress(con, job_id):
     with con:
-        con.execute('UPDATE frequencies SET is_complete=1 WHERE frequency=?', (f,))
+        con.execute('UPDATE progress SET is_complete=1 WHERE job_id=?', [job_id,])
 
 
 def update_displacements_table(con, f, k, nodes, displacements):
