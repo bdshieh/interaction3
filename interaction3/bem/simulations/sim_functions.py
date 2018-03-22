@@ -3,6 +3,10 @@
 import numpy as np
 import itertools
 import pandas as pd
+from contextlib import closing
+import sqlite3 as sql
+import functools
+from itertools import repeat
 
 from .. core import bem_functions as bem
 
@@ -28,7 +32,7 @@ def connector_square_cmut_membrane(obj, **kwargs):
     dc_bias = kwargs['dc_bias']
 
     nodes_at_origin, nnodes, dx, dy, s_n, e_mask = generate_square_nodes(length_x, length_y, electrode_x, electrode_y,
-                                                                          nnodes_x, nnodes_y)
+                                                                         nnodes_x, nnodes_y)
 
     # apply rotations to nodes if specified
     if rotations is not None:
@@ -512,15 +516,57 @@ def create_jobs(*args, mode='zip', is_complete=None):
 
 ## DATABASE FUNCTIONS ##
 
+def open_sqlite_file(f):
+
+    @functools.wraps
+    def decorator(file, *args, **kwargs):
+
+        if isinstance(file, sql.Connection):
+            return f(file, *args, **kwargs)
+        else:
+            with closing(sql.connect(file)) as con:
+                return f(con, *args, **kwargs)
+
+    return decorator
+
+
+@open_sqlite_file
 def table_exists(con, name):
 
     query = '''SELECT count(*) FROM sqlite_master WHERE type='table' and name=?'''
     return con.execute(query, (name,)).fetchone()[0] != 0
 
 
+@open_sqlite_file
 def create_metadata_table(con, **kwargs):
 
     table = [[str(v) for v in list(kwargs.values())]]
     columns = list(kwargs.keys())
-
     pd.DataFrame(table, columns=columns, dtype=str).to_sql('metadata', con, if_exists='replace', index=False)
+
+
+@open_sqlite_file
+def create_progress_table(con, njobs):
+
+    with con:
+        # create table
+        con.execute('CREATE TABLE progress (job_id INTEGER PRIMARY KEY, is_complete boolean)')
+        # insert values
+        con.executemany('INSERT INTO progress (is_complete) VALUES (?)', repeat((False,), njobs))
+
+
+@open_sqlite_file
+def get_progress(con):
+
+    table = pd.read_sql('SELECT is_complete FROM progress SORT BY job_id', con)
+
+    is_complete = np.array(table).squeeze()
+    ijob = sum(is_complete)
+
+    return is_complete, ijob
+
+@open_sqlite_file
+def update_progress(con, job_id):
+
+    with con:
+        con.execute('UPDATE progress SET is_complete=1 WHERE job_id=?', [job_id,])

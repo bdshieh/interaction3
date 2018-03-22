@@ -31,9 +31,9 @@ def init_process(_write_lock):
     write_lock = _write_lock
 
 
-def process(args):
+def process(job):
 
-    file, f, k, sim, array = args
+    job_id, (file, f, k, sim, array) = job
 
     # deserialize json objects
     sim = abstract.loads(sim)
@@ -60,7 +60,7 @@ def process(args):
                 create_displacements_table(con)
 
             update_displacements_table(con, f, k, nodes, displacement)
-            update_progress(con, f)
+            sim.update_progress(con, f)
 
 
 def run_process(*args, **kwargs):
@@ -78,7 +78,7 @@ def main(**args):
     # get abstract objects from specification
     spec = args['spec']
 
-    simulation, object = ReceiveCrosstalk.get_objects_from_spec(*spec)
+    simulation, array = ReceiveCrosstalk.get_objects_from_spec(*spec)
 
     # set defaults with the following priority: command line arguments >> simulation object >> script defaults
     for k, v in simulation.items():
@@ -104,7 +104,6 @@ def main(**args):
     # create frequencies/wavenumbers
     fs = np.arange(f_start, f_stop + f_step, f_step)
     ks = 2 * np.pi * fs / c
-
     njobs = len(fs)
 
     # check for existing file
@@ -124,17 +123,10 @@ def main(**args):
                 # create database tables
                 sim.create_metadata_table(con, **args, **simulation)
                 create_frequencies_table(con, fs, ks)
-                create_progress_table(con, njobs)
+                sim.create_progress_table(con, njobs)
 
         elif response.lower() in ['c', 'continue']:
-
-            with closing(sql.connect(file)) as con:
-
-                query = 'SELECT frequency, wavenumber FROM frequencies WHERE is_complete=0'
-                table = pd.read_sql(query, con)
-
-            fs = np.array(table['frequency'])
-            ks = np.array(table['wavenumber'])
+            is_complete, ijob = sim.get_progress(file)
 
         else:
             raise Exception('Database already exists')
@@ -146,29 +138,26 @@ def main(**args):
         if not os.path.exists(file_dir):
             os.makedirs(file_dir)
 
-        # determine frequencies and wavenumbers
-        f_start, f_stop, f_step = freqs
-        fs = np.arange(f_start, f_stop + f_step, f_step)
-        ks = 2 * np.pi * fs / c
-
         # create database
         with closing(sql.connect(file)) as con:
 
             # create database tables
             sim.create_metadata_table(con, **args)
             create_frequencies_table(con, fs, ks)
+            sim.create_progress_table(con, njobs)
 
     try:
 
         # start multiprocessing pool and run process
         write_lock = multiprocessing.Lock()
         pool = multiprocessing.Pool(threads, initializer=init_process, initargs=(write_lock,))
-        jobs = sim.create_jobs(file, simulation, arrays, (field_pos, 100), (rotation_rules, 1), mode='product',
-                                    is_complete=is_complete)
-        # proc_args = [(file, f, k, abstract.dumps(simulation), abstract.dumps(array)) for f, k in zip(fs, ks)]
-        result = pool.imap_unordered(process, proc_args)
 
-        for r in tqdm(result, desc='Simulating', total=len(fs)):
+        simulation = abstract.dumps(simulation)
+        array = abstract.dumps(array)
+        jobs = sim.create_jobs(file, (fs, 1), (ks, 1), simulation, array, mode='zip', is_complete=is_complete)
+        result = pool.imap_unordered(process, jobs)
+
+        for r in tqdm(result, desc='Simulating', total=njobs, initial=ijob):
             pass
 
     except Exception as e:
@@ -191,14 +180,6 @@ def create_frequencies_table(con, fs, ks):
         con.execute('CREATE UNIQUE INDEX wavenumber_index ON frequencies (wavenumber)')
         # insert values into table
         con.executemany('INSERT INTO frequencies VALUES (?, ?)', zip(fs, ks))
-
-
-def create_progress_table(con, njobs):
-    with con:
-        # create table
-        con.execute('CREATE TABLE progress (job_id INTEGER PRIMARY KEY, is_complete boolean)')
-        # insert values
-        con.executemany('INSERT INTO progress (is_complete) VALUES (?)', repeat((False,), njobs))
 
 
 def create_nodes_table(con, nodes, membrane_ids, element_ids, channel_ids):
@@ -237,11 +218,6 @@ def create_displacements_table(con):
         con.execute(query)
         # create indexes
         con.execute('CREATE INDEX query_index ON displacements (frequency, x, y, z)')
-
-
-def update_progress(con, job_id):
-    with con:
-        con.execute('UPDATE progress SET is_complete=1 WHERE job_id=?', [job_id,])
 
 
 def update_displacements_table(con, f, k, nodes, displacements):

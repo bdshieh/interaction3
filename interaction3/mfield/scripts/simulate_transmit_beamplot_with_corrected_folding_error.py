@@ -33,9 +33,9 @@ def init_process(_write_lock):
     write_lock = _write_lock
 
 
-def process(args):
+def process(job):
 
-    job_id, (file, sim, arrays, field_pos, rotation_rule) = args
+    job_id, (file, sim, arrays, field_pos, rotation_rule) = job
 
     rotation_rule = rotation_rule[0] # remove enclosing list
 
