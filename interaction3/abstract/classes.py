@@ -16,20 +16,40 @@ import functools
 SCHEMA_FILENAME = 'base-schema-1.3.json' # relative path to schema json file
 
 
-def memoize(f):
+# def memoize(f):
+#     '''
+#     Class memoization using json serialization as the key and deepcopy.
+#     '''
+#     memo = dict()
+#
+#     @functools.wraps(f)
+#     def decorator(*args, **kwargs):
+#
+#         key = json.dumps((args, kwargs))
+#
+#         if key not in memo:
+#             memo[key] = f(*args, **kwargs)
+#         return deepcopy(memo[key])
+#
+#     return decorator
+
+
+def memoize(cls):
     '''
     Class memoization using json serialization as the key and deepcopy.
     '''
     memo = dict()
 
-    @functools.wraps(f)
-    def decorator(*args, **kwargs):
+    class decorator(cls):
 
-        key = json.dumps((args, kwargs))
+        def __call__(self, *args, **kwargs):
 
-        if key not in memo:
-            memo[key] = f(*args, **kwargs)
-        return deepcopy(memo[key])
+            key = json.dumps((args, kwargs))
+
+            if key not in memo:
+                memo[key] = cls.__call__(*args, **kwargs)
+
+            return deepcopy(memo[key])
 
     return decorator
 

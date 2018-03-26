@@ -3,7 +3,6 @@ import numpy as np
 import multiprocessing
 import os
 import sqlite3 as sql
-import pandas as pd
 from itertools import repeat
 from contextlib import closing
 from tqdm import tqdm
@@ -33,14 +32,18 @@ def init_process(_write_lock):
 
 def process(job):
 
-    job_id, (file, f, k, sim, array) = job
+    job_id, (file, f, k, simulation, array) = job
+
+    # remove enclosing lists
+    f = f[0]
+    k = k[0]
 
     # deserialize json objects
-    sim = abstract.loads(sim)
+    simulation = abstract.loads(simulation)
     array = abstract.loads(array)
 
-    sim['frequency'] = f
-    kwargs, meta = ReceiveCrosstalk.connector(sim, array)
+    simulation['frequency'] = f
+    kwargs, meta = ReceiveCrosstalk.connector(simulation, array)
 
     simulation = ReceiveCrosstalk(**kwargs)
     simulation.solve()
@@ -60,7 +63,7 @@ def process(job):
                 create_displacements_table(con)
 
             update_displacements_table(con, f, k, nodes, displacement)
-            sim.update_progress(con, f)
+            sim.update_progress(con, job_id)
 
 
 def run_process(*args, **kwargs):
@@ -105,11 +108,12 @@ def main(**args):
     fs = np.arange(f_start, f_stop + f_step, f_step)
     ks = 2 * np.pi * fs / c
     njobs = len(fs)
+    is_complete = None
+    ijob = 0
 
     # check for existing file
     if os.path.isfile(file):
 
-        # con = sql.connect(file)
         response = input('File ' + str(file) + ' already exists.\n' +
                          'Continue (c), overwrite (o), or do nothing (any other key)?')
 
@@ -121,7 +125,7 @@ def main(**args):
             with closing(sql.connect(file)) as con:
 
                 # create database tables
-                sim.create_metadata_table(con, **args, **simulation)
+                sim.create_metadata_table(con, **args)
                 create_frequencies_table(con, fs, ks)
                 sim.create_progress_table(con, njobs)
 
@@ -239,18 +243,12 @@ if __name__ == '__main__':
 
     import argparse
 
-    # default arguments
-    nthreads = multiprocessing.cpu_count()
-    freqs = 50e3, 50e6, 50e3
-    file = None
-    specification = None
-
     # define and parse arguments
     parser = argparse.ArgumentParser()
-    parser.add_argument('file', nargs='?', default=file)
-    parser.add_argument('-s', '--specification', nargs='+', default=specification)
-    parser.add_argument('-t', '--threads', type=int, default=nthreads)
-    parser.add_argument('-f', '--freqs', nargs=3, type=float, default=freqs)
+    parser.add_argument('file', nargs='?')
+    parser.add_argument('-s', '--spec', nargs='+')
+    parser.add_argument('-t', '--threads', type=int)
+    parser.add_argument('-f', '--freqs', nargs=3, type=float)
 
     args = vars(parser.parse_args())
     main(**args)

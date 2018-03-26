@@ -518,13 +518,12 @@ def create_jobs(*args, mode='zip', is_complete=None):
 
 def open_sqlite_file(f):
 
-    @functools.wraps
-    def decorator(file, *args, **kwargs):
+    def decorator(firstarg, *args, **kwargs):
 
-        if isinstance(file, sql.Connection):
-            return f(file, *args, **kwargs)
+        if isinstance(firstarg, sql.Connection):
+            return f(firstarg, *args, **kwargs)
         else:
-            with closing(sql.connect(file)) as con:
+            with closing(sql.connect(firstarg)) as con:
                 return f(con, *args, **kwargs)
 
     return decorator

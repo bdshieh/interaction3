@@ -160,7 +160,7 @@ class TransmitCrosstalk(object):
         for obj in spec:
             if isinstance(obj, abstract.Array):
                 array = obj
-            elif isinstance(obj, abstract.BemArrayTransmitSimulation):
+            elif isinstance(obj, abstract.BemSimulation):
                 simulation = obj
 
         return simulation, array
