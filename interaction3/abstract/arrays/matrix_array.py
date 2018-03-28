@@ -91,7 +91,7 @@ def init(**kwargs):
             # construct membrane
             m = SquareCmutMembrane(**mem_properties)
             m['id'] = i * len(mem_pos) + j
-            m['position'] = position=(epos + mpos).tolist()
+            m['position'] = (epos + mpos).tolist()
             membranes.append(m)
             # membranes.append(SquareCmutMembrane(id=(i * len(mem_pos) + j),
             #                                     position=(epos + mpos).tolist(),

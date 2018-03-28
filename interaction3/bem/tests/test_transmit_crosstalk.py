@@ -9,6 +9,7 @@ simulation = abstract.BemSimulation(frequency=1e6,
                                     density=1000,
                                     sound_speed=1500,
                                     max_level=5,
+                                    tolerance=0.001,
                                     bounding_box=[-1e-3, -1e-3, 1e-3, 1e-3],
                                     orders_db='./orders_dims_0.0020_0.0020.db',
                                     translations_db='./translations_dims_0.0020_0.0020.db')

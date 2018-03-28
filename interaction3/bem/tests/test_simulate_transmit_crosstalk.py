@@ -16,13 +16,13 @@ simulation = abstract.BemSimulation(freqs=[50e3, 5e6, 50e3],
                                     translations_db='./translations_dims_0.0020_0.0020.db')
 
 abstract.dump((simulation, array), 'test_spec.json', mode='w')
-file = 'test.db'
+file = 'transmit_test.db'
 if os.path.isfile(file):
     os.remove(file)
 
 command = '''
           python -m interaction3.bem.scripts.simulate_transmit_crosstalk
-          test.db
+          transmit_test.db
           -s test_spec.json
           '''
 subprocess.run(command.split())
