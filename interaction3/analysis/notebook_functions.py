@@ -19,6 +19,7 @@ import ipywidgets as widgets
 from IPython.display import display, HTML, Markdown
 import tabulate
 from mpl_toolkits import axes_grid1
+from tqdm import tqdm_notebook as tqdm
 
 colors = plt.rcParams['axes.prop_cycle'].by_key()['color']
 blue, orange, green, red, purple, brown, pink, olive, yellow, cyan = colors
@@ -136,6 +137,37 @@ def _file_exists(file):
     return os.path.isfile(file)
 
 
+def meshview(v1, v2, v3, mode='cartesian', as_list=True):
+
+    if mode.lower() in ('cart', 'cartesian', 'rect'):
+
+        x, y, z = np.meshgrid(v1, v2, v3, indexing='ij')
+
+    elif mode.lower() in ('spherical', 'sphere', 'polar'):
+
+        r, theta, phi = np.meshgrid(v1, v2, v3, indexing='ij')
+
+        x = r * np.cos(theta) * np.sin(phi)
+        y = r * np.sin(theta) * np.sin(phi)
+        z = r * np.cos(phi)
+
+    elif mode.lower() in ('sector', 'sec'):
+
+        r, py, px = np.meshgrid(v1, v2, v3, indexing='ij')
+
+        px = -px
+        pyp = np.arctan(np.cos(px) * np.sin(py) / np.cos(py))
+
+        x = r * np.sin(pyp)
+        y = -r * np.cos(pyp) * np.sin(px)
+        z = r * np.cos(px) * np.cos(pyp)
+
+    if as_list:
+        return np.c_[x.ravel(order='F'), y.ravel(order='F'), z.ravel(order='F')]
+    else:
+        return x, y, z
+    
+    
 def interpolate_surfaces(meminfo, freqs, f, grid=(20,20)):
 
     i = np.argmin(np.abs(f - freqs))
