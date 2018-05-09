@@ -21,9 +21,9 @@ def _time_beamform(rfdata, delays, window, channel_mask, apodization, sample_fre
 
         # use floor if resampling to keep windowing logic simple
         sample_delays = np.floor(delays * sample_frequency).astype(int)
-        resample_delays = np.round(delays * sample_frequency * resample).astype(int)
+        resample_delays = np.floor(delays * sample_frequency * resample).astype(int)
         resample_window = winhalf * resample * 2 + 1
-        bfdata = np.zeros((npos, window * resample, nframes))
+        bfdata = np.zeros((npos, resample_window, nframes))
     else:
         sample_delays = np.round(delays * sample_frequency).astype(int)
         bfdata = np.zeros((npos, window, nframes))
@@ -52,7 +52,7 @@ def _time_beamform(rfdata, delays, window, channel_mask, apodization, sample_fre
                 if not channel_mask[ch]:
                     continue
 
-                delay = sd[ch] + window - winhalf # account for zero-padding
+                delay = sd[ch] + window - winhalf  # account for zero-padding
                 window_rf = rfdata[delay:(delay + window), ch, :]
 
                 if resample > 1:
@@ -71,8 +71,43 @@ def _time_beamform(rfdata, delays, window, channel_mask, apodization, sample_fre
     else:
 
         for frame in range(nframes):
+
             for pos in range(npos):
+
+                sd = sample_delays[pos, :, frame]
+                valid_delay = (sd <= (nsamples + winhalf)) & (sd >= -(winhalf + 1))
+
+                if not np.any(valid_delay):
+                    continue
+
+                if resample > 1:
+                    rsd = resample_delays[pos, :, frame]
+                    bfsig = np.zeros((resample_window, nframes))
+                else:
+                    bfsig = np.zeros((window, nframes))
+
                 for ch in range(nchannels):
-                    pass
+
+                    if not valid_delay[ch]:
+                        continue
+
+                    if not channel_mask[ch]:
+                        continue
+
+                    delay = sd[ch] + window - winhalf  # account for zero-padding
+                    window_rf = rfdata[delay:(delay + window), ch, frame]
+
+                    if resample > 1:
+
+                        resample_rf = signal.resample(window_rf, window * resample, axis=0)
+                        start = rsd[ch] - (resample * sd[ch])
+                        rf = resample_rf[start:(start + resample_window), frame]
+                    else:
+
+                        rf = window_rf
+
+                    bfsig += apodization[ch] * rf
+
+                bfdata[pos, :, frame] = bfsig
 
     return bfdata
