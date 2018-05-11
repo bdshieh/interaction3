@@ -7,12 +7,15 @@ import scipy as sp
 from scipy.spatial.distance import cdist as distance
 import attr
 
-from engines import _time_beamform
+from . engines import _time_beamform
 
 
 def _rfdata_converter(value):
+
     if value.ndim == 2:
         return value[..., None]
+    else:
+        return value
 
 
 def _window_converter(value):
@@ -34,11 +37,11 @@ class Beamformer(object):
     window = attr.ib(init=True, converter=_window_converter, default=51)
     sample_frequency = attr.ib(init=True, default=40e6)
     sound_speed = attr.ib(init=True, default=1540)
-    apodization = attr.ib(init=True)
-    channel_mask = attr.ib(init=True)
     t0 = attr.ib(init=True, default=0)
     resample = attr.ib(init=True, default=1)
     chunksize = attr.ib(init=True, default=100)
+    apodization = attr.ib(init=True)
+    channel_mask = attr.ib(init=True)
 
     result = attr.ib(init=False, default=attr.Factory(dict))
 
@@ -83,19 +86,6 @@ class Beamformer(object):
         nsamples, nchannels, nframes = rfdata.shape
         npos, _ = field_pos.shape
 
-        # resample data
-        # if resample != 1:
-        #     rfdata = sp.signal.resample(rfdata, nsamples * resample)
-        #     nsamples = rfdata.shape[0]
-
-        # select beamforming engine
-        # if _ENGINES_PYX_PRESENT:
-        #     engine = engines._time_beamform_engine
-        #     chmask = chmask.astype(np.int32)
-        #     apod = apod.astype(np.float64)
-        # else:
-        #     engine = _time_beamform_engine
-
         # pad data
         pad_width = ((window, window), (0, 0), (0, 0))
         rfdata = np.pad(rfdata, pad_width, mode='constant')
@@ -110,11 +100,14 @@ class Beamformer(object):
                 angles = [0,]
 
             rad_angles = np.deg2rad(angles)
-            normals = np.c_[np.cos(rad_angles), np.zeros(len(rad_angles)), np.sin(rad_angles)]
+            normals = np.c_[np.sin(rad_angles), np.zeros(len(rad_angles)), np.cos(rad_angles)]
             r = field_pos - transmit_pos
             transmit_delays = np.abs(np.dot(r, normals.T)) / sound_speed
             transmit_delays = transmit_delays[:, None, :]
 
+            r = receive_pos - transmit_pos
+            np.dot(r, normals.T)
+            
         else:
 
             if transmit_pos is None: # no transmit delays (assume receive only)

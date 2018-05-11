@@ -84,7 +84,7 @@ def _time_beamform(rfdata, delays, window, channel_mask, apodization, sample_fre
                     rsd = resample_delays[pos, :, frame]
                     bfsig = np.zeros((resample_window, nframes))
                 else:
-                    bfsig = np.zeros((window, nframes))
+                    bfsig = np.zeros(window)
 
                 for ch in range(nchannels):
 

@@ -76,14 +76,14 @@ def concatenate_with_padding(rf_data, t0s, fs, axis=-1):
 
     mint0 = float(min(t0s))
     frontpads = [int(np.ceil((t - mint0) * fs)) for t in t0s]
-    maxlen = max([fpad + rf.shape[1] for fpad, rf in zip(frontpads, rf_data)])
-    backpads = [maxlen - (fpad + rf.shape[1]) for fpad, rf in zip(frontpads, rf_data)]
+    maxlen = max([fpad + rf.shape[0] for fpad, rf in zip(frontpads, rf_data)])
+    backpads = [maxlen - (fpad + rf.shape[0]) for fpad, rf in zip(frontpads, rf_data)]
 
     new_data = list()
 
     for rf, fpad, bpad in zip(rf_data, frontpads, backpads):
 
-        new_rf = np.pad(rf, ((0,0), (fpad, bpad)), mode='constant')
+        new_rf = np.pad(rf, ((fpad, bpad), (0, 0)), mode='constant')
         new_data.append(new_rf)
 
     if axis == 2:

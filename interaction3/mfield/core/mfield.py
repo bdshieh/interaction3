@@ -31,7 +31,7 @@ class MField(object):
 
     def __del__(self):
 
-        self.field_end() # end FIELD II
+        # self.field_end() # end FIELD II
         self._mateng.quit() # shutdown MATLAB engine
 
     def _numpy_to_mat(self, array, orient='row'):
