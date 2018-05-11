@@ -107,7 +107,7 @@ class Beamformer(object):
 
             r = receive_pos - transmit_pos
             np.dot(r, normals.T)
-            
+
         else:
 
             if transmit_pos is None: # no transmit delays (assume receive only)
