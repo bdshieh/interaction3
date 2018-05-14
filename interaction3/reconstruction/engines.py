@@ -82,7 +82,8 @@ def _time_beamform(rfdata, delays, window, channel_mask, apodization, sample_fre
 
                 if resample > 1:
                     rsd = resample_delays[pos, :, frame]
-                    bfsig = np.zeros((resample_window, nframes))
+                    # bfsig = np.zeros((resample_window, nframes))
+                    bfsig = np.zeros(resample_window)
                 else:
                     bfsig = np.zeros(window)
 
@@ -101,7 +102,7 @@ def _time_beamform(rfdata, delays, window, channel_mask, apodization, sample_fre
 
                         resample_rf = signal.resample(window_rf, window * resample, axis=0)
                         start = rsd[ch] - (resample * sd[ch])
-                        rf = resample_rf[start:(start + resample_window), frame]
+                        rf = resample_rf[start:(start + resample_window)]
                     else:
 
                         rf = window_rf

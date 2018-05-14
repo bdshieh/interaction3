@@ -42,6 +42,7 @@ class Beamformer(object):
     chunksize = attr.ib(init=True, default=100)
     apodization = attr.ib(init=True)
     channel_mask = attr.ib(init=True)
+    normalize_delays = attr.ib(init=True, default=True)
 
     result = attr.ib(init=False, default=attr.Factory(dict))
 
@@ -82,6 +83,7 @@ class Beamformer(object):
         t0 = self.t0
         channel_mask = self.channel_mask
         apodization = self.apodization
+        normalize_delays = self.normalize_delays
 
         nsamples, nchannels, nframes = rfdata.shape
         npos, _ = field_pos.shape
@@ -105,8 +107,12 @@ class Beamformer(object):
             transmit_delays = np.abs(np.dot(r, normals.T)) / sound_speed
             transmit_delays = transmit_delays[:, None, :]
 
-            r = receive_pos - transmit_pos
-            np.dot(r, normals.T)
+            if normalize_delays:
+
+                r = receive_pos - transmit_pos
+                pw_delay = np.dot(r, normals.T) / sound_speed
+                correction = np.min(pw_delay, axis=0)[None, None, :]
+                transmit_delays += correction
 
         else:
 

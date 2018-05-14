@@ -7,11 +7,15 @@ from matplotlib import pyplot as plt
 from interaction3.reconstruction.tests import sim_functions as sim
 from interaction3.reconstruction.beamforming import Beamformer
 
-filename = 'test_rf_data.npz'
+filename = 'test_rf_data_v2.npz'
+nelements = 32
+pitch = 300e-6
+angles = np.linspace(-40, 40, 17)
+
 xx, yy, zz = np.mgrid[-0.02:0.02:81j, 0:1:1j, 0.001:0.041:81j]
 field_pos = np.c_[xx.ravel(), yy.ravel(), zz.ravel()]
 
-xv, yv, zv = np.linspace(0, 15 * 102e-6, 16) - 15 * 102e-6 / 2, 0, 0
+xv, yv, zv = np.linspace(0, (nelements - 1) * pitch, nelements) - (nelements - 1) * pitch / 2, 0, 0
 xx, yy, zz = np.meshgrid(xv, yv, zv)
 array_pos = np.c_[xx.ravel(), yy.ravel(), zz.ravel()]
 
@@ -31,12 +35,15 @@ def test_planewave_beamformer():
     kwargs['field_pos'] = field_pos
     kwargs['rfdata'] = rfdata
     kwargs['planewave'] = True
-    kwargs['resample'] = 10
+    kwargs['resample'] = 2
 
     bf = Beamformer(**kwargs)
     bfdata = bf.run()
     envdata = sim.envelope(bfdata, axis=1)
     imgdata = np.max(envdata, axis=1).reshape((81, 81))
+
+    plt.figure()
+    plt.imshow(imgdata)
 
     return bfdata, imgdata
 
@@ -56,12 +63,16 @@ def test_synthetic_beamformer():
     kwargs['field_pos'] = field_pos
     kwargs['rfdata'] = rfdata
     kwargs['planewave'] = False
-    kwargs['resample'] = 1
+    kwargs['resample'] = 2
 
     bf = Beamformer(**kwargs)
     bfdata = bf.run()
-    envdata = sim.envelope(bfdata, axis=1)
+    envdata = sim.envelope(np.sum(bfdata, axis=-1), axis=1)
+    # envdata = sim.envelope(bfdata, axis=1)
     imgdata = np.max(envdata, axis=1).reshape((81, 81, -1))
+
+    plt.figure()
+    plt.imshow(imgdata[..., 0])
 
     return bfdata, imgdata
 
@@ -81,12 +92,24 @@ def test_angular_beamformer():
     kwargs['field_pos'] = field_pos
     kwargs['rfdata'] = rfdata
     kwargs['planewave'] = True
-    kwargs['angles'] = np.linspace(-40, 40, 9)
-    kwargs['resample'] = 1
+    kwargs['angles'] = angles
+    kwargs['resample'] = 2
+    kwargs['normalize_delays'] = True
 
     bf = Beamformer(**kwargs)
     bfdata = bf.run()
-    envdata = sim.envelope(bfdata, axis=1)
+    envdata = sim.envelope(np.sum(bfdata, axis=-1), axis=1)
+    # envdata = sim.envelope(bfdata, axis=1)
     imgdata = np.max(envdata, axis=1).reshape((81, 81, -1))
 
+    plt.figure()
+    plt.imshow(imgdata[..., 0])
+
     return bfdata, imgdata
+
+
+if __name__ == '__main__':
+
+    test_planewave_beamformer()
+    test_synthetic_beamformer()
+    test_angular_beamformer()
