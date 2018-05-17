@@ -10,7 +10,7 @@ from interaction3.reconstruction.beamforming import Beamformer
 filename = 'test_rf_data_v2.npz'
 nelements = 32
 pitch = 300e-6
-angles = np.linspace(-40, 40, 17)
+angles = np.linspace(-5, 5, 21)
 
 xx, yy, zz = np.mgrid[-0.02:0.02:81j, 0:1:1j, 0.001:0.041:81j]
 field_pos = np.c_[xx.ravel(), yy.ravel(), zz.ravel()]
@@ -27,7 +27,7 @@ def test_planewave_beamformer():
         t0 = file['planewave_t0']
 
     kwargs = dict()
-    kwargs['sample_frequency'] = 100e6
+    kwargs['sample_frequency'] = 40e6
     kwargs['t0'] = t0
     kwargs['window'] = 101
     kwargs['transmit_pos'] = [0, 0, 0]
@@ -35,7 +35,7 @@ def test_planewave_beamformer():
     kwargs['field_pos'] = field_pos
     kwargs['rfdata'] = rfdata
     kwargs['planewave'] = True
-    kwargs['resample'] = 2
+    kwargs['resample'] = 20
 
     bf = Beamformer(**kwargs)
     bfdata = bf.run()
@@ -110,6 +110,7 @@ def test_angular_beamformer():
 
 if __name__ == '__main__':
 
-    test_planewave_beamformer()
-    test_synthetic_beamformer()
-    test_angular_beamformer()
+    pass
+    # test_planewave_beamformer()
+    # test_synthetic_beamformer()
+    # test_angular_beamformer()

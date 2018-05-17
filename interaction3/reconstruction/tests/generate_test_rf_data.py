@@ -6,7 +6,7 @@ from interaction3.reconstruction.tests import sim_functions as sim
 
 
 
-fs = 100e6
+fs = 40e6
 c = 1540
 use_att = True
 att = 0
@@ -15,7 +15,7 @@ att_f0 = 1e6
 excitation_fc = 5e6
 excitation_bw = 4e6
 field_pos = np.array([0, 0, 0.02])
-angles = np.linspace(-40, 40, 17)
+angles = np.linspace(-5, 5, 21)
 nelements = 32
 pitch = 300e-6
 kerf = 112e-6
@@ -59,5 +59,39 @@ angular_rf, angular_t0 = sim.concatenate_with_padding(angular_rf, angular_t0, fs
 np.savez('test_rf_data_v2.npz', pulse=pulse, fs=fs, planewave_rf=planewave_rf, planewave_t0=planewave_t0,
          synthetic_rf=synthetic_rf, synthetic_t0=synthetic_t0, angular_rf=angular_rf, angular_t0=angular_t0)
 
-
-field.field_end()
+# xx = 3000 * np.sin(np.deg2rad(-10))
+# yy = 0
+# zz = 3000 * np.cos(np.deg2rad(-10))
+#
+# field.xdc_focus(array, np.array([0]), np.array([xx, yy, zz]))
+#
+# xx, yy, zz = np.mgrid[-0.01:0.01:41j, 0:1:1j, 0.001:0.031:61j]
+# field_pos = np.c_[xx.ravel(), yy.ravel(), zz.ravel()]
+# p, t0 = field.calc_hp(array, field_pos)
+# p = p.reshape((-1, 41, 61))
+# penv = sim.envelope(p, axis=0)
+# plog = 20 * np.log10(penv / np.max(penv))
+# plog[plog < -60] = -60
+#
+# field.field_end()
+#
+# from matplotlib import pyplot as plt
+# import time
+#
+#
+# def play():
+#
+#     # vmin, vmax = 0, np.max(penv)
+#     vmin, vmax = -60, 0
+#
+#     fig = plt.figure()
+#     ax = fig.add_subplot(111)
+#     im = ax.imshow(plog[0, ...], vmin=vmin, vmax=vmax, interpolation='none')
+#
+#     for i in range(plog.shape[0]):
+#
+#         im.set_data(plog[i, ...])
+#         fig.canvas.update()
+#         fig.canvas.flush_events()
+#         plt.draw()
+#         time.sleep(0.001)

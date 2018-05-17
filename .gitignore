@@ -81,3 +81,4 @@ ENV/
 !interaction3/abstract/*.json 
 *.m
 *.mex[aw]64
+*.npz
