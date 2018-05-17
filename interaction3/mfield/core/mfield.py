@@ -219,6 +219,9 @@ class MField(object):
 
         self._mateng.xdc_apodization(Th, times_mat, values_mat, nargout=0)
 
+    def xdc_quantization(self, Th, value):
+        self._mateng.xdc_quantization(Th, value, nargout=0)
+
     def xdc_2d_array(self):
         raise NotImplementedError
 

@@ -6,7 +6,7 @@ from interaction3.reconstruction.tests import sim_functions as sim
 
 
 
-fs = 40e6
+fs = 100e6
 c = 1540
 use_att = True
 att = 0
