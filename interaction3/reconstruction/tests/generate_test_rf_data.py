@@ -2,7 +2,7 @@
 
 import numpy as np
 from interaction3.mfield.core import mfield
-from interaction3.reconstruction.tests import sim_functions as sim
+from interaction3.reconstruction import sim_functions as sim
 
 
 
@@ -56,7 +56,7 @@ for a in angles:
 
 angular_rf, angular_t0 = sim.concatenate_with_padding(angular_rf, angular_t0, fs, axis=2)
 
-np.savez('test_rf_data_v2.npz', pulse=pulse, fs=fs, planewave_rf=planewave_rf, planewave_t0=planewave_t0,
+np.savez('test_rf_data.npz', pulse=pulse, fs=fs, planewave_rf=planewave_rf, planewave_t0=planewave_t0,
          synthetic_rf=synthetic_rf, synthetic_t0=synthetic_t0, angular_rf=angular_rf, angular_t0=angular_t0)
 
 # xx = 3000 * np.sin(np.deg2rad(-10))

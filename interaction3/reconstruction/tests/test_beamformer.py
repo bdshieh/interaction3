@@ -4,10 +4,10 @@ import numpy as np
 import scipy as sp
 from matplotlib import pyplot as plt
 
-from interaction3.reconstruction.tests import sim_functions as sim
-from interaction3.reconstruction.beamforming import Beamformer
+from interaction3.reconstruction import sim_functions as sim
+from interaction3.reconstruction import Beamformer
 
-filename = 'test_rf_data_v2.npz'
+filename = 'test_rf_data.npz'
 nelements = 32
 pitch = 300e-6
 angles = np.linspace(-5, 5, 21)
@@ -27,7 +27,7 @@ def test_planewave_beamformer():
         t0 = file['planewave_t0']
 
     kwargs = dict()
-    kwargs['sample_frequency'] = 40e6
+    kwargs['sample_frequency'] = 100e6
     kwargs['t0'] = t0
     kwargs['window'] = 101
     kwargs['transmit_pos'] = [0, 0, 0]
@@ -35,7 +35,7 @@ def test_planewave_beamformer():
     kwargs['field_pos'] = field_pos
     kwargs['rfdata'] = rfdata
     kwargs['planewave'] = True
-    kwargs['resample'] = 20
+    kwargs['resample'] = 8
 
     bf = Beamformer(**kwargs)
     bfdata = bf.run()
@@ -63,7 +63,7 @@ def test_synthetic_beamformer():
     kwargs['field_pos'] = field_pos
     kwargs['rfdata'] = rfdata
     kwargs['planewave'] = False
-    kwargs['resample'] = 2
+    kwargs['resample'] = 8
 
     bf = Beamformer(**kwargs)
     bfdata = bf.run()
@@ -93,7 +93,7 @@ def test_angular_beamformer():
     kwargs['rfdata'] = rfdata
     kwargs['planewave'] = True
     kwargs['angles'] = angles
-    kwargs['resample'] = 2
+    kwargs['resample'] = 1
     kwargs['normalize_delays'] = True
 
     bf = Beamformer(**kwargs)
@@ -104,13 +104,15 @@ def test_angular_beamformer():
 
     plt.figure()
     plt.imshow(imgdata[..., 0])
+    plt.show()
 
     return bfdata, imgdata
 
 
 if __name__ == '__main__':
 
-    pass
-    # test_planewave_beamformer()
-    # test_synthetic_beamformer()
+    # pass
+    test_planewave_beamformer()
+    test_synthetic_beamformer()
     # test_angular_beamformer()
+    plt.show()

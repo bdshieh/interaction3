@@ -24,6 +24,12 @@ ext_modules = [
               sources = ['interaction3/bem/core/fma_functions.pyx'],
               include_dirs = [np.get_include()],
               language=_LANGUAGE
+    ),
+    Extension(name = 'interaction3.reconstruction.engines_cy',
+              sources = ['interaction3/reconstruction/engines_cy.pyx'],
+              include_dirs = [np.get_include()],
+              language = _LANGUAGE
+
     )
 ]
 

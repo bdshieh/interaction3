@@ -22,6 +22,7 @@ sql.register_adapter(np.int32, int)
 defaults = dict()
 defaults['threads'] = multiprocessing.cpu_count()
 
+
 ## PROCESS FUNCTIONS ##
 
 def init_process(_write_lock):
