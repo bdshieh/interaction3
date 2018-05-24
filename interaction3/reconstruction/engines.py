@@ -1,3 +1,7 @@
+"""
+
+"""
+
 ## interaction3 / reconstruction / engines.py
 
 __all__ = ['time_beamform', 'freq_beamform']
@@ -16,16 +20,21 @@ if not _ENGINES_CY_PRESENT:
 
 
     def time_beamform(rfdata, delays, window, fs, channel_mask, apodization):
-        '''Time-domain beamformer.
+        """
 
-        :param ndarray rfdata: 3D array of RF data
-        :param ndarray delays: 3D array of delays
-        :param int window: number of samples in window
-        :param float fs: sampling frequency
-        :param ndarray channel_mask: channel mask
-        :param ndarray apodization: apodization
-        :return ndarray: 3D array of beamformed data
-        '''
+        Parameters
+        ----------
+        rfdata
+        delays
+        window
+        fs
+        channel_mask
+        apodization
+
+        Returns
+        -------
+
+        """
 
         # get data attribtues and beamforming options
         npos, _, ndelay_frames = delays.shape

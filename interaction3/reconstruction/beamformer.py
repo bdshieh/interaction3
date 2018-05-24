@@ -16,7 +16,7 @@ from . import sim_functions as sim
 def _process(job):
 
     job_id, (rfdata, t0, field_pos, transmit_pos, receive_pos, window, sound_speed, fs, planewave, angles,
-             normalize_delays, channel_mask, apodization) = job
+             normalize_delays, channel_mask, apodization, return_image) = job
 
     field_pos = np.array(field_pos)
     nsamples, nchannels, nframes = rfdata.shape
@@ -64,7 +64,13 @@ def _process(job):
     # run beamformer
     bfdata = time_beamform(rfdata, delays, window, fs, channel_mask, apodization)
 
-    return job_id, bfdata
+    if return_image:
+
+        imgdata = sim.envelope(np.sum(bfdata, axis=-1), axis=1)[:, window // 2]
+        return job_id, imgdata
+
+    else:
+        return job_id, bfdata
 
 
 def _rfdata_converter(value):
@@ -82,6 +88,9 @@ def _window_converter(value):
 
 @attr.s
 class Beamformer(object):
+    """
+
+    """
 
     rfdata = attr.ib(converter=_rfdata_converter)
     field_pos = attr.ib(converter=np.atleast_2d)
@@ -95,12 +104,12 @@ class Beamformer(object):
     sound_speed = attr.ib(default=1540)
     t0 = attr.ib(default=0)
     resample = attr.ib(default=1)
-    chunksize = attr.ib(default=100)
     apodization = attr.ib()
     channel_mask = attr.ib()
     normalize_delays = attr.ib(default=True)
-    max_ram = attr.ib(default=4)
+    ram_limit = attr.ib(default=0.5)
     threads = attr.ib(default=multiprocessing.cpu_count())
+    return_image = attr.ib(default=True)
 
     # result = attr.ib(init=False, default=attr.Factory(dict))
 
@@ -141,15 +150,16 @@ class Beamformer(object):
         channel_mask = self.channel_mask
         apodization = self.apodization
         normalize_delays = self.normalize_delays
-        max_ram = self.max_ram
+        ram_limit = self.ram_limit
         threads = self.threads
+        return_image = self.return_image
 
         nsamples, nchannels, nframes = rfdata.shape
         npos, _ = field_pos.shape
 
         # upsample data
         if resample > 1:
-            rfdata = sp.signal.resample(rfdata, rfdata.shape[0] * resample, axis=0)
+            rfdata = sp.signal.resample(rfdata, nsamples * resample, axis=0)
             fs = fs * resample
             window = (window - 1) // 2 * resample * 2 + 1
 
@@ -158,22 +168,23 @@ class Beamformer(object):
         rfdata = np.pad(rfdata, pad_width, mode='constant')
 
         # split field_pos into chunks to avoid excessive RAM usage when pre-calculating delays
-        njobs = int(np.ceil(npos * nchannels * 8 / 1024 / 1024 / 1024 / max_ram))
+        # njobs = int(np.ceil(npos * nchannels * nframes * 8 / 1024 / 1024 / 1024 / ram_limit))
+        njobs = int(np.ceil(npos * window * nframes * 8 / 1024 / 1024 / 1024 / ram_limit))
         chunksize = int(np.ceil(npos / njobs))
 
         # create jobs
         jobs = sim.create_jobs(rfdata, t0, (field_pos, chunksize), transmit_pos, receive_pos, window, sound_speed, fs,
-                               planewave, angles, normalize_delays, channel_mask, apodization, mode='zip')
+                               planewave, angles, normalize_delays, channel_mask, apodization, return_image, mode='zip')
 
         # create pool and run jobs
         pool = multiprocessing.Pool(threads)
-        bfdata = [None] * njobs
+        result = [None] * njobs
         results = pool.imap_unordered(_process, jobs)
 
         for job_id, r in tqdm(results, desc='Beamforming', total=njobs):
-            bfdata[job_id] = r
+            result[job_id] = r
 
-        return np.concatenate(bfdata, axis=0)
+        return np.concatenate(result, axis=0)
 
 
 if __name__ == '__main__':
