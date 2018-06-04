@@ -1,4 +1,4 @@
-## interaction3 / abstract / arrays / foldable_linear_array.py
+## interaction3 / arrays / foldable_linear.py
 
 import numpy as np
 
@@ -6,10 +6,9 @@ from interaction3.abstract import *
 
 
 # default parameters
-defaults = dict()
+defaults = {}
 
 # membrane properties
-
 defaults['length'] = [40e-6, 40e-6]
 defaults['electrode'] = [40e-6, 40e-6]
 defaults['nnodes'] = [9, 9]
@@ -25,10 +24,10 @@ defaults['ndiv'] = [2, 2]
 
 # array properties
 defaults['mempitch'] = [45e-6, 45e-6]
-defaults['nmem'] = [2, 2]
-defaults['elempitch'] = [100e-6, 100e-6]
-defaults['nelem'] = [7, 7]
-defaults['edge_buffer'] = 100e-6
+defaults['nmem'] = [1, 64]
+defaults['nelem'] = 48
+defaults['elempitch'] = 208e-6
+defaults['edge_buffer'] = 45e-6
 
 
 def init(**kwargs):
@@ -43,8 +42,8 @@ def init(**kwargs):
     electrode_x, electrode_y = kwargs['electrode']
     nnodes_x, nnodes_y = kwargs['nnodes']
     ndiv_x, ndiv_y = kwargs['ndiv']
-    nelem_x, nelem_y = kwargs['nelem']
-    elempitch_x, elempitch_y = kwargs['elempitch']
+    nelem = kwargs['nelem']
+    elempitch = kwargs['elempitch']
     edge_buffer = kwargs['edge_buffer']
 
     # membrane properties
@@ -66,7 +65,6 @@ def init(**kwargs):
     mem_properties['ndiv_x'] = ndiv_x
     mem_properties['ndiv_y'] = ndiv_y
 
-
     # calculate membrane positions
     xx, yy, zz = np.meshgrid(np.linspace(0, (nmem_x - 1) * mempitch_x, nmem_x),
                              np.linspace(0, (nmem_y - 1) * mempitch_y, nmem_y),
@@ -76,12 +74,12 @@ def init(**kwargs):
                                                            0]
 
     # calculate element positions
-    xx, yy, zz = np.meshgrid(np.linspace(0, (nelem_x - 1) * elempitch_x, nelem_x),
-                             np.linspace(0, (nelem_y - 1) * elempitch_y, nelem_y),
+    xx, yy, zz = np.meshgrid(np.linspace(0, (nelem - 1) * elempitch, nelem),
+                             0,
                              0)
-    elem_pos = np.c_[xx.ravel(), yy.ravel(), zz.ravel()] - [(nelem_x - 1) * elempitch_x / 2,
-                                                           (nelem_y - 1) * elempitch_y / 2,
-                                                           0]
+    elem_pos = np.c_[xx.ravel(), yy.ravel(), zz.ravel()] - [(nelem - 1) * elempitch / 2,
+                                                            0,
+                                                            0]
 
     # create arrays, bounding box and rotation points are hard-coded
     vertices = [[-1 / 2 * 1e-2, -1 / 3 * 1e-2, 0],
@@ -189,11 +187,11 @@ if __name__ == '__main__':
     parser.add_argument('--electrode', nargs=2, type=float)
     parser.add_argument('--nelem', type=int)
     parser.add_argument('--elempitch', type=int)
-    parser.add_argument('-d', '--dump-json', nargs='?', default=None)
+    parser.add_argument('-d', '--dump', nargs='?', default=None)
     parser.set_defaults(**defaults)
 
     args = vars(parser.parse_args())
-    filename = args.pop('dump_json')
+    filename = args.pop('dump')
 
     spec = init(**args)
     print(spec)

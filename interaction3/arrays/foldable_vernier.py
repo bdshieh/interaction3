@@ -1,4 +1,4 @@
-## interaction3 / abstract/ arrays/ foldable_vernier_array.py
+## interaction3 / arrays / foldable_vernier.py
 
 import numpy as np
 from scipy.spatial.distance import cdist as distance
@@ -7,11 +7,9 @@ from interaction3.abstract import *
 
 
 # default parameters
-defaults = dict()
+defaults = {}
 
 # membrane properties
-defaults['mempitch'] = [45e-6, 45e-6]
-defaults['nmem'] = [2, 2]
 defaults['length'] = [35e-6, 35e-6]
 defaults['electrode'] = [35e-6, 35e-6]
 defaults['nnodes'] = [9, 9]
@@ -26,10 +24,13 @@ defaults['att_mech'] = 0
 defaults['ndiv'] = [2, 2]
 
 # array properties
+defaults['mempitch'] = [45e-6, 45e-6]
+defaults['nmem'] = [2, 2]
 defaults['ntx'] = 25
 defaults['nrx'] = 25
 defaults['design_freq'] = 7e6
 defaults['sound_speed'] = 1500
+defaults['edge_buffer'] = 45e-6
 
 
 def init(**kwargs):
@@ -48,6 +49,7 @@ def init(**kwargs):
     electrode_x, electrode_y = kwargs['electrode']
     nnodes_x, nnodes_y = kwargs['nnodes']
     ndiv_x, ndiv_y = kwargs['ndiv']
+    edge_buffer = kwargs['edge_buffer']
 
     # calculated parameters
     p = 3
@@ -118,9 +120,11 @@ def init(**kwargs):
     x0, y0, _ = vertices[0]
     x1, y1, _ = vertices[2]
     xx, yy, zz = tx_pos.T
-    tx_mask = np.logical_and(np.logical_and(np.logical_and(xx >= x0, xx < x1), yy >= y0), yy < y1)
+    tx_mask = np.logical_and(np.logical_and(np.logical_and(xx >= (x0 + edge_buffer), xx < (x1 - edge_buffer)),
+                                         yy >= (y0 + edge_buffer)), yy < (y1 - edge_buffer))
     xx, yy, zz = rx_pos.T
-    rx_mask = np.logical_and(np.logical_and(np.logical_and(xx >= x0, xx < x1), yy >= y0), yy < y1)
+    rx_mask = np.logical_and(np.logical_and(np.logical_and(xx >= (x0 + edge_buffer), xx < (x1 - edge_buffer)),
+                                         yy >= (y0 + edge_buffer)), yy < (y1 - edge_buffer))
     array0 = _construct_array(0, np.array([-1.25e-3, 0, 0]), vertices, tx_pos[tx_mask, :], rx_pos[rx_mask, :], mem_pos,
                               mem_properties)
 
@@ -131,9 +135,11 @@ def init(**kwargs):
     x0, y0, _ = vertices[0]
     x1, y1, _ = vertices[2]
     xx, yy, zz = tx_pos.T
-    tx_mask = np.logical_and(np.logical_and(np.logical_and(xx >= x0, xx < x1), yy >= y0), yy < y1)
+    tx_mask = np.logical_and(np.logical_and(np.logical_and(xx >= (x0 + edge_buffer), xx < (x1 - edge_buffer)),
+                                         yy >= (y0 + edge_buffer)), yy < (y1 - edge_buffer))
     xx, yy, zz = rx_pos.T
-    rx_mask = np.logical_and(np.logical_and(np.logical_and(xx >= x0, xx < x1), yy >= y0), yy < y1)
+    rx_mask = np.logical_and(np.logical_and(np.logical_and(xx >= (x0 + edge_buffer), xx < (x1 - edge_buffer)),
+                                         yy >= (y0 + edge_buffer)), yy < (y1 - edge_buffer))
     array1 = _construct_array(1, np.array([0, 0, 0]), vertices, tx_pos[tx_mask, :], rx_pos[rx_mask, :], mem_pos,
                               mem_properties)
 
@@ -144,9 +150,11 @@ def init(**kwargs):
     x0, y0, _ = vertices[0]
     x1, y1, _ = vertices[2]
     xx, yy, zz = tx_pos.T
-    tx_mask = np.logical_and(np.logical_and(np.logical_and(xx >= x0, xx < x1), yy >= y0), yy < y1)
+    tx_mask = np.logical_and(np.logical_and(np.logical_and(xx >= (x0 + edge_buffer), xx < (x1 - edge_buffer)),
+                                         yy >= (y0 + edge_buffer)), yy < (y1 - edge_buffer))
     xx, yy, zz = rx_pos.T
-    rx_mask = np.logical_and(np.logical_and(np.logical_and(xx >= x0, xx < x1), yy >= y0), yy < y1)
+    rx_mask = np.logical_and(np.logical_and(np.logical_and(xx >= (x0 + edge_buffer), xx < (x1 - edge_buffer)),
+                                         yy >= (y0 + edge_buffer)), yy < (y1 - edge_buffer))
     array2 = _construct_array(2, np.array([1.25e-3, 0, 0]), vertices, tx_pos[tx_mask, :], rx_pos[rx_mask, :], mem_pos,
                               mem_properties)
 
@@ -176,9 +184,6 @@ def _construct_array(id, rotation_origin, vertices, tx_pos, rx_pos, mem_pos, mem
             m['id'] = mem_counter
             m['position'] = (e_pos + m_pos).tolist()
             membranes.append(m)
-            # membranes.append(SquareCmutMembrane(id=mem_counter,
-            #                                     position=(e_pos + m_pos).tolist(),
-            #                                     **mem_properties))
             mem_counter += 1
 
         # construct element
@@ -189,9 +194,14 @@ def _construct_array(id, rotation_origin, vertices, tx_pos, rx_pos, mem_pos, mem
         elements.append(elem)
         elem_counter += 1
 
+        if np.any(np.all(np.isclose(e_pos, rx_pos), axis=1)):
+            kind = 'both'
+        else:
+            kind = 'transmit'
+
         # construct channel
         ch = Channel(id=ch_counter,
-                     kind='transmit',
+                     kind=kind,
                      position=e_pos.tolist(),
                      elements=elements,
                      dc_bias=0,
@@ -203,6 +213,9 @@ def _construct_array(id, rotation_origin, vertices, tx_pos, rx_pos, mem_pos, mem
 
     for e_pos in rx_pos:
 
+        if np.any(np.all(np.isclose(e_pos, tx_pos), axis=1)):
+            continue
+
         membranes = []
         elements = []
 
@@ -213,9 +226,6 @@ def _construct_array(id, rotation_origin, vertices, tx_pos, rx_pos, mem_pos, mem
             m['id'] = mem_counter
             m['position'] = (e_pos + m_pos).tolist()
             membranes.append(m)
-            # membranes.append(SquareCmutMembrane(id=mem_counter,
-            #                                     position=(e_pos + m_pos).tolist(),
-            #                                     **mem_properties))
             mem_counter += 1
 
         # construct element
@@ -228,7 +238,7 @@ def _construct_array(id, rotation_origin, vertices, tx_pos, rx_pos, mem_pos, mem
 
         # construct channel
         ch = Channel(id=ch_counter,
-                     kind='transmit',
+                     kind='receive',
                      position=e_pos.tolist(),
                      elements=elements,
                      dc_bias=0,
@@ -262,11 +272,11 @@ if __name__ == '__main__':
     parser.add_argument('--ntx', type=int)
     parser.add_argument('--nrx', type=int)
     parser.add_argument('--design-frequency', type=float)
-    parser.add_argument('-d', '--dump-json', nargs='?', default=None)
+    parser.add_argument('-d', '--dump', nargs='?', default=None)
     parser.set_defaults(**defaults)
 
     args = vars(parser.parse_args())
-    filename = args.pop('dump_json')
+    filename = args.pop('dump')
 
     spec = init(**args)
     print(spec)

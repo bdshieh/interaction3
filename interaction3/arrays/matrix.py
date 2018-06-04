@@ -1,4 +1,4 @@
-## interaction3 / abstract/ arrays/ matrix_array.py
+## interaction3 / arrays / matrix.py
 
 import numpy as np
 
@@ -8,8 +8,6 @@ from interaction3.abstract import *
 defaults = dict()
 
 # membrane properties
-defaults['mempitch'] = [50e-6, 50e-6]
-defaults['nmem'] = [2, 2]
 defaults['length'] = [40e-6, 40e-6]
 defaults['electrode'] = [40e-6, 40e-6]
 defaults['nnodes'] = [9, 9]
@@ -24,6 +22,8 @@ defaults['att_mech'] = 0
 defaults['ndiv'] = [2, 2]
 
 # array properties
+defaults['mempitch'] = [50e-6, 50e-6]
+defaults['nmem'] = [2, 2]
 defaults['elempitch'] = [100e-6, 100e-6]
 defaults['nelem'] = [7, 7]
 
@@ -135,11 +135,11 @@ if __name__ == '__main__':
     parser.add_argument('-mempitch', '--mempitch', nargs=2, type=float)
     parser.add_argument('-nelem', '--nelem', nargs=2, type=int)
     parser.add_argument('-elempitch', '--elempitch', nargs=2, type=float)
-    parser.add_argument('-d', '--dump-json', nargs='?', default=None)
+    parser.add_argument('-d', '--dump', nargs='?', default=None)
     parser.set_defaults(**defaults)
 
     args = vars(parser.parse_args())
-    filename = args.pop('dump_json')
+    filename = args.pop('dump')
 
     spec = init(**args)
     print(spec)
