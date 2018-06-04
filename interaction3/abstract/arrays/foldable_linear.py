@@ -9,8 +9,6 @@ from interaction3.abstract import *
 defaults = dict()
 
 # membrane properties
-defaults['mempitch'] = [45e-6, 45e-6]
-defaults['nmem'] = [1, 64]
 defaults['length'] = [40e-6, 40e-6]
 defaults['electrode'] = [40e-6, 40e-6]
 defaults['nnodes'] = [9, 9]
@@ -25,6 +23,8 @@ defaults['att_mech'] = 0
 defaults['ndiv'] = [2, 2]
 
 # array properties
+defaults['mempitch'] = [45e-6, 45e-6]
+defaults['nmem'] = [1, 64]
 defaults['nelem'] = 48
 defaults['elempitch'] = 208e-6
 
