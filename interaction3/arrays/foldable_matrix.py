@@ -1,6 +1,7 @@
 ## interaction3 / arrays / foldable_matrix.py
 
 import numpy as np
+from scipy.spatial.distance import cdist as distance
 
 from interaction3.abstract import *
 
@@ -28,6 +29,7 @@ defaults['nmem'] = [2, 2]
 defaults['elempitch'] = [90e-6, 90e-6]
 defaults['nelem'] = [80, 80]
 defaults['edge_buffer'] = 45e-6
+defaults['taper_radius'] = 3.75e-3
 
 
 def init(**kwargs):
@@ -45,6 +47,7 @@ def init(**kwargs):
     nelem_x, nelem_y = kwargs['nelem']
     elempitch_x, elempitch_y = kwargs['elempitch']
     edge_buffer = kwargs['edge_buffer']
+    taper_radius = kwargs['taper_radius']
 
     # membrane properties
     mem_properties = dict()
@@ -82,23 +85,27 @@ def init(**kwargs):
                                                            (nelem_y - 1) * elempitch_y / 2,
                                                            0]
 
+    # taper transmit corner elements
+    dist = distance(elem_pos, np.array([[0, 0, 0]]))
+    mask = (dist <= taper_radius).squeeze()
+    elem_pos = elem_pos[mask, :]
+
     # create arrays, bounding box and rotation points are hard-coded
-    vertices = [[-1 / 2 * 1e-2, -1 / 3 * 1e-2, 0],
-                [-1 / 2 * 1e-2, 1 / 3 * 1e-2, 0],
-                [-1 / 6 * 1e-2, 1 / 3 * 1e-2, 0],
-                [-1 / 6 * 1e-2, -1 / 3 * 1e-2, 0]]
+    vertices = [[-3.75e-3, -3.75e-3, 0],
+                [-3.75e-3, 3.75e-3, 0],
+                [-1.25e-3, 3.75e-3, 0],
+                [-1.25e-3, -3.75e-3, 0]]
     x0, y0, _ = vertices[0]
     x1, y1, _ = vertices[2]
     xx, yy, zz = elem_pos.T
     mask = np.logical_and(np.logical_and(np.logical_and(xx >= (x0 + edge_buffer), xx < (x1 - edge_buffer)),
                                          yy >= (y0 + edge_buffer)), yy < (y1 - edge_buffer))
-    array0 = _construct_array(0, np.array([-1 / 6 * 1e-2, 0, 0]), vertices, elem_pos[mask, :], mem_pos,
-                              mem_properties)
+    array0 = _construct_array(0, np.array([-1.25e-3, 0, 0]), vertices, elem_pos[mask, :], mem_pos, mem_properties)
 
-    vertices = [[-1 / 6 * 1e-2, -1 / 3 * 1e-2, 0],
-                [-1 / 6 * 1e-2, 1 / 3 * 1e-2, 0],
-                [1 / 6 * 1e-2, 1 / 3 * 1e-2, 0],
-                [1 / 6 * 1e-2, -1 / 3 * 1e-2, 0]]
+    vertices = [[-1.25e-3, -3.75e-3, 0],
+                [-1.25e-3, 3.75e-3, 0],
+                [1.25e-3, 3.75e-3, 0],
+                [1.25e-3, -3.75e-3, 0]]
     x0, y0, _ = vertices[0]
     x1, y1, _ = vertices[2]
     xx, yy, zz = elem_pos.T
@@ -106,16 +113,16 @@ def init(**kwargs):
                                          yy >= (y0 + edge_buffer)), yy < (y1 - edge_buffer))
     array1 = _construct_array(1, np.array([0, 0, 0]), vertices, elem_pos[mask, :], mem_pos, mem_properties)
 
-    vertices = [[1 / 6 * 1e-2, -1 / 3 * 1e-2, 0],
-                [1 / 6 * 1e-2, 1 / 3 * 1e-2, 0],
-                [1 / 2 * 1e-2, 1 / 3 * 1e-2, 0],
-                [1 / 2 * 1e-2, -1 / 3 * 1e-2, 0]]
+    vertices = [[1.25e-3, -3.75e-3, 0],
+                [1.25e-3, 3.75e-3, 0],
+                [3.75e-3, 3.75e-3, 0],
+                [3.75e-3, -3.75e-3, 0]]
     x0, y0, _ = vertices[0]
     x1, y1, _ = vertices[2]
     xx, yy, zz = elem_pos.T
     mask = np.logical_and(np.logical_and(np.logical_and(xx >= (x0 + edge_buffer), xx < (x1 - edge_buffer)),
                                          yy >= (y0 + edge_buffer)), yy < (y1 - edge_buffer))
-    array2 = _construct_array(2, np.array([1 / 6 * 1e-2, 0, 0]), vertices, elem_pos[mask, :], mem_pos, mem_properties)
+    array2 = _construct_array(2, np.array([1.25e-3, 0, 0]), vertices, elem_pos[mask, :], mem_pos, mem_properties)
 
     return array0, array1, array2
 
