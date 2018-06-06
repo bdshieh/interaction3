@@ -28,20 +28,38 @@ defaults['mempitch'] = [45e-6, 45e-6]
 defaults['nmem'] = [2, 2]
 defaults['nelem'] = 25
 defaults['edge_buffer'] = 45e-6
+defaults['taper_radius'] = 7.5e-3
 
 
-def blackman_integral(n, N):
+def blackman_integral(r, R):
 
     # alpha = 0.16
     a0 = 0.42  # (1 - alpha) / 2
     a1 = 0.5  # 1 / 2
-    a2 = 0.8  # alpha / 2
+    a2 = 0.08  # alpha / 2
 
-    r0 = a0 * n
-    r1 = a1 * np.sin(2 * np.pi * n / (N - 1)) * (N - 1) / (2 * np.pi)
-    r2 = a2 * np.sin(4 * np.pi * n / (N - 1)) * (N - 1) / (4 * np.pi)
+    b0 = a0 * r ** 2 / 2
+    b1 = a1 * R / (4 * np.pi ** 2) * (2 * np.pi * r * np.sin(2 * np.pi * r / R) + R * np.cos(2 * np.pi * r / R))
+    b2 = a2 * R / (16 * np.pi ** 2) * (4 * np.pi * r * np.sin(4 * np.pi * r / R) + R * np.cos(4 * np.pi * r / R))
 
-    return  r0 - r1 + r2
+    # b0 = a0 * n
+    # b1 = a1 * np.sin(2 * np.pi * n / (N - 1)) * (N - 1) / (2 * np.pi)
+    # b2 = a2 * np.sin(4 * np.pi * n / (N - 1)) * (N - 1) / (4 * np.pi)
+
+    return  b0 + b1 + b2
+
+from sympy import *
+
+def blackman_integral_sym(r, R):
+
+    b0 = 0.42 * r ** 2 / 2
+    b1 = 0.5 * R / (4 * pi ** 2) * (2 * pi * r * sin(2 * pi * r / R) + R * cos(2 * pi * r / R))
+    b2 = 0.08 * R / (16 * pi ** 2) * (4 * pi * r * sin(4 * pi * r / R) + R * cos(4 * pi * r / R))
+
+    return  b0 + b1 + b2
+
+r, R = symbols('r R')
+A = 0.42 - 0.5 * cos(2 * pi *(r / (2 *R) + 0.5)) + 0.08 * cos(4 * pi * (r / (2 * R) + 0.5))
 
 
 def init(**kwargs):
@@ -50,10 +68,7 @@ def init(**kwargs):
     for k, v in defaults.items():
         kwargs.setdefault(k, v)
 
-    sound_speed = kwargs['sound_speed']
-    design_freq = kwargs['design_freq']
-    ntx = kwargs['ntx']
-    nrx = kwargs['nrx']
+    nelem = kwargs['nelem']
     nmem_x, nmem_y = kwargs['nmem']
     mempitch_x, mempitch_y = kwargs['mempitch']
     length_x, length_y = kwargs['length']
@@ -61,9 +76,11 @@ def init(**kwargs):
     nnodes_x, nnodes_y = kwargs['nnodes']
     ndiv_x, ndiv_y = kwargs['ndiv']
     edge_buffer = kwargs['edge_buffer']
+    taper_radius = kwargs['taper_radius']
 
     # calculated parameters
     gr = np.pi * (np.sqrt(5) - 1)
+    a_eff = 2 * np.pi * (blackman_integral(taper_radius, taper_radius) - blackman_integral(0, taper_radius))
 
     # membrane properties
     mem_properties = dict()
@@ -93,19 +110,16 @@ def init(**kwargs):
                                                            0]
 
     # define transmit element centers
+    r_prev = 0
+    elem_pos = []
+    for n in nelem:
+
+        r =
     xx, yy, zz = np.meshgrid(np.linspace(0, (ntx - 1) * tx_pitch, ntx),
                              np.linspace(0, (ntx - 1) * tx_pitch, ntx),
                              0)
-    tx_pos = np.c_[xx.ravel(), yy.ravel(), zz.ravel()] - [(ntx - 1) * tx_pitch / 2,
+    elem_pos = np.c_[xx.ravel(), yy.ravel(), zz.ravel()] - [(ntx - 1) * tx_pitch / 2,
                                                           (ntx - 1) * tx_pitch / 2,
-                                                          0]
-
-    # define receive element centers
-    xx, yy, zz = np.meshgrid(np.linspace(0, (nrx - 1) * rx_pitch, nrx),
-                             np.linspace(0, (nrx - 1) * rx_pitch, nrx),
-                             0)
-    rx_pos = np.c_[xx.ravel(), yy.ravel(), zz.ravel()] - [(nrx - 1) * rx_pitch / 2,
-                                                          (nrx - 1) * rx_pitch / 2,
                                                           0]
 
     # taper transmit corner elements
