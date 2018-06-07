@@ -2,6 +2,7 @@
 
 import numpy as np
 from scipy.spatial.distance import cdist as distance
+from scipy.optimize import brentq
 
 from interaction3.abstract import *
 
@@ -31,38 +32,33 @@ defaults['edge_buffer'] = 45e-6
 defaults['taper_radius'] = 7.5e-3
 
 
-def blackman_integral(r, R):
+def blackman_functions(R):
 
-    # alpha = 0.16
-    a0 = 0.42  # (1 - alpha) / 2
-    a1 = 0.5  # 1 / 2
-    a2 = 0.08  # alpha / 2
+    cos = np.cos
+    sin = np.sin
+    pi = np.pi
 
-    b0 = a0 * r ** 2 / 2
-    b1 = a1 * R / (4 * np.pi ** 2) * (2 * np.pi * r * np.sin(2 * np.pi * r / R) + R * np.cos(2 * np.pi * r / R))
-    b2 = a2 * R / (16 * np.pi ** 2) * (4 * np.pi * r * np.sin(4 * np.pi * r / R) + R * np.cos(4 * np.pi * r / R))
+    integral = lambda r: (R ** 2 * (0.5 * cos(pi * r / R) + 0.02 * cos(2.0 * pi * r / R) - 0.52) + pi * R * r * (
+                0.5 * sin(pi * r / R) + 0.04 * sin(2.0 * pi * r / R)) + 0.21 * pi ** 2 * r ** 2) / pi ** 2
+    A_eff = (-1.0 * R ** 2 + 0.21 * pi ** 2 * R ** 2) / pi ** 2
 
-    # b0 = a0 * n
-    # b1 = a1 * np.sin(2 * np.pi * n / (N - 1)) * (N - 1) / (2 * np.pi)
-    # b2 = a2 * np.sin(4 * np.pi * n / (N - 1)) * (N - 1) / (4 * np.pi)
+    return integral, A_eff
 
-    return  b0 + b1 + b2
 
-from sympy import *
+def _get_symbolic_equations():
 
-def blackman_integral_sym(r, R):
+    import sympy
 
-    b0 = 0.42 * r ** 2 / 2
-    b1 = 0.5 * R / (4 * pi ** 2) * (2 * pi * r * sin(2 * pi * r / R) + R * cos(2 * pi * r / R))
-    b2 = 0.08 * R / (16 * pi ** 2) * (4 * pi * r * sin(4 * pi * r / R) + R * cos(4 * pi * r / R))
+    cos = sympy.cos
+    pi = sympy.pi
 
-    return  b0 + b1 + b2
+    r, R = sympy.symbols('r R')
+    A = 0.42 - 0.5 * cos(2 * pi *(r / (2 * R) + 0.5)) + 0.08 * cos(4 * pi * (r / (2 * R) + 0.5))
+    integral = sympy.simplify(sympy.integrate(A * r, (r, 0, r)))
+    A_eff = integral.subs(r, R)
 
-r, R = symbols('r R')
-A = 0.42 - 0.5 * cos(2 * pi *(r / (2 *R) + 0.5)) + 0.08 * cos(4 * pi * (r / (2 * R) + 0.5))
-integrand = A.subs(R, 1) * r
-integral = integrate(integrand, (r, 0, r))
-A_eff = integral.subs(r, 1).evalf()
+    return integral, A_eff
+
 
 def init(**kwargs):
 
@@ -82,7 +78,7 @@ def init(**kwargs):
 
     # calculated parameters
     gr = np.pi * (np.sqrt(5) - 1)
-    a_eff = 2 * np.pi * (blackman_integral(taper_radius, taper_radius) - blackman_integral(0, taper_radius))
+    integral, a_eff = blackman_functions(taper_radius)
 
     # membrane properties
     mem_properties = dict()
@@ -112,27 +108,23 @@ def init(**kwargs):
                                                            0]
 
     # define transmit element centers
-    r_prev = 0
     elem_pos = []
-    for n in nelem:
+    for n in range(nelem):
 
-        r =
-    xx, yy, zz = np.meshgrid(np.linspace(0, (ntx - 1) * tx_pitch, ntx),
-                             np.linspace(0, (ntx - 1) * tx_pitch, ntx),
-                             0)
-    elem_pos = np.c_[xx.ravel(), yy.ravel(), zz.ravel()] - [(ntx - 1) * tx_pitch / 2,
-                                                          (ntx - 1) * tx_pitch / 2,
-                                                          0]
+        f = lambda r: integral(r) - (2 * n + 1) * a_eff / (2 * nelem)
+        r = brentq(f, 0, taper_radius)
+        theta = (n + 1) * gr
+        xx = r * np.sin(theta)
+        yy = r * np.cos(theta)
+        zz = 0
+        elem_pos.append([xx, yy, zz])
+
+    elem_pos = np.array(elem_pos)
 
     # taper transmit corner elements
-    dist = distance(tx_pos, np.array([[0, 0, 0]]))
-    mask = dist <= tx_r
-    tx_pos = tx_pos[mask.squeeze(), :]
-
-    # taper receive corner elements
-    dist = distance(rx_pos, np.array([[0, 0, 0]]))
-    mask = dist <= rx_r
-    rx_pos = rx_pos[mask.squeeze(), :]
+    dist = distance(elem_pos, np.array([[0, 0, 0]]))
+    mask = dist <= mem_pos
+    mem_pos = elem_pos[mask.squeeze(), :]
 
     # create arrays, bounding box and rotation points are hard-coded
     vertices = [[-3.75e-3, -3.75e-3, 0],
@@ -141,14 +133,10 @@ def init(**kwargs):
                 [-1.25e-3, -3.75e-3, 0]]
     x0, y0, _ = vertices[0]
     x1, y1, _ = vertices[2]
-    xx, yy, zz = tx_pos.T
-    tx_mask = np.logical_and(np.logical_and(np.logical_and(xx >= (x0 + edge_buffer), xx < (x1 - edge_buffer)),
-                                         yy >= (y0 + edge_buffer)), yy < (y1 - edge_buffer))
-    xx, yy, zz = rx_pos.T
+    xx, yy, zz = elem_pos.T
     rx_mask = np.logical_and(np.logical_and(np.logical_and(xx >= (x0 + edge_buffer), xx < (x1 - edge_buffer)),
                                          yy >= (y0 + edge_buffer)), yy < (y1 - edge_buffer))
-    array0 = _construct_array(0, np.array([-1.25e-3, 0, 0]), vertices, tx_pos[tx_mask, :], rx_pos[rx_mask, :], mem_pos,
-                              mem_properties)
+    array0 = _construct_array(0, np.array([-1.25e-3, 0, 0]), vertices, elem_pos[rx_mask, :], mem_pos, mem_properties)
 
     vertices = [[-1.25e-3, -3.75e-3, 0],
                 [-1.25e-3, 3.75e-3, 0],
@@ -156,14 +144,10 @@ def init(**kwargs):
                 [1.25e-3, -3.75e-3, 0]]
     x0, y0, _ = vertices[0]
     x1, y1, _ = vertices[2]
-    xx, yy, zz = tx_pos.T
-    tx_mask = np.logical_and(np.logical_and(np.logical_and(xx >= (x0 + edge_buffer), xx < (x1 - edge_buffer)),
-                                         yy >= (y0 + edge_buffer)), yy < (y1 - edge_buffer))
-    xx, yy, zz = rx_pos.T
+    xx, yy, zz = elem_pos.T
     rx_mask = np.logical_and(np.logical_and(np.logical_and(xx >= (x0 + edge_buffer), xx < (x1 - edge_buffer)),
                                          yy >= (y0 + edge_buffer)), yy < (y1 - edge_buffer))
-    array1 = _construct_array(1, np.array([0, 0, 0]), vertices, tx_pos[tx_mask, :], rx_pos[rx_mask, :], mem_pos,
-                              mem_properties)
+    array1 = _construct_array(1, np.array([0, 0, 0]), vertices, elem_pos[rx_mask, :], mem_pos, mem_properties)
 
     vertices = [[1.25e-3, -3.75e-3, 0],
                 [1.25e-3, 3.75e-3, 0],
@@ -171,14 +155,10 @@ def init(**kwargs):
                 [3.75e-3, -3.75e-3, 0]]
     x0, y0, _ = vertices[0]
     x1, y1, _ = vertices[2]
-    xx, yy, zz = tx_pos.T
-    tx_mask = np.logical_and(np.logical_and(np.logical_and(xx >= (x0 + edge_buffer), xx < (x1 - edge_buffer)),
-                                         yy >= (y0 + edge_buffer)), yy < (y1 - edge_buffer))
-    xx, yy, zz = rx_pos.T
+    xx, yy, zz = elem_pos.T
     rx_mask = np.logical_and(np.logical_and(np.logical_and(xx >= (x0 + edge_buffer), xx < (x1 - edge_buffer)),
                                          yy >= (y0 + edge_buffer)), yy < (y1 - edge_buffer))
-    array2 = _construct_array(2, np.array([1.25e-3, 0, 0]), vertices, tx_pos[tx_mask, :], rx_pos[rx_mask, :], mem_pos,
-                              mem_properties)
+    array2 = _construct_array(2, np.array([1.25e-3, 0, 0]), vertices, elem_pos[rx_mask, :], mem_pos, mem_properties)
 
     return array0, array1, array2
 
