@@ -60,7 +60,9 @@ def blackman_integral_sym(r, R):
 
 r, R = symbols('r R')
 A = 0.42 - 0.5 * cos(2 * pi *(r / (2 *R) + 0.5)) + 0.08 * cos(4 * pi * (r / (2 * R) + 0.5))
-
+integrand = A.subs(R, 1) * r
+integral = integrate(integrand, (r, 0, r))
+A_eff = integral.subs(r, 1).evalf()
 
 def init(**kwargs):
 
