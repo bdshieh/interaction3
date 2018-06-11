@@ -1,4 +1,4 @@
-## interaction3 / arrays / foldable_spiral.py
+## interaction3 / arrays / foldable_constant_spiral.py
 
 import numpy as np
 from scipy.spatial.distance import cdist as distance
@@ -27,37 +27,9 @@ defaults['ndiv'] = [2, 2]
 # array properties
 defaults['mempitch'] = [45e-6, 45e-6]
 defaults['nmem'] = [2, 2]
-defaults['nelem'] = 25
-defaults['edge_buffer'] = 45e-6
-defaults['taper_radius'] = 7.5e-3
-
-
-def blackman_functions(R):
-
-    cos = np.cos
-    sin = np.sin
-    pi = np.pi
-
-    integral = lambda r: (R ** 2 * (0.5 * cos(pi * r / R) + 0.02 * cos(2.0 * pi * r / R) - 0.52) + pi * R * r * (
-                0.5 * sin(pi * r / R) + 0.04 * sin(2.0 * pi * r / R)) + 0.21 * pi ** 2 * r ** 2) / pi ** 2
-    A_eff = (-1.0 * R ** 2 + 0.21 * pi ** 2 * R ** 2) / pi ** 2
-
-    return integral, A_eff
-
-
-def _get_symbolic_equations():
-
-    import sympy
-
-    cos = sympy.cos
-    pi = sympy.pi
-
-    r, R = sympy.symbols('r R')
-    A = 0.42 - 0.5 * cos(2 * pi *(r / (2 * R) + 0.5)) + 0.08 * cos(4 * pi * (r / (2 * R) + 0.5))
-    integral = sympy.simplify(sympy.integrate(A * r, (r, 0, r)))
-    A_eff = integral.subs(r, R)
-
-    return integral, A_eff
+defaults['nelem'] = 512
+defaults['edge_buffer'] = 90e-6
+defaults['taper_radius'] = 3.75e-3
 
 
 def init(**kwargs):
@@ -78,7 +50,6 @@ def init(**kwargs):
 
     # calculated parameters
     gr = np.pi * (np.sqrt(5) - 1)
-    integral, a_eff = blackman_functions(taper_radius)
 
     # membrane properties
     mem_properties = dict()
@@ -111,8 +82,7 @@ def init(**kwargs):
     elem_pos = []
     for n in range(nelem):
 
-        f = lambda r: integral(r) - (2 * n + 1) * a_eff / (2 * nelem)
-        r = brentq(f, 0, taper_radius)
+        r = taper_radius * np.sqrt((n + 1) / nelem)
         theta = (n + 1) * gr
         xx = r * np.sin(theta)
         yy = r * np.cos(theta)
@@ -120,11 +90,6 @@ def init(**kwargs):
         elem_pos.append([xx, yy, zz])
 
     elem_pos = np.array(elem_pos)
-
-    # taper transmit corner elements
-    dist = distance(elem_pos, np.array([[0, 0, 0]]))
-    mask = dist <= mem_pos
-    mem_pos = elem_pos[mask.squeeze(), :]
 
     # create arrays, bounding box and rotation points are hard-coded
     vertices = [[-3.75e-3, -3.75e-3, 0],
@@ -134,9 +99,9 @@ def init(**kwargs):
     x0, y0, _ = vertices[0]
     x1, y1, _ = vertices[2]
     xx, yy, zz = elem_pos.T
-    rx_mask = np.logical_and(np.logical_and(np.logical_and(xx >= (x0 + edge_buffer), xx < (x1 - edge_buffer)),
+    mask = np.logical_and(np.logical_and(np.logical_and(xx >= (x0 + edge_buffer), xx < (x1 - edge_buffer)),
                                          yy >= (y0 + edge_buffer)), yy < (y1 - edge_buffer))
-    array0 = _construct_array(0, np.array([-1.25e-3, 0, 0]), vertices, elem_pos[rx_mask, :], mem_pos, mem_properties)
+    array0 = _construct_array(0, np.array([-1.25e-3, 0, 0]), vertices, elem_pos[mask, :], mem_pos, mem_properties)
 
     vertices = [[-1.25e-3, -3.75e-3, 0],
                 [-1.25e-3, 3.75e-3, 0],
@@ -145,9 +110,9 @@ def init(**kwargs):
     x0, y0, _ = vertices[0]
     x1, y1, _ = vertices[2]
     xx, yy, zz = elem_pos.T
-    rx_mask = np.logical_and(np.logical_and(np.logical_and(xx >= (x0 + edge_buffer), xx < (x1 - edge_buffer)),
+    mask = np.logical_and(np.logical_and(np.logical_and(xx >= (x0 + edge_buffer), xx < (x1 - edge_buffer)),
                                          yy >= (y0 + edge_buffer)), yy < (y1 - edge_buffer))
-    array1 = _construct_array(1, np.array([0, 0, 0]), vertices, elem_pos[rx_mask, :], mem_pos, mem_properties)
+    array1 = _construct_array(1, np.array([0, 0, 0]), vertices, elem_pos[mask, :], mem_pos, mem_properties)
 
     vertices = [[1.25e-3, -3.75e-3, 0],
                 [1.25e-3, 3.75e-3, 0],
@@ -156,14 +121,14 @@ def init(**kwargs):
     x0, y0, _ = vertices[0]
     x1, y1, _ = vertices[2]
     xx, yy, zz = elem_pos.T
-    rx_mask = np.logical_and(np.logical_and(np.logical_and(xx >= (x0 + edge_buffer), xx < (x1 - edge_buffer)),
+    mask = np.logical_and(np.logical_and(np.logical_and(xx >= (x0 + edge_buffer), xx < (x1 - edge_buffer)),
                                          yy >= (y0 + edge_buffer)), yy < (y1 - edge_buffer))
-    array2 = _construct_array(2, np.array([1.25e-3, 0, 0]), vertices, elem_pos[rx_mask, :], mem_pos, mem_properties)
+    array2 = _construct_array(2, np.array([1.25e-3, 0, 0]), vertices, elem_pos[mask, :], mem_pos, mem_properties)
 
     return array0, array1, array2
 
 
-def _construct_array(id, rotation_origin, vertices, tx_pos, rx_pos, mem_pos, mem_properties):
+def _construct_array(id, rotation_origin, vertices, elem_pos, mem_pos, mem_properties):
 
     if rotation_origin is None:
         rotation_origin = np.array([0,0,0])
@@ -174,49 +139,7 @@ def _construct_array(id, rotation_origin, vertices, tx_pos, rx_pos, mem_pos, mem
     elem_counter = 0
     ch_counter = 0
 
-    for e_pos in tx_pos:
-
-        membranes = []
-        elements = []
-
-        for m_pos in mem_pos:
-
-            # construct membrane
-            m = SquareCmutMembrane(**mem_properties)
-            m['id'] = mem_counter
-            m['position'] = (e_pos + m_pos).tolist()
-            membranes.append(m)
-            mem_counter += 1
-
-        # construct element
-        elem = Element(id=elem_counter,
-                       position=e_pos.tolist(),
-                       membranes=membranes)
-        element_position_from_membranes(elem)
-        elements.append(elem)
-        elem_counter += 1
-
-        if np.any(np.all(np.isclose(e_pos, rx_pos), axis=1)):
-            kind = 'both'
-        else:
-            kind = 'transmit'
-
-        # construct channel
-        ch = Channel(id=ch_counter,
-                     kind=kind,
-                     position=e_pos.tolist(),
-                     elements=elements,
-                     dc_bias=0,
-                     active=True,
-                     delay=0)
-
-        channels.append(ch)
-        ch_counter += 1
-
-    for e_pos in rx_pos:
-
-        if np.any(np.all(np.isclose(e_pos, tx_pos), axis=1)):
-            continue
+    for e_pos in elem_pos:
 
         membranes = []
         elements = []
@@ -240,7 +163,7 @@ def _construct_array(id, rotation_origin, vertices, tx_pos, rx_pos, mem_pos, mem
 
         # construct channel
         ch = Channel(id=ch_counter,
-                     kind='receive',
+                     kind='both',
                      position=e_pos.tolist(),
                      elements=elements,
                      dc_bias=0,
@@ -271,9 +194,7 @@ if __name__ == '__main__':
     parser.add_argument('--mempitch', nargs=2, type=float)
     parser.add_argument('--length', nargs=2, type=float)
     parser.add_argument('--electrode', nargs=2, type=float)
-    parser.add_argument('--ntx', type=int)
-    parser.add_argument('--nrx', type=int)
-    parser.add_argument('--design-frequency', type=float)
+    parser.add_argument('--nelem', type=int)
     parser.add_argument('-d', '--dump', nargs='?', default=None)
     parser.set_defaults(**defaults)
 

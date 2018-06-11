@@ -2,7 +2,6 @@
 
 import numpy as np
 from scipy.spatial.distance import cdist as distance
-from scipy.optimize import brentq
 
 from interaction3.abstract import *
 
@@ -27,37 +26,47 @@ defaults['ndiv'] = [2, 2]
 # array properties
 defaults['mempitch'] = [45e-6, 45e-6]
 defaults['nmem'] = [2, 2]
-defaults['nelem'] = 25
+defaults['nelem'] = 512
 defaults['edge_buffer'] = 45e-6
-defaults['taper_radius'] = 7.5e-3
+defaults['taper_radius'] = 3.75e-3
+defaults['random_seed'] = 0
+
+# array pane vertices, hard-coded
+_vertices0 = [[-3.75e-3, -3.75e-3, 0],
+              [-3.75e-3, 3.75e-3, 0],
+              [-1.25e-3, 3.75e-3, 0],
+              [-1.25e-3, -3.75e-3, 0]]
+
+_vertices1 = [[-1.25e-3, -3.75e-3, 0],
+              [-1.25e-3, 3.75e-3, 0],
+              [1.25e-3, 3.75e-3, 0],
+              [1.25e-3, -3.75e-3, 0]]
+
+_vertices2 = [[1.25e-3, -3.75e-3, 0],
+              [1.25e-3, 3.75e-3, 0],
+              [3.75e-3, 3.75e-3, 0],
+              [3.75e-3, -3.75e-3, 0]]
 
 
-def blackman_functions(R):
+def _check_for_element_collision(pos, all_pos, radius):
 
-    cos = np.cos
-    sin = np.sin
-    pi = np.pi
-
-    integral = lambda r: (R ** 2 * (0.5 * cos(pi * r / R) + 0.02 * cos(2.0 * pi * r / R) - 0.52) + pi * R * r * (
-                0.5 * sin(pi * r / R) + 0.04 * sin(2.0 * pi * r / R)) + 0.21 * pi ** 2 * r ** 2) / pi ** 2
-    A_eff = (-1.0 * R ** 2 + 0.21 * pi ** 2 * R ** 2) / pi ** 2
-
-    return integral, A_eff
+    dist = distance(*np.atleast_2d(pos, all_pos))
+    if np.any(dist <= 2 * radius):
+        return True
+    else:
+        return False
 
 
-def _get_symbolic_equations():
+def _check_for_edge_collision(pos, vertices, edge_buffer):
 
-    import sympy
+    x, y, z = pos
+    x0, y0, _ = vertices[0]
+    x1, y1, _ = vertices[2]
 
-    cos = sympy.cos
-    pi = sympy.pi
-
-    r, R = sympy.symbols('r R')
-    A = 0.42 - 0.5 * cos(2 * pi *(r / (2 * R) + 0.5)) + 0.08 * cos(4 * pi * (r / (2 * R) + 0.5))
-    integral = sympy.simplify(sympy.integrate(A * r, (r, 0, r)))
-    A_eff = integral.subs(r, R)
-
-    return integral, A_eff
+    if (abs(x - x0) >= edge_buffer and abs(x - x1) >= edge_buffer
+            and abs(y - x0) >= edge_buffer and abs(y - x1) >= edge_buffer):
+        return False
+    return True
 
 
 def init(**kwargs):
@@ -75,10 +84,7 @@ def init(**kwargs):
     ndiv_x, ndiv_y = kwargs['ndiv']
     edge_buffer = kwargs['edge_buffer']
     taper_radius = kwargs['taper_radius']
-
-    # calculated parameters
-    gr = np.pi * (np.sqrt(5) - 1)
-    integral, a_eff = blackman_functions(taper_radius)
+    random_seed = kwargs['random_seed']
 
     # membrane properties
     mem_properties = dict()
@@ -108,62 +114,55 @@ def init(**kwargs):
                                                            0]
 
     # define transmit element centers
+    np.random.seed(random_seed)
+    collision_radius = np.sqrt((nmem_x * length_x + nmem_x * mempitch_x) ** 2 +
+                               (nmem_y * length_y + nmem_y * mempitch_y) ** 2) / 2
     elem_pos = []
+
     for n in range(nelem):
 
-        f = lambda r: integral(r) - (2 * n + 1) * a_eff / (2 * nelem)
-        r = brentq(f, 0, taper_radius)
-        theta = (n + 1) * gr
-        xx = r * np.sin(theta)
-        yy = r * np.cos(theta)
-        zz = 0
+        while True:
+
+            xx = np.random.rand() * 2 * taper_radius - taper_radius
+            yy = np.random.rand() * 2 * taper_radius - taper_radius
+            zz = 0
+            pos = [xx, yy, zz]
+
+            if not _check_for_edge_collision(pos, _vertices0, edge_buffer):
+                if not _check_for_edge_collision(pos, _vertices1, edge_buffer):
+                    if not _check_for_edge_collision(pos, _vertices2, edge_buffer):
+                        if n == 0: # skip collision check for first element
+                            break
+                        if not _check_for_element_collision(pos, elem_pos, collision_radius):
+                            break
+
         elem_pos.append([xx, yy, zz])
 
     elem_pos = np.array(elem_pos)
 
-    # taper transmit corner elements
-    dist = distance(elem_pos, np.array([[0, 0, 0]]))
-    mask = dist <= mem_pos
-    mem_pos = elem_pos[mask.squeeze(), :]
-
     # create arrays, bounding box and rotation points are hard-coded
-    vertices = [[-3.75e-3, -3.75e-3, 0],
-                [-3.75e-3, 3.75e-3, 0],
-                [-1.25e-3, 3.75e-3, 0],
-                [-1.25e-3, -3.75e-3, 0]]
-    x0, y0, _ = vertices[0]
-    x1, y1, _ = vertices[2]
+    x0, y0, _ = _vertices0[0]
+    x1, y1, _ = _vertices0[2]
     xx, yy, zz = elem_pos.T
-    rx_mask = np.logical_and(np.logical_and(np.logical_and(xx >= (x0 + edge_buffer), xx < (x1 - edge_buffer)),
-                                         yy >= (y0 + edge_buffer)), yy < (y1 - edge_buffer))
-    array0 = _construct_array(0, np.array([-1.25e-3, 0, 0]), vertices, elem_pos[rx_mask, :], mem_pos, mem_properties)
+    mask = np.logical_and(np.logical_and(np.logical_and(xx >= x0, xx < x1), yy >= y0), yy < y1)
+    array0 = _construct_array(0, np.array([-1.25e-3, 0, 0]), _vertices0, elem_pos[mask, :], mem_pos, mem_properties)
 
-    vertices = [[-1.25e-3, -3.75e-3, 0],
-                [-1.25e-3, 3.75e-3, 0],
-                [1.25e-3, 3.75e-3, 0],
-                [1.25e-3, -3.75e-3, 0]]
-    x0, y0, _ = vertices[0]
-    x1, y1, _ = vertices[2]
+    x0, y0, _ = _vertices1[0]
+    x1, y1, _ = _vertices1[2]
     xx, yy, zz = elem_pos.T
-    rx_mask = np.logical_and(np.logical_and(np.logical_and(xx >= (x0 + edge_buffer), xx < (x1 - edge_buffer)),
-                                         yy >= (y0 + edge_buffer)), yy < (y1 - edge_buffer))
-    array1 = _construct_array(1, np.array([0, 0, 0]), vertices, elem_pos[rx_mask, :], mem_pos, mem_properties)
+    mask = np.logical_and(np.logical_and(np.logical_and(xx >= x0, xx < x1), yy >= y0), yy < y1)
+    array1 = _construct_array(1, np.array([0, 0, 0]), _vertices1, elem_pos[mask, :], mem_pos, mem_properties)
 
-    vertices = [[1.25e-3, -3.75e-3, 0],
-                [1.25e-3, 3.75e-3, 0],
-                [3.75e-3, 3.75e-3, 0],
-                [3.75e-3, -3.75e-3, 0]]
-    x0, y0, _ = vertices[0]
-    x1, y1, _ = vertices[2]
+    x0, y0, _ = _vertices2[0]
+    x1, y1, _ = _vertices2[2]
     xx, yy, zz = elem_pos.T
-    rx_mask = np.logical_and(np.logical_and(np.logical_and(xx >= (x0 + edge_buffer), xx < (x1 - edge_buffer)),
-                                         yy >= (y0 + edge_buffer)), yy < (y1 - edge_buffer))
-    array2 = _construct_array(2, np.array([1.25e-3, 0, 0]), vertices, elem_pos[rx_mask, :], mem_pos, mem_properties)
+    mask = np.logical_and(np.logical_and(np.logical_and(xx >= x0, xx < x1), yy >= y0), yy < y1)
+    array2 = _construct_array(2, np.array([1.25e-3, 0, 0]), _vertices2, elem_pos[mask, :], mem_pos, mem_properties)
 
     return array0, array1, array2
 
 
-def _construct_array(id, rotation_origin, vertices, tx_pos, rx_pos, mem_pos, mem_properties):
+def _construct_array(id, rotation_origin, vertices, elem_pos, mem_pos, mem_properties):
 
     if rotation_origin is None:
         rotation_origin = np.array([0,0,0])
@@ -174,49 +173,7 @@ def _construct_array(id, rotation_origin, vertices, tx_pos, rx_pos, mem_pos, mem
     elem_counter = 0
     ch_counter = 0
 
-    for e_pos in tx_pos:
-
-        membranes = []
-        elements = []
-
-        for m_pos in mem_pos:
-
-            # construct membrane
-            m = SquareCmutMembrane(**mem_properties)
-            m['id'] = mem_counter
-            m['position'] = (e_pos + m_pos).tolist()
-            membranes.append(m)
-            mem_counter += 1
-
-        # construct element
-        elem = Element(id=elem_counter,
-                       position=e_pos.tolist(),
-                       membranes=membranes)
-        element_position_from_membranes(elem)
-        elements.append(elem)
-        elem_counter += 1
-
-        if np.any(np.all(np.isclose(e_pos, rx_pos), axis=1)):
-            kind = 'both'
-        else:
-            kind = 'transmit'
-
-        # construct channel
-        ch = Channel(id=ch_counter,
-                     kind=kind,
-                     position=e_pos.tolist(),
-                     elements=elements,
-                     dc_bias=0,
-                     active=True,
-                     delay=0)
-
-        channels.append(ch)
-        ch_counter += 1
-
-    for e_pos in rx_pos:
-
-        if np.any(np.all(np.isclose(e_pos, tx_pos), axis=1)):
-            continue
+    for e_pos in elem_pos:
 
         membranes = []
         elements = []
@@ -240,7 +197,7 @@ def _construct_array(id, rotation_origin, vertices, tx_pos, rx_pos, mem_pos, mem
 
         # construct channel
         ch = Channel(id=ch_counter,
-                     kind='receive',
+                     kind='both',
                      position=e_pos.tolist(),
                      elements=elements,
                      dc_bias=0,
