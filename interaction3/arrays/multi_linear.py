@@ -25,7 +25,7 @@ defaults['ndiv'] = [2, 2]
 # array properties
 defaults['mempitch'] = [55e-6, 55e-6]
 defaults['nmem'] = [2, 32]
-defaults['nelem'] = 16
+defaults['nelem'] = 32
 defaults['elempitch'] = 110e-6
 defaults['radius_of_curvature'] = 15e-2
 defaults['angle_pitch'] = np.deg2rad(10)
@@ -145,7 +145,14 @@ def init(**kwargs):
 
         arrays.append(array)
 
-    return arrays
+    # combine separate arrays into one
+    combined_array = Array(id=0,
+                           channels=[],
+                           position=[0, 0, 0])
+    for array in arrays:
+        combined_array['channels'] += array['channels']
+
+    return combined_array
 
 
 ## COMMAND LINE INTERFACE ##
