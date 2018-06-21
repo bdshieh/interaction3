@@ -133,7 +133,7 @@ class TransmitBeamplot(object):
                 pos_rf.append(_rf)
                 pos_t0s.append(_t0)
 
-            _array_rf, _array_t0 = sim.concatenate_with_padding(pos_rf, pos_t0s, fs)
+            _array_rf, _array_t0 = sim.concatenate_with_padding(pos_rf, pos_t0s, fs, axis=0)
 
             array_rf.append(_array_rf)
             array_t0s.append(_array_t0)
@@ -144,7 +144,7 @@ class TransmitBeamplot(object):
         times = t0 + np.arange(rf_data.shape[1]) / fs
 
         result['rf_data'] = rf_data
-        result['times'] = [times,] * len(rf_data)
+        result['times'] = times
 
     @staticmethod
     def get_objects_from_spec(*files):

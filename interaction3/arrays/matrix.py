@@ -20,6 +20,7 @@ defaults['permittivity'] = 6.3
 defaults['gap'] = 100e-9
 defaults['att_mech'] = 0
 defaults['ndiv'] = [2, 2]
+defaults['k_matrix_comsol_file'] = None
 
 # array properties
 defaults['mempitch'] = [50e-6, 50e-6]
@@ -61,6 +62,7 @@ def init(**kwargs):
     mem_properties['att_mech'] = kwargs['att_mech']
     mem_properties['ndiv_x'] = ndiv_x
     mem_properties['ndiv_y'] = ndiv_y
+    mem_properties['k_matrix_comsol_file'] = kwargs['k_matrix_comsol_file']
 
     # calculate membrane positions
     xx, yy, zz = np.meshgrid(np.linspace(0, (nmem_x - 1) * mempitch_x, nmem_x),

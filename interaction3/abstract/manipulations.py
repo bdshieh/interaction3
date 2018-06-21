@@ -206,7 +206,7 @@ def defocus_channel(ch, pos):
 
 @vectorize
 def bias_channel(ch, bias):
-    ch['bias'] = bias
+    ch['dc_bias'] = bias
 
 
 @vectorize

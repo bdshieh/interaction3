@@ -25,8 +25,8 @@ ext_modules = [
               include_dirs = [np.get_include()],
               language=_LANGUAGE
     ),
-    Extension(name = 'interaction3.reconstruction.engines_cy',
-              sources = ['interaction3/reconstruction/engines_cy.pyx'],
+    Extension(name = 'interaction3.beamform.engines_cy',
+              sources = ['interaction3/beamform/engines_cy.pyx'],
               include_dirs = [np.get_include()],
               language = _LANGUAGE
 

@@ -52,7 +52,7 @@ def connector_square_cmut_membrane(obj, **kwargs):
     B = bem.b_matrix(att_mech, nnodes)
 
     # stiffness matrix
-    if 'k_matrix_comsol_file' in obj:
+    if 'k_matrix_comsol_file' in obj and obj['k_matrix_comsol_file'] is not None:
 
         filename = obj['k_matrix_comsol_file']
         K = bem.k_matrix_comsol(filename)
@@ -130,7 +130,8 @@ def connector_circular_cmut_membrane(obj, **kwargs):
     B = bem.b_matrix(att_mech, nnodes)
 
     # stiffness matrix
-    if 'k_matrix_comsol_file' in obj:
+    if 'k_matrix_comsol_file' in obj and obj['k_matrix_comsol_file'] is not None:
+
         filename = obj['k_matrix_comsol_file']
         K = bem.k_matrix_comsol(filename)
     else:
@@ -204,9 +205,11 @@ def connector_square_pmut_membrane(obj, **kwargs):
     B = bem.b_matrix(att_mech, nnodes)
 
     # stiffness matrix
-    if 'k_matrix_comsol_file' in obj:
+    if 'k_matrix_comsol_file' in obj and obj['k_matrix_comsol_file'] is not None:
+
         filename = obj['k_matrix_comsol_file']
         K = bem.k_matrix_comsol(filename)
+
     else:
         E = obj['y_modulus']
         eta = obj['p_ratio']
@@ -272,14 +275,13 @@ def connector_circular_pmut_membrane(obj, **kwargs):
     B = bem.b_matrix(att_mech, nnodes)
 
     # stiffness matrix
-    if 'k_matrix_comsol_file' in obj:
+    if 'k_matrix_comsol_file' in obj and obj['k_matrix_comsol_file'] is not None:
+
         filename = obj['k_matrix_comsol_file']
         K = bem.k_matrix_comsol(filename)
+
     else:
-        E = obj['y_modulus']
-        eta = obj['p_ratio']
-        shape = nnodes_x - 2, nnodes_y - 2
-        K = bem.k_matrix_fd2(E, h, eta, dx, dy, nnodes, shape)
+        raise NotImplementedError
 
     # single membrane acoustic impedance matrix
     if use_preconditioner:

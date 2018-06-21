@@ -79,7 +79,7 @@ def concatenate_with_padding(rf_data, t0s, fs, axis=-1):
     maxlen = max([fpad + rf.shape[1] for fpad, rf in zip(frontpads, rf_data)])
     backpads = [maxlen - (fpad + rf.shape[1]) for fpad, rf in zip(frontpads, rf_data)]
 
-    new_data = list()
+    new_data = []
 
     for rf, fpad, bpad in zip(rf_data, frontpads, backpads):
 
@@ -95,7 +95,7 @@ def concatenate_with_padding(rf_data, t0s, fs, axis=-1):
 def sum_with_padding(rf_data, t0s, fs):
 
     if len(rf_data) <= 1:
-        return np.atleast_2d(rf_data), t0s[0]
+        return np.atleast_2d(rf_data[0]), t0s[0]
 
     rf_data = np.atleast_2d(*rf_data)
 
@@ -104,7 +104,7 @@ def sum_with_padding(rf_data, t0s, fs):
     maxlen = max([fpad + rf.shape[1] for fpad, rf in zip(frontpads, rf_data)])
     backpads = [maxlen - (fpad + rf.shape[1]) for fpad, rf in zip(frontpads, rf_data)]
 
-    new_data = list()
+    new_data = []
 
     for rf, fpad, bpad in zip(rf_data, frontpads, backpads):
 

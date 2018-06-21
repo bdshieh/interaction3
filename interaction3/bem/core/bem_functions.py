@@ -4,7 +4,7 @@ import numpy as np
 from scipy import sparse as sps, linalg
 from scipy.constants import epsilon_0 as e_0
 from scipy.signal import convolve2d
-from scipy.spatial.distance import cdist as distance
+from scipy.spatial.distance import cdist
 from scipy.io import loadmat
 
 
@@ -223,21 +223,37 @@ def kss_matrix(K, e_mask, dc_bias, h_gap, h_isol, e_r, nnodes):
     return Kss, collapsed, u0, t_ratios
 
 
-@memoize
-def zr1_matrix(nodes, f, rho, c, a_n):
+def zr_matrix(nodes, f, rho, c, a_n):
     '''
-    Single membrane acoustic impedance matrix.
+    Acoustic impedance matrix.
     '''
     dist = distance(nodes, nodes)
     k = 2 * np.pi * f / c
     a_eff = np.sqrt(a_n / np.pi)
 
     with np.errstate(divide='ignore', invalid='ignore'):
-        zr1 = 1j * 2 * np.pi * f * rho * a_n / (2 * np.pi) * np.exp(-1j * k * dist) / dist
+        zr = 1j * 2 * np.pi * f * rho * a_n / (2 * np.pi) * np.exp(-1j * k * dist) / dist
 
-    zr1[np.eye(*dist.shape).astype(bool)] = rho * c * (0.5 * (k * a_eff) ** 2 + 1j * 8 / (3 * np.pi) * k * a_eff)
+    zr[np.eye(*dist.shape).astype(bool)] = rho * c * (0.5 * (k * a_eff) ** 2 + 1j * 8 / (3 * np.pi) * k * a_eff)
 
-    return zr1
+    return zr
+
+
+@memoize
+def zr1_matrix(nodes, f, rho, c, a_n):
+    '''
+    Acoustic impedance matrix.
+    '''
+    dist = distance(nodes, nodes)
+    k = 2 * np.pi * f / c
+    a_eff = np.sqrt(a_n / np.pi)
+
+    with np.errstate(divide='ignore', invalid='ignore'):
+        zr = 1j * 2 * np.pi * f * rho * a_n / (2 * np.pi) * np.exp(-1j * k * dist) / dist
+
+    zr[np.eye(*dist.shape).astype(bool)] = rho * c * (0.5 * (k * a_eff) ** 2 + 1j * 8 / (3 * np.pi) * k * a_eff)
+
+    return zr
 
 
 @memoize
@@ -261,6 +277,10 @@ def g1inv_matrix(g1):
 
 
 ## UTILITY FUNCTIONS ##
+
+def distance(*args):
+    return cdist(*np.atleast_2d(*args))
+
 
 def solve_static_displacement(K, e_mask, dc_bias, h_eff, tol=1.0, maxiter=100):
     '''

@@ -59,7 +59,8 @@
       "p_ratio": { "type": "array", "items": { "type": "number" }, "minItems": 1 },
       "isolation": { "type": "number" },
       "permittivity": { "type": "number" },
-      "gap": { "type": "number" }
+      "gap": { "type": "number" },
+      "k_matrix_comsol_file": { }
       },
     "required": [ "radius", "electrode_r", "density", "thickness", "nnodes_x", "nnodes_y", "isolation", "permittivity",
       "gap" ]
@@ -85,7 +86,8 @@
       "p_ratio": { "type": "array", "items": { "type": "number" }, "minItems": 1 },
       "isolation": { "type": "number" },
       "permittivity": { "type": "number" },
-      "gap": { "type": "number" }
+      "gap": { "type": "number" },
+      "k_matrix_comsol_file": { }
       },
     "required": [ "length_x", "length_y", "electrode_x", "electrode_y", "density", "thickness", "nnodes_x", "nnodes_y",
       "isolation", "permittivity", "gap" ]
@@ -103,7 +105,8 @@
       "att_mech": { "type": "number" },
       "rotations": { "$ref": "#/definitions/rotations" },
       "nnodes_x": { "type": "integer" },
-      "nnodes_y": { "type": "integer" }
+      "nnodes_y": { "type": "integer" },
+      "k_matrix_comsol_file": { }
       },
     "required": [ "radius", "electrode_r", "density", "thickness", "nnodes_x", "nnodes_y" ]
   },
@@ -121,7 +124,8 @@
       "att_mech": { "type": "number" },
       "rotations": { "$ref": "#/definitions/rotations" },
       "nnodes_x": { "type": "integer" },
-      "nnodes_y": { "type": "integer" }
+      "nnodes_y": { "type": "integer" },
+      "k_matrix_comsol_file": { }
       },
     "required": [ "length_x", "length_y", "density", "thickness", "nnodes_x", "nnodes_y" ]
   },
