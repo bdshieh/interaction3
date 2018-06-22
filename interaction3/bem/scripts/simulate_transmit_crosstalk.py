@@ -3,7 +3,6 @@ import numpy as np
 import multiprocessing
 import os
 import sqlite3 as sql
-import pandas as pd
 from itertools import repeat
 from contextlib import closing
 from tqdm import tqdm
@@ -253,7 +252,6 @@ def update_displacements_table(con, f, k, nodes, displacements):
 ## COMMAND LINE INTERFACE ##
 
 if __name__ == '__main__':
-
 
     import argparse
 
