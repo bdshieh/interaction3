@@ -2,12 +2,17 @@
 
 import numpy as np
 import pandas as pd
+import scipy as sp
 import scipy.signal
+import scipy.fftpack
+from scipy.spatial.distance import cdist
 import itertools
 from contextlib import closing
 from itertools import repeat
 import sqlite3 as sql
 
+
+## GEOMETRY-RELATED FUNCTIONS ##
 
 def meshview(v1, v2, v3, mode='cartesian', as_list=True):
 
@@ -51,6 +56,75 @@ def cart2sec(xyz):
 
     return np.c_[r, py, -px]
 
+
+def cart2sec2(xyz):
+
+    x, y, z = np.atleast_2d(xyz).T
+
+    r = np.sqrt(x ** 2 + y ** 2 + z ** 2)
+    py = np.arccos(z / (np.sqrt(x ** 2 + z ** 2)))
+    px = np.arccos(z / (np.sqrt(y ** 2 + z ** 2)))
+
+    return np.c_[r, px, py]
+
+
+def sec2cart(rpxpy):
+
+    r, px, py = np.atleast_2d(rpxpy).T
+
+    pyp = np.arctan(np.tan(py) * np.cos(px))
+    x = np.sin(pyp) * r
+    y = -np.sin(px) * r * np.cos(pyp)
+    z = np.sqrt(r ** 2 - x ** 2 - y ** 2)
+
+    return np.c_[x, y, z]
+
+
+def rotation_matrix(vec, angle):
+
+    if isinstance(vec, str):
+        string = vec.lower()
+        if string == 'x':
+            vec = [1, 0, 0]
+        elif string == '-x':
+            vec = [-1, 0, 0]
+        elif string == 'y':
+            vec = [0, 1, 0]
+        elif string == '-y':
+            vec = [0, -1, 0]
+        elif string == 'z':
+            vec = [0, 0, 1]
+        elif string == '-x':
+            vec = [0, 0, -1]
+
+    x, y, z = vec
+    a = angle
+
+    r = np.zeros((3, 3))
+    r[0, 0] = np.cos(a) + x**2 * (1 - np.cos(a))
+    r[0, 1] = x * y * (1 - np.cos(a)) - z * np.sin(a)
+    r[0, 2] = x * z * (1 - np.cos(a)) + y * np.sin(a)
+    r[1, 0] = y * x * (1 - np.cos(a)) + z * np.sin(a)
+    r[1, 1] = np.cos(a) + y**2 * (1 - np.cos(a))
+    r[1, 2] = y * z * (1 - np.cos(a)) - x * np.sin(a)
+    r[2, 0] = z * x * (1 - np.cos(a)) - z * np.sin(a)
+    r[2, 1] = z * y * (1 - np.cos(a)) + x * np.sin(a)
+    r[2, 2] = np.cos(a) + z**2 * (1 - np.cos(a))
+
+    return r
+
+
+def rotate_nodes(nodes, vec, angle):
+
+    rmatrix = rotation_matrix(vec, angle)
+    return rmatrix.dot(nodes.T).T
+
+
+def distance(*args):
+    return cdist(*np.atleast_2d(*args))
+
+
+## SIGNAL PROCESSING AND RF DATA FUNCTIONS ##
 
 def concatenate_with_padding(rf_data, t0s, fs, axis=-1):
 
@@ -105,7 +179,7 @@ def gausspulse(fc, fbw, fs):
     adj_cutoff = np.ceil(cutoff * fs) / fs
 
     t = np.arange(-adj_cutoff, adj_cutoff + 1 / fs, 1 / fs)
-    pulse, _ = scipy.signal.gausspulse(t, fc=fc, bw=fbw, retquad=True, bwr=-3)
+    pulse, _ = sp.signal.gausspulse(t, fc=fc, bw=fbw, retquad=True, bwr=-3)
 
     return pulse, t
 
@@ -113,6 +187,113 @@ def gausspulse(fc, fbw, fs):
 def envelope(rf_data, axis=-1):
     return np.abs(scipy.signal.hilbert(np.atleast_2d(rf_data), axis=axis))
 
+
+def qbutter(x, fn, fs=1, btype='lowpass', n=4, plot=False, axis=-1):
+
+    wn = fn / (fs / 2.)
+    b, a = sp.signal.butter(n, wn, btype)
+
+    # if plot:
+    #     w, h = freqz(b, a)
+    #
+    #     fig = plt.figure()
+    #     ax1 = fig.add_subplot(111)
+    #
+    #     ax1.plot(w / (2 * np.pi) * fs, 20 * np.log10(np.abs(h)), 'b')
+    #     ax1.set_xlabel('Frequency (Hz)')
+    #     ax1.set_ylabel('Amplitude (dB)')
+    #     ax1.set_title('Butterworth filter response')
+    #
+    #     ax2 = ax1.twinx()
+    #     ax2.plot(w / (2 * np.pi) * fs, np.unwrap(np.angle(h)), 'g')
+    #     ax2.set_ylabel('Phase (radians)')
+    #
+    #     plt.grid()
+    #     plt.axis('tight')
+    #
+    #     fig.show()
+
+    fx = sp.signal.lfilter(b, a, x, axis=axis)
+
+    return fx
+
+
+def qfirwin(x, fn, fs=1, btype='lowpass', ntaps=80, plot=False, axis=-1,
+            window='hamming'):
+    if btype.lower() in ('lowpass', 'low'):
+        pass_zero = 1
+    elif btype.lower() in ('bandpass', 'band'):
+        pass_zero = 0
+    elif btype.lower() in ('highpass', 'high'):
+        pass_zero = 0
+
+    wn = fn / (fs / 2.)
+    b = sp.signal.firwin(ntaps, wn, pass_zero=pass_zero, window=window)
+
+    # if plot:
+    #     w, h = freqz(b)
+    #
+    #     fig = plt.figure()
+    #     ax1 = fig.add_subplot(111)
+    #
+    #     ax1.plot(w / (2 * np.pi) * fs, 20 * np.log10(np.abs(h)), 'b')
+    #     ax1.set_xlabel('Frequency (Hz)')
+    #     ax1.set_ylabel('Amplitude (dB)')
+    #     ax1.set_title('FIR filter response')
+    #
+    #     ax2 = ax1.twinx()
+    #     ax2.plot(w / (2 * np.pi) * fs, np.unwrap(np.angle(h)), 'g')
+    #     ax2.set_ylabel('Phase (radians)')
+    #
+    #     plt.grid()
+    #     plt.axis('tight')
+    #
+    #     fig.show()
+
+    fx = np.apply_along_axis(lambda x: np.convolve(x, b), axis, x)
+
+    return fx
+
+
+def qfft(s, nfft=None, fs=1, dr=100, fig=None, **kwargs):
+    '''
+    Quick FFT plot. Returns frequency bins and FFT in dB.
+    '''
+    s = np.atleast_2d(s)
+
+    nsig, nsample = s.shape
+
+    if nfft is None:
+        nfft = nsample
+
+    # if fig is None:
+    #     fig = plt.figure(tight_layout=1)
+    #     ax = fig.add_subplot(111)
+    # else:
+    #     ax = fig.get_axes()[0]
+
+    if nfft > nsample:
+        s = np.pad(s, ((0, 0), (0, nfft - nsample)), mode='constant')
+    elif nfft < nsample:
+        s = s[:, :nfft]
+
+    ft = sp.fftpack.fft(s, axis=1)
+    freqs = sp.fftpack.fftfreq(nfft, 1 / fs)
+
+    ftdb = 20 * np.log10(np.abs(ft) / (np.max(np.abs(ft), axis=1)[..., None]))
+    ftdb[ftdb < -dr] = -dr
+
+    cutoff = (nfft + 1) // 2
+
+    # ax.plot(freqs[:cutoff], ftdb[:, :cutoff].T, **kwargs)
+    # ax.set_xlabel('Frequency (Hz)')
+    # ax.set_ylabel('Magnitude (dB re max)')
+    # fig.show()
+
+    return freqs[:cutoff], ftdb[:, :cutoff]
+
+
+## JOB-RELATED UTILITY FUNCTIONS ##
 
 def chunks(iterable, n):
 
@@ -174,46 +355,6 @@ def create_jobs(*args, mode='zip', is_complete=None):
         res = r + p
         # reorder vals according to input order
         yield job_id + 1, tuple(res[i] for i in np.argsort(static_idx + iterable_idx))
-
-
-def rotation_matrix(vec, angle):
-
-    if isinstance(vec, str):
-        string = vec.lower()
-        if string == 'x':
-            vec = [1, 0, 0]
-        elif string == '-x':
-            vec = [-1, 0, 0]
-        elif string == 'y':
-            vec = [0, 1, 0]
-        elif string == '-y':
-            vec = [0, -1, 0]
-        elif string == 'z':
-            vec = [0, 0, 1]
-        elif string == '-x':
-            vec = [0, 0, -1]
-
-    x, y, z = vec
-    a = angle
-
-    r = np.zeros((3, 3))
-    r[0, 0] = np.cos(a) + x**2 * (1 - np.cos(a))
-    r[0, 1] = x * y * (1 - np.cos(a)) - z * np.sin(a)
-    r[0, 2] = x * z * (1 - np.cos(a)) + y * np.sin(a)
-    r[1, 0] = y * x * (1 - np.cos(a)) + z * np.sin(a)
-    r[1, 1] = np.cos(a) + y**2 * (1 - np.cos(a))
-    r[1, 2] = y * z * (1 - np.cos(a)) - x * np.sin(a)
-    r[2, 0] = z * x * (1 - np.cos(a)) - z * np.sin(a)
-    r[2, 1] = z * y * (1 - np.cos(a)) + x * np.sin(a)
-    r[2, 2] = np.cos(a) + z**2 * (1 - np.cos(a))
-
-    return r
-
-
-def rotate_nodes(nodes, vec, angle):
-
-    rmatrix = rotation_matrix(vec, angle)
-    return rmatrix.dot(nodes.T).T
 
 
 ## DATABASE FUNCTIONS ##

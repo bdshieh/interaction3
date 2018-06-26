@@ -1,9 +1,9 @@
 ## interaction3 / arrays / foldable_vernier.py
 
 import numpy as np
-from scipy.spatial.distance import cdist as distance
 
 from interaction3.abstract import *
+from interaction3 import util
 
 
 # default parameters
@@ -20,20 +20,20 @@ defaults['p_ratio'] = [0.22,]
 defaults['isolation'] = 200e-9
 defaults['permittivity'] = 6.3
 defaults['gap'] = 50e-9
-defaults['att_mech'] = 0
+defaults['att_mech'] = 3000
 defaults['ndiv'] = [2, 2]
 
 # array properties
 defaults['mempitch'] = [45e-6, 45e-6]
 defaults['nmem'] = [2, 2]
-defaults['ntx'] = 25
-defaults['nrx'] = 25
+defaults['ntransmit'] = 25
+defaults['nreceive'] = 25
 defaults['design_freq'] = 7e6
-defaults['sound_speed'] = 1500
-defaults['edge_buffer'] = 45e-6
+defaults['sound_speed'] = 1540
+defaults['edge_buffer'] = np.sqrt(2 * 40e-6 ** 2) + 10e-6
 
 
-def init(**kwargs):
+def create(**kwargs):
 
     # set defaults if not in kwargs:
     for k, v in defaults.items():
@@ -41,8 +41,8 @@ def init(**kwargs):
 
     sound_speed = kwargs['sound_speed']
     design_freq = kwargs['design_freq']
-    ntx = kwargs['ntx']
-    nrx = kwargs['nrx']
+    ntx = kwargs['ntransmit']
+    nrx = kwargs['nreceive']
     nmem_x, nmem_y = kwargs['nmem']
     mempitch_x, mempitch_y = kwargs['mempitch']
     length_x, length_y = kwargs['length']
@@ -56,8 +56,8 @@ def init(**kwargs):
     d = sound_speed / design_freq / 2 * 0.9
     tx_pitch = p * d
     rx_pitch = (p - 1) * d
-    tx_r = ntx / 2 * tx_pitch + 0.00025
-    rx_r = nrx / 2 * rx_pitch + 0.00017
+    tx_r = ntx / 2 * tx_pitch  # + 0.00025
+    rx_r = nrx / 2 * rx_pitch  # + 0.00017
 
     # membrane properties
     mem_properties = dict()
@@ -103,12 +103,12 @@ def init(**kwargs):
                                                           0]
 
     # taper transmit corner elements
-    dist = distance(tx_pos, np.array([[0, 0, 0]]))
+    dist = util.distance(tx_pos, np.array([[0, 0, 0]]))
     mask = dist <= tx_r
     tx_pos = tx_pos[mask.squeeze(), :]
 
     # taper receive corner elements
-    dist = distance(rx_pos, np.array([[0, 0, 0]]))
+    dist = util.distance(rx_pos, np.array([[0, 0, 0]]))
     mask = dist <= rx_r
     rx_pos = rx_pos[mask.squeeze(), :]
 
@@ -278,7 +278,7 @@ if __name__ == '__main__':
     args = vars(parser.parse_args())
     filename = args.pop('dump')
 
-    spec = init(**args)
+    spec = create(**args)
     print(spec)
 
     if filename is not None:
