@@ -1,4 +1,4 @@
-## interaction3 / mfield / tests / test_simulate_transmit_beamplot_with_folding_error.py
+## interaction3 / mfield / tests / test_simulate_transmit_beamplot.py
 
 import numpy as np
 import subprocess
@@ -14,9 +14,6 @@ sim_kwargs = {}
 sim_kwargs['transmit_focus'] = [0, 0, 0.05]
 sim_kwargs['delay_quantization'] = 0
 sim_kwargs['threads'] = 3
-sim_kwargs['rotations'] = [[0, 'y'], [2, '-y']]
-sim_kwargs['angles'] = [0, 5, 1]
-sim_kwargs['angle_tolerance'] = 0.5
 sim_kwargs['sampling_frequency'] = 100e6
 sim_kwargs['sound_speed'] = 1540
 sim_kwargs['excitation_center_frequecy'] = 7e6
@@ -32,12 +29,12 @@ simulation = abstract.MfieldSimulation(**sim_kwargs)
 abstract.dump((simulation,) + arrays, 'test_spec.json', mode='w')
 
 command = '''
-          python -m interaction3.mfield.scripts.simulate_transmit_beamplot_with_folding_error
+          python -m interaction3.mfield.scripts.simulate_transmit_beamplot
           test_database.db
           -s test_spec.json
           '''
 subprocess.run(command.split())
-#
+
 # import sqlite3 as sql
 # import pandas as pd
 # from matplotlib import pyplot as plt

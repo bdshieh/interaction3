@@ -5,7 +5,6 @@ import itertools
 import pandas as pd
 from contextlib import closing
 import sqlite3 as sql
-import functools
 from itertools import repeat
 
 from .. core import bem_functions as bem

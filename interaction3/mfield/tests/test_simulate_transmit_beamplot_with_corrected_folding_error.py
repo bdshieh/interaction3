@@ -1,4 +1,4 @@
-## interaction3 / mfield / tests / test_simulate_transmit_beamplot_with_folding_error.py
+## interaction3 / mfield / tests / test_simulate_transmit_beamplot_with_corrected_folding_error.py
 
 import numpy as np
 import subprocess
@@ -32,7 +32,7 @@ simulation = abstract.MfieldSimulation(**sim_kwargs)
 abstract.dump((simulation,) + arrays, 'test_spec.json', mode='w')
 
 command = '''
-          python -m interaction3.mfield.scripts.simulate_transmit_beamplot_with_folding_error
+          python -m interaction3.mfield.scripts.simulate_transmit_beamplot_with_corrected_folding_error
           test_database.db
           -s test_spec.json
           '''

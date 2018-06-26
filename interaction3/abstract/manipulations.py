@@ -302,6 +302,12 @@ def focus_array(a, pos, sound_speed, quantization=None, kind=None):
         focus_channel(ch, pos, sound_speed, quantization)
 
 
+@vectorize
+def reset_focus_array(a):
+    for ch in a['channels']:
+        ch['delay'] = 0
+
+
 if __name__ == '__main__':
 
     pass

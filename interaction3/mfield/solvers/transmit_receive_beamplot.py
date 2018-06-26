@@ -10,7 +10,7 @@ from . import sim_functions as sim
 
 
 @attr.s
-class TransmitBeamplot(object):
+class TransmitReceiveBeamplot(object):
 
     # INSTANCE VARIABLES, FIELD II PARAMETERS
     c = attr.ib()
@@ -114,6 +114,23 @@ class TransmitBeamplot(object):
             # set mathematical element delays
             field.ele_delay(tx, np.arange(len(tx_ele_delays)) + 1, tx_ele_delays)
 
+            rx_info = info['rx_info']
+            rx_rectangles = rx_info['rectangles']
+            rx_centers = rx_info['centers']
+            rx_delays = rx_info['delays']
+            rx_apod = rx_info['apodizations']
+            rx_ele_delays = rx_info['ele_delays']
+
+            # create receive aperture and set aperture parameters
+            rx = field.xdc_rectangles(rx_rectangles, rx_centers, np.array([[0, 0, 300]]))
+            field.xdc_impulse(rx, pulse)
+            field.xdc_excitation(rx, np.array([1]))
+            field.xdc_focus_times(rx, np.zeros((1, 1)), rx_delays)
+            field.xdc_apodization(rx, np.zeros((1, 1)), rx_apod)
+
+            # set mathematical element delays
+            field.ele_delay(rx, np.arange(len(rx_ele_delays)) + 1, rx_ele_delays)
+
             pos_rf = list()
             pos_t0s = list()
 
@@ -125,26 +142,36 @@ class TransmitBeamplot(object):
                     r_tx = np.atleast_2d(pos) - np.atleast_2d(tx_centers)
                     r, a, b = sim.cart2sec(r_tx).T
                     tx_correction = interpolator(np.rad2deg(np.abs(a)), np.rad2deg(np.abs(b)))
+
                     # apply correction as apodization
                     field.xdc_apodization(tx, np.zeros((1, 1)), tx_apod * tx_correction)
 
-                _rf, _t0 = field.calc_hp(tx, pos)
+                    # calculate element factor corrections
+                    r_rx = np.atleast_2d(pos) - np.atleast_2d(rx_centers)
+                    r, a, b = sim.cart2sec(r_rx).T
+                    rx_correction = interpolator(np.rad2deg(np.abs(a)), np.rad2deg(np.abs(b)))
+
+                    # apply correction as apodization
+                    field.xdc_apodization(rx, np.zeros((1, 1)), rx_apod * rx_correction)
+
+                _rf, _t0 = field.calc_hhp(tx, rx, pos)
 
                 pos_rf.append(_rf)
                 pos_t0s.append(_t0)
 
-            _array_rf, _array_t0 = sim.concatenate_with_padding(pos_rf, pos_t0s, fs, axis=0)
+            _array_rf, _array_t0 = sim.concatenate_with_padding(pos_rf, pos_t0s, fs)
 
             array_rf.append(_array_rf)
             array_t0s.append(_array_t0)
 
             field.xdc_free(tx)
+            field.xdc_free(rx)
 
         rf_data, t0 = sim.sum_with_padding(array_rf, array_t0s, fs)
         times = t0 + np.arange(rf_data.shape[1]) / fs
 
         result['rf_data'] = rf_data
-        result['times'] = times
+        result['times'] = [times,] * len(rf_data)
 
     @staticmethod
     def get_objects_from_spec(*files):
@@ -180,12 +207,23 @@ class TransmitBeamplot(object):
         use_element_factor = simulation.get('use_element_factor', False)
         element_factor_file = simulation.get('element_factor_file', None)
         field_pos = simulation.get('field_positions', None)
+        tx_focus = simulation.get('transmit_focus', None)
+        rx_focus = simulation.get('transmit_focus', None)
+        c = simulation.get('sound_speed', 1540)
+        delay_quant = simulation.get('delay_quantization', 0)
 
         rectangles_info = list()
         for array in arrays:
 
+            if tx_focus is not None:  # apply transmit focus
+                abstract.focus_array(array, tx_focus, c, delay_quant, kind='tx')
             tx_info = _construct_rectangles_info(array, kind='tx')
-            rectangles_info.append(dict(tx_info=tx_info))
+
+            if rx_focus is not None:  # apply receive focus
+                abstract.focus_array(array, rx_focus, c, delay_quant, kind='rx')
+            rx_info = _construct_rectangles_info(array, kind='rx')
+
+            rectangles_info.append(dict(tx_info=tx_info, rx_info=rx_info))
 
         output = dict()
         output['rectangles_info'] = rectangles_info

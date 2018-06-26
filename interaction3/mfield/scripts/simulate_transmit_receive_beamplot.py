@@ -1,4 +1,4 @@
-## interaction3 / mfield / scripts / simulate_transmit_beamplot.py
+## interaction3 / mfield / scripts / simulate_transmit_receive_beamplot.py
 
 import numpy as np
 import multiprocessing
@@ -9,8 +9,9 @@ from tqdm import tqdm
 import traceback
 import sys
 
-from interaction3 import abstract, util
-from interaction3.mfield.solvers import TransmitBeamplot
+import interaction3.abstract as abstract
+from interaction3.mfield.simulations import TransmitReceiveBeamplot
+from interaction3.mfield.simulations import sim_functions as sim
 
 # register adapters for sqlite to convert numpy types
 sql.register_adapter(np.float64, float)
@@ -18,25 +19,19 @@ sql.register_adapter(np.float32, float)
 sql.register_adapter(np.int64, int)
 sql.register_adapter(np.int32, int)
 
-# set default script parameters
 defaults = dict()
 defaults['threads'] = multiprocessing.cpu_count()
-defaults['transmit_focus'] = None
-defaults['delay_quantization'] = 0
 
 
 ## PROCESS FUNCTIONS ##
 
-POSITIONS_PER_PROCESS = 1000
+def init_process(_write_lock, _simulation, _array):
 
-
-def init_process(_write_lock, _simulation, _arrays):
-
-    global write_lock, simulation, arrays
+    global write_lock, simulation, array
 
     write_lock = _write_lock
     simulation = abstract.loads(_simulation)
-    arrays = abstract.loads(_arrays)
+    array = abstract.loads(_array)
 
 
 def process(job):
@@ -45,17 +40,16 @@ def process(job):
 
     simulation['field_positions'] = field_pos
 
-    kwargs, meta = TransmitBeamplot.connector(simulation, *arrays)
-    solver = TransmitBeamplot(**kwargs)
-    solver.solve(field_pos)
+    kwargs, meta = TransmitReceiveBeamplot.connector(simulation, array)
+    solver = TransmitReceiveBeamplot(**kwargs)
 
     rf_data = solver.result['rf_data']
-    p = np.max(util.envelope(rf_data, axis=1), axis=1)
+    p = np.max(sim.envelope(rf_data, axis=1), axis=1)
 
     with write_lock:
         with closing(sql.connect(file)) as con:
             update_pressures_table(con, field_pos, p)
-            util.update_progress(con, job_id)
+            sim.update_progress(con, job_id)
 
 
 def run_process(*args, **kwargs):
@@ -72,15 +66,15 @@ def main(**args):
 
     # get abstract objects from specification
     spec = args['spec']
-    objects = TransmitBeamplot.get_objects_from_spec(*spec)
-    simulation = objects[0]
-    arrays = objects[1:]
+
+    simulation, array = TransmitReceiveBeamplot.get_objects_from_spec(*spec)
 
     # set defaults with the following priority: command line arguments >> simulation object >> script defaults
     for k, v in simulation.items():
         args.setdefault(k, v)
         if args[k] is None:
             args[k] = v
+
     for k, v in defaults.items():
         args.setdefault(k, v)
         if args[k] is None:
@@ -94,17 +88,15 @@ def main(**args):
     file = args['file']
     threads = args['threads']
     mode = args['mesh_mode']
-    mesh_vector1 = args['mesh_vector1']
-    mesh_vector2 = args['mesh_vector2']
-    mesh_vector3 = args['mesh_vector3']
 
     # create field positions
-    field_pos = util.meshview(np.linspace(*mesh_vector1), np.linspace(*mesh_vector2), np.linspace(*mesh_vector3),
-                             mode=mode)
+    v1 = np.linspace(*simulation['mesh_vector1'])
+    v2 = np.linspace(*simulation['mesh_vector2'])
+    v3 = np.linspace(*simulation['mesh_vector3'])
+    field_pos = sim.meshview(v1, v2, v3, mode=mode)
 
-    # calculate job-related values
     is_complete = None
-    njobs = int(np.ceil(len(field_pos) / POSITIONS_PER_PROCESS))
+    njobs = int(np.ceil(len(field_pos) / 100))
     ijob = 0
 
     # check for existing file
@@ -113,13 +105,21 @@ def main(**args):
         response = input('File ' + str(file) + ' already exists.\n' +
                          'Continue (c), overwrite (o), or do nothing (any other key)?')
 
-        if response.lower() in ['o', 'overwrite']:  # if file exists, prompt for overwrite
+        if response.lower() in ['o', 'overwrite']:
 
-            os.remove(file)  # remove existing file
-            create_database(file, args, njobs, field_pos)  # create database
+            os.remove(file)
 
-        elif response.lower() in ['c', 'continue']:  # continue from current progress
-            is_complete, ijob = util.get_progress(file)
+            # create database
+            with closing(sql.connect(file)) as con:
+
+                # create database tables
+                sim.create_metadata_table(con, **args)
+                sim.create_progress_table(con, njobs)
+                create_field_positions_table(con, field_pos)
+                create_pressures_table(con)
+
+        elif response.lower() in ['c', 'continue']:
+            is_complete, ijob = sim.get_progress(file)
 
         else:
             raise Exception('Database already exists')
@@ -132,18 +132,24 @@ def main(**args):
             os.makedirs(file_dir)
 
         # create database
-        create_database(file, args, njobs, field_pos)
+        with closing(sql.connect(file)) as con:
+
+            # create database tables
+            sim.create_metadata_table(con, **args)
+            sim.create_progress_table(con, njobs)
+            create_field_positions_table(con, field_pos)
+            create_pressures_table(con)
 
     try:
 
         # start multiprocessing pool and run process
         write_lock = multiprocessing.Lock()
         simulation = abstract.dumps(simulation)
-        arrays = abstract.dumps(arrays)
-        pool = multiprocessing.Pool(threads, initializer=init_process, initargs=(write_lock, simulation, arrays))
+        array = abstract.dumps(array)
+        pool = multiprocessing.Pool(threads, initializer=init_process, initargs=(write_lock, simulation, array))
 
-        jobs = util.create_jobs(file, (field_pos, POSITIONS_PER_PROCESS), mode='zip', is_complete=is_complete)
-        result = pool.imap_unordered(run_process, jobs)
+        jobs = sim.create_jobs(file, (field_pos, 100), mode='zip', is_complete=is_complete)
+        result = pool.imap_unordered(process, jobs)
 
         for r in tqdm(result, desc='Simulating', total=njobs, initial=ijob):
             pass
@@ -157,23 +163,17 @@ def main(**args):
         pool.close()
 
 
+
 ## DATABASE FUNCTIONS ##
 
-def create_database(file, args, njobs, field_pos):
-
-    with closing(sql.connect(file)) as con:
-        # create database tables (metadata, progress, field_positions, pressures)
-        util.create_metadata_table(con, **args)
-        util.create_progress_table(con, njobs)
-        create_field_positions_table(con, field_pos)
-        create_pressures_table(con)
-
+# Tables: metadata, field_positions, pressures
 
 def create_field_positions_table(con, field_pos):
 
     x, y, z = field_pos.T
 
     with con:
+
         # create table
         con.execute('CREATE TABLE field_positions (x float, y float, z float)')
         # create indexes
@@ -186,6 +186,7 @@ def create_field_positions_table(con, field_pos):
 def create_pressures_table(con):
 
     with con:
+
         # create table
         query = '''
                 CREATE TABLE pressures (

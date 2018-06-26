@@ -217,7 +217,6 @@
       "transmit_focus": { "$ref": "#/definitions/position" },
       "receive_focus": { "$ref": "#/definitions/position" },
       "delay_quantization": { "type": "number" },
-      "save_image_data_only": { "type": "boolean" },
       "threads": { "type": "integer" },
       "file": { "type": "string" },
       "rotations": { "$ref": "#/definitions/rotations" },
