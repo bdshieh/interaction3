@@ -1,10 +1,9 @@
 ## interaction3 / arrays / foldable_matrix.py
 
 import numpy as np
-from scipy.spatial.distance import cdist as distance
 
 from interaction3.abstract import *
-
+from interaction3 import util
 
 # default parameters
 defaults = {}
@@ -20,7 +19,7 @@ defaults['p_ratio'] = [0.22,]
 defaults['isolation'] = 200e-9
 defaults['permittivity'] = 6.3
 defaults['gap'] = 50e-9
-defaults['att_mech'] = 0
+defaults['att_mech'] = 3000
 defaults['ndiv'] = [2, 2]
 
 # array properties
@@ -28,11 +27,11 @@ defaults['mempitch'] = [45e-6, 45e-6]
 defaults['nmem'] = [2, 2]
 defaults['elempitch'] = [90e-6, 90e-6]
 defaults['nelem'] = [80, 80]
-defaults['edge_buffer'] = 45e-6
-defaults['taper_radius'] = 3.75e-3
+defaults['edge_buffer'] = 40e-6  # np.sqrt(2 * 40e-6 ** 2)
+defaults['taper_radius'] = 3.7125e-3
 
 
-def init(**kwargs):
+def create(**kwargs):
 
     # set defaults if not in kwargs:
     for k, v in defaults.items():
@@ -86,7 +85,7 @@ def init(**kwargs):
                                                            0]
 
     # taper transmit corner elements
-    dist = distance(elem_pos, np.array([[0, 0, 0]]))
+    dist = util.distance(elem_pos, np.array([[0, 0, 0]]))
     mask = (dist <= taper_radius).squeeze()
     elem_pos = elem_pos[mask, :]
 
@@ -201,7 +200,7 @@ if __name__ == '__main__':
     args = vars(parser.parse_args())
     filename = args.pop('dump')
 
-    spec = init(**args)
+    spec = create(**args)
     print(spec)
 
     if filename is not None:

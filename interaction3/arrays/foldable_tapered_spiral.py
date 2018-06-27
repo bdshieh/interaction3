@@ -21,15 +21,15 @@ defaults['p_ratio'] = [0.22,]
 defaults['isolation'] = 200e-9
 defaults['permittivity'] = 6.3
 defaults['gap'] = 50e-9
-defaults['att_mech'] = 0
+defaults['att_mech'] = 3000
 defaults['ndiv'] = [2, 2]
 
 # array properties
 defaults['mempitch'] = [45e-6, 45e-6]
 defaults['nmem'] = [2, 2]
 defaults['nelem'] = 512
-defaults['edge_buffer'] = 90e-6
-defaults['taper_radius'] = 3.75e-3
+defaults['edge_buffer'] = np.sqrt(2 * 40e-6 ** 2)
+defaults['taper_radius'] = 3.7125e-3
 
 
 def blackman_functions(R):
@@ -60,7 +60,7 @@ def _get_blackman_symbolic_equations():
     return integral, a_eff
 
 
-def init(**kwargs):
+def create(**kwargs):
 
     # set defaults if not in kwargs:
     for k, v in defaults.items():
@@ -231,7 +231,7 @@ if __name__ == '__main__':
     args = vars(parser.parse_args())
     filename = args.pop('dump')
 
-    spec = init(**args)
+    spec = create(**args)
     print(spec)
 
     if filename is not None:

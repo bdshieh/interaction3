@@ -30,7 +30,7 @@ defaults['ntransmit'] = 25
 defaults['nreceive'] = 25
 defaults['design_freq'] = 7e6
 defaults['sound_speed'] = 1540
-defaults['edge_buffer'] = np.sqrt(2 * 40e-6 ** 2) + 10e-6
+defaults['edge_buffer'] = 0  # np.sqrt(2 * 40e-6 ** 2)
 
 
 def create(**kwargs):
@@ -269,8 +269,8 @@ if __name__ == '__main__':
     parser.add_argument('--mempitch', nargs=2, type=float)
     parser.add_argument('--length', nargs=2, type=float)
     parser.add_argument('--electrode', nargs=2, type=float)
-    parser.add_argument('--ntx', type=int)
-    parser.add_argument('--nrx', type=int)
+    parser.add_argument('--ntransmit', type=int)
+    parser.add_argument('--nreceive', type=int)
     parser.add_argument('--design-frequency', type=float)
     parser.add_argument('-d', '--dump', nargs='?', default=None)
     parser.set_defaults(**defaults)
