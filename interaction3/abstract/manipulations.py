@@ -1,11 +1,11 @@
 ## interaction3 / abstract / manipulations.py
 
 # names to export
-__all__ = ['move_membrane', 'translate_membrane', 'rotate_membrane', 'move_element', 'translate_element',
-           'rotate_element', 'element_position_from_membranes', 'channel_position_from_elements', 'focus_channel',
-           'defocus_channel', 'bias_channel', 'activate_channel', 'deactivate_channel', 'move_array',
-           'translate_array', 'rotate_array', 'array_position_from_vertices', 'get_channel_positions_from_array',
-           'get_element_positions_from_array', 'get_membrane_positions_from_array', 'focus_array']
+# __all__ = ['move_membrane', 'translate_membrane', 'rotate_membrane', 'move_element', 'translate_element',
+#            'rotate_element', 'element_position_from_membranes', 'channel_position_from_elements', 'focus_channel',
+#            'defocus_channel', 'bias_channel', 'activate_channel', 'deactivate_channel', 'move_array',
+#            'translate_array', 'rotate_array', 'array_position_from_vertices', 'get_channel_positions_from_array',
+#            'get_element_positions_from_array', 'get_membrane_positions_from_array', 'focus_array', 'get_channel_count']
 
 import numpy as np
 import math
@@ -295,7 +295,7 @@ def focus_array(a, pos, sound_speed, quantization=None, kind=None):
         channels = [ch for ch in a['channels'] if ch['kind'].lower() in ['tx', 'transmit', 'both', 'txrx']]
     elif kind.lower() in ['rx', 'receive']:
         channels = [ch for ch in a['channels'] if ch['kind'].lower() in ['rx', 'receive', 'both', 'txrx']]
-    elif kind.lower() in ['txrx', 'both']:
+    elif kind.lower() in ['txrx', 'both'] or kind is None:
         channels = a['channels']
 
     for ch in channels:
@@ -306,6 +306,19 @@ def focus_array(a, pos, sound_speed, quantization=None, kind=None):
 def reset_focus_array(a):
     for ch in a['channels']:
         ch['delay'] = 0
+
+
+@vectorize
+def get_channel_count(a, kind=None):
+
+    if kind is None:
+        return len(a['channels'])
+    elif kind.lower() in ['tx', 'transmit']:
+        return len([ch for ch in a['channels'] if ch['kind'].lower() in ['tx', 'transmit', 'both', 'txrx']])
+    elif kind.lower() in ['rx', 'receive']:
+        return len([ch for ch in a['channels'] if ch['kind'].lower() in ['rx', 'receive', 'both', 'txrx']])
+    elif kind.lower() in ['txrx', 'both']:
+        return len([ch for ch in a['channels'] if ch['kind'].lower() in ['both', 'txrx']])
 
 
 if __name__ == '__main__':

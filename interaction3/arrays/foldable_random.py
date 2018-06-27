@@ -64,7 +64,7 @@ def _check_for_edge_collision(pos, vertices, edge_buffer):
     x1, y1, _ = vertices[2]
 
     if (abs(x - x0) >= edge_buffer and abs(x - x1) >= edge_buffer
-            and abs(y - x0) >= edge_buffer and abs(y - x1) >= edge_buffer):
+            and abs(y - y0) >= edge_buffer and abs(y - y1) >= edge_buffer):
         return False
     return True
 

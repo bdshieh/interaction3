@@ -201,7 +201,12 @@ if __name__ == '__main__':
     filename = args.pop('dump')
 
     spec = create(**args)
+
     print(spec)
+    print('Total number of channels ->', sum(get_channel_count(spec)))
+    print('Number of transmit channels ->', sum(get_channel_count(spec, kind='tx')))
+    print('Number of receive channels ->', sum(get_channel_count(spec, kind='rx')))
+    print('Number of transmit/receive channels ->', sum(get_channel_count(spec, kind='both')))
 
     if filename is not None:
         dump(spec, filename, mode='w')
