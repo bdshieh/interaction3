@@ -1,10 +1,9 @@
-## interaction3 / arrays / foldable_spiral.py
+## interaction3 / arrays / foldable_random.py
 
 import numpy as np
-from scipy.spatial.distance import cdist as distance
 
 from interaction3.abstract import *
-
+from interaction3 import util
 
 # default parameters
 defaults = {}
@@ -26,10 +25,11 @@ defaults['ndiv'] = [2, 2]
 # array properties
 defaults['mempitch'] = [45e-6, 45e-6]
 defaults['nmem'] = [2, 2]
-defaults['nelem'] = 512
-defaults['edge_buffer'] = 45e-6
-defaults['taper_radius'] = 3.75e-3
+defaults['nelem'] = 489
+defaults['edge_buffer'] = 60e-6
+defaults['taper_radius'] = 3.75e-3 - 40e-6
 defaults['random_seed'] = 0
+defaults['assert_radius'] = 3.75e-3 - 40e-6
 
 # array pane vertices, hard-coded
 _vertices0 = [[-3.75e-3, -3.75e-3, 0],
@@ -50,7 +50,7 @@ _vertices2 = [[1.25e-3, -3.75e-3, 0],
 
 def _check_for_element_collision(pos, all_pos, radius):
 
-    dist = distance(*np.atleast_2d(pos, all_pos))
+    dist = util.distance(pos, all_pos)
     if np.any(dist <= 2 * radius):
         return True
     else:
@@ -85,6 +85,7 @@ def init(**kwargs):
     edge_buffer = kwargs['edge_buffer']
     taper_radius = kwargs['taper_radius']
     random_seed = kwargs['random_seed']
+    assert_radius = kwargs['assert_radius']
 
     # membrane properties
     mem_properties = dict()
@@ -117,27 +118,33 @@ def init(**kwargs):
     np.random.seed(random_seed)
     collision_radius = np.sqrt((nmem_x * length_x + nmem_x * mempitch_x) ** 2 +
                                (nmem_y * length_y + nmem_y * mempitch_y) ** 2) / 2
+
     elem_pos = []
+    n = 0
 
-    for n in range(nelem):
+    while True:
 
-        while True:
+        if len(elem_pos) == nelem:
+            break
 
-            xx = np.random.rand() * 2 * taper_radius - taper_radius
-            yy = np.random.rand() * 2 * taper_radius - taper_radius
-            zz = 0
-            pos = [xx, yy, zz]
+        xx = np.random.rand() * 2 * taper_radius - taper_radius
+        yy = np.random.rand() * 2 * taper_radius - taper_radius
+        zz = 0
+        pos = [xx, yy, zz]
 
-            if not _check_for_edge_collision(pos, _vertices0, edge_buffer):
-                if not _check_for_edge_collision(pos, _vertices1, edge_buffer):
-                    if not _check_for_edge_collision(pos, _vertices2, edge_buffer):
-                        if n == 0: # skip collision check for first element
-                            break
-                        if not _check_for_element_collision(pos, elem_pos, collision_radius):
-                            break
+        if np.sqrt(xx **2 + yy ** 2) > taper_radius:
+            continue
+        if _check_for_edge_collision(pos, _vertices0, edge_buffer):
+            continue
+        if _check_for_edge_collision(pos, _vertices1, edge_buffer):
+            continue
+        if _check_for_edge_collision(pos, _vertices2, edge_buffer):
+            continue
+        if n != 0: # skip collision check for first element
+            if _check_for_element_collision(pos, elem_pos, collision_radius):
+                continue
 
         elem_pos.append([xx, yy, zz])
-
     elem_pos = np.array(elem_pos)
 
     # create arrays, bounding box and rotation points are hard-coded
@@ -159,7 +166,16 @@ def init(**kwargs):
     mask = np.logical_and(np.logical_and(np.logical_and(xx >= x0, xx < x1), yy >= y0), yy < y1)
     array2 = _construct_array(2, np.array([1.25e-3, 0, 0]), _vertices2, elem_pos[mask, :], mem_pos, mem_properties)
 
+    _assert_radius_rule(assert_radius, array0, array1, array2)
+
     return array0, array1, array2
+
+
+def _assert_radius_rule(radius, *arrays):
+
+    pos = np.concatenate(get_channel_positions_from_array(arrays), axis=0)
+    r = util.distance(pos, [0, 0, 0])
+    assert np.all(r <= radius)
 
 
 def _construct_array(id, rotation_origin, vertices, elem_pos, mem_pos, mem_properties):
@@ -239,6 +255,24 @@ if __name__ == '__main__':
 
     spec = init(**args)
     print(spec)
+    print('Total number of channels ->', sum(get_channel_count(spec)))
+    print('Number of transmit channels ->', sum(get_channel_count(spec, kind='tx')))
+    print('Number of receive channels ->', sum(get_channel_count(spec, kind='rx')))
+    print('Number of transmit/receive channels ->', sum(get_channel_count(spec, kind='both')))
 
     if filename is not None:
         dump(spec, filename, mode='w')
+
+    from matplotlib import pyplot as plt
+
+    pos = np.concatenate(get_membrane_positions_from_array(spec), axis=0)
+    plt.plot(pos[:, 0], pos[:, 1], '.')
+    plt.gca().set_aspect('equal')
+    plt.gca().axvline(-1.25e-3)
+    plt.gca().axvline(1.25e-3)
+    plt.gca().axvline(-3.75e-3)
+    plt.gca().axvline(3.75e-3)
+    plt.gca().axhline(-3.75e-3)
+    plt.gca().axhline(3.75e-3)
+    plt.gca().add_patch(plt.Circle(radius=defaults['assert_radius'], xy=(0,0), fill=None))
+    plt.show()

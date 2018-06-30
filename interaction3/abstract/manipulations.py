@@ -1,11 +1,12 @@
 ## interaction3 / abstract / manipulations.py
 
 # names to export
-# __all__ = ['move_membrane', 'translate_membrane', 'rotate_membrane', 'move_element', 'translate_element',
-#            'rotate_element', 'element_position_from_membranes', 'channel_position_from_elements', 'focus_channel',
-#            'defocus_channel', 'bias_channel', 'activate_channel', 'deactivate_channel', 'move_array',
-#            'translate_array', 'rotate_array', 'array_position_from_vertices', 'get_channel_positions_from_array',
-#            'get_element_positions_from_array', 'get_membrane_positions_from_array', 'focus_array', 'get_channel_count']
+__all__ = ['move_membrane', 'translate_membrane', 'rotate_membrane', 'move_element', 'translate_element',
+           'rotate_element', 'element_position_from_membranes', 'channel_position_from_elements', 'focus_channel',
+           'defocus_channel', 'bias_channel', 'activate_channel', 'deactivate_channel', 'move_array',
+           'translate_array', 'rotate_array', 'array_position_from_vertices', 'get_channel_positions_from_array',
+           'get_element_positions_from_array', 'get_membrane_positions_from_array', 'focus_array', 'reset_focus_array',
+           'get_channel_count']
 
 import numpy as np
 import math

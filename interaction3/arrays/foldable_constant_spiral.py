@@ -3,6 +3,7 @@
 import numpy as np
 
 from interaction3.abstract import *
+from interaction3 import util
 
 
 # default parameters
@@ -25,9 +26,9 @@ defaults['ndiv'] = [2, 2]
 # array properties
 defaults['mempitch'] = [45e-6, 45e-6]
 defaults['nmem'] = [2, 2]
-defaults['nelem'] = 512
-defaults['edge_buffer'] = 60e-6  # np.sqrt(2 * 40e-6 ** 2)
-defaults['taper_radius'] = 3.7125e-3
+defaults['nelem'] = 489
+defaults['edge_buffer'] = 60e-6  # accounts for 20um dicing tolerance
+defaults['taper_radius'] = 3.63e-3 # controls size of spiral
 defaults['assert_radius'] = 3.75e-3 - 40e-6
 
 # array pane vertices, hard-coded
@@ -120,8 +121,6 @@ def create(**kwargs):
         zz = 0
         n += 1
 
-        assert r <= assert_radius
-
         if _check_for_edge_collision([xx, yy, zz], _vertices0, edge_buffer):
             continue
         elif _check_for_edge_collision([xx, yy, zz], _vertices1, edge_buffer):
@@ -131,7 +130,6 @@ def create(**kwargs):
         else:
             elem_pos.append([xx, yy, zz])
     elem_pos = np.array(elem_pos)
-
 
     # create arrays, bounding box and rotation points are hard-coded
     x0, y0, _ = _vertices0[0]
@@ -152,7 +150,16 @@ def create(**kwargs):
     mask = np.logical_and(np.logical_and(np.logical_and(xx >= x0, xx < x1), yy >= y0), yy < y1)
     array2 = _construct_array(2, np.array([1.25e-3, 0, 0]), _vertices2, elem_pos[mask, :], mem_pos, mem_properties)
 
+    _assert_radius_rule(assert_radius, array0, array1, array2)
+
     return array0, array1, array2
+
+
+def _assert_radius_rule(radius, *arrays):
+
+    pos = np.concatenate(get_channel_positions_from_array(arrays), axis=0)
+    r = util.distance(pos, [0,0,0])
+    assert np.all(r <= radius)
 
 
 def _check_for_edge_collision(pos, vertices, edge_buffer):
@@ -263,3 +270,4 @@ if __name__ == '__main__':
     plt.gca().axhline(-3.75e-3)
     plt.gca().axhline(3.75e-3)
     plt.gca().add_patch(plt.Circle(radius=defaults['assert_radius'], xy=(0,0), fill=None))
+    plt.show()
