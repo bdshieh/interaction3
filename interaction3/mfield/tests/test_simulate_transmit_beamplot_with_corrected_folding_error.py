@@ -7,13 +7,13 @@ from interaction3 import abstract
 from interaction3.arrays import foldable_vernier
 
 array_kwargs = {}
-array_kwargs['ntx'] = 10
-array_kwargs['nrx'] = 10
+array_kwargs['ntransmit'] = 10
+array_kwargs['nreceive'] = 10
 
 sim_kwargs = {}
-sim_kwargs['transmit_focus'] = [0, 0, 0.05]
+sim_kwargs['focus'] = [0, 0, 0.05]
 sim_kwargs['delay_quantization'] = 0
-sim_kwargs['threads'] = 3
+sim_kwargs['threads'] = 2
 sim_kwargs['rotations'] = [[0, 'y'], [2, '-y']]
 sim_kwargs['angles'] = [0, 5, 1]
 sim_kwargs['angle_tolerance'] = 0.5
@@ -26,23 +26,25 @@ sim_kwargs['mesh_vector1'] = [-0.02, 0.02, 41]
 sim_kwargs['mesh_vector2'] = [-0.02, 0.02, 41]
 sim_kwargs['mesh_vector3'] = [0.05, 0.06, 1]
 
-arrays = foldable_vernier.init(**array_kwargs)
+arrays = foldable_vernier.create(**array_kwargs)
 simulation = abstract.MfieldSimulation(**sim_kwargs)
 
 abstract.dump((simulation,) + arrays, 'test_spec.json', mode='w')
 
 command = '''
-          python -m interaction3.mfield.scripts.simulate_transmit_beamplot_with_corrected_folding_error
+          python -m interaction3.mfield.scripts.simulate_transmit_receive_beamplot_with_corrected_folding_error
           test_database.db
           -s test_spec.json
           '''
 subprocess.run(command.split())
-#
-# import sqlite3 as sql
-# import pandas as pd
-# from matplotlib import pyplot as plt
-#
-# con = sql.connect('test.db')
-# image = np.array(pd.read_sql('SELECT brightness FROM image WHERE angle=0 ORDER BY x, y, z', con))
-# plt.imshow(20*np.log10(np.abs(image)).reshape((41,41)).T)
-# plt.show()
+
+import sqlite3 as sql
+import pandas as pd
+from matplotlib import pyplot as plt
+
+con = sql.connect('test_database.db')
+image = np.array(pd.read_sql('SELECT brightness FROM image ORDER BY angle, error_type, x, y, z', con))
+image = image.reshape((6, 2, 41, 41))
+plt.figure()
+plt.imshow(20 * np.log10(np.abs(image[0, 0, ...]) / image[0, 0, ...].max()))
+plt.show()

@@ -20,22 +20,35 @@ else:
     _LANGUAGE = 'c' # for gcc
 
 ext_modules = [
-    Extension(name = 'interaction3.bem.core.fma_functions',
-              sources = ['interaction3/bem/core/fma_functions.pyx'],
-              include_dirs = [np.get_include()],
+    Extension(name='interaction3.bem.core.fma_functions',
+              sources=['interaction3/bem/core/fma_functions.pyx'],
+              include_dirs=[np.get_include()],
               language=_LANGUAGE
     ),
-    Extension(name = 'interaction3.beamform.engines_cy',
-              sources = ['interaction3/beamform/engines_cy.pyx'],
-              include_dirs = [np.get_include()],
-              language = _LANGUAGE
+    Extension(name='interaction3.beamform.engines_cy',
+              sources=['interaction3/beamform/engines_cy.pyx'],
+              include_dirs=[np.get_include()],
+              language=_LANGUAGE
 
     )
 ]
 
 
 setup(
-    name = 'interaction3',
-    ext_modules = cythonize(ext_modules)
+    name='interaction3',
+    ext_modules=cythonize(ext_modules),
+    install_requires=[
+        'numpy',
+        'scipy',
+        'matplotlib',
+        'jupyter',
+        'cython',
+        'pandas',
+        'sqlite',
+        'sympy',
+        'attrs',
+        'tqdm',
+        'namedlist'
+    ]
 )
 

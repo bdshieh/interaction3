@@ -29,7 +29,7 @@ defaults['elempitch'] = [100e-6, 100e-6]
 defaults['nelem'] = [7, 7]
 
 
-def init(**kwargs):
+def create(**kwargs):
 
     # set defaults if not in kwargs:
     for k, v in defaults.items():

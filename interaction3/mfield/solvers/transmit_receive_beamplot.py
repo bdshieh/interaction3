@@ -1,12 +1,11 @@
-## mfield / simulations / transmit_receive_beamplot.py
+## interaction3 / mfield / solvers / transmit_receive_beamplot.py
 
 import numpy as np
 import attr
 from scipy.interpolate import interp2d
 
-from interaction3 import abstract
+from interaction3 import abstract, util
 from .. core import mfield
-from . import sim_functions as sim
 
 
 @attr.s
@@ -48,7 +47,7 @@ class TransmitReceiveBeamplot(object):
         field.set_field('att_f0', self.att_f0)
 
         # create excitation
-        pulse, _ = sim.gausspulse(self.excitation_fc, self.excitation_bw / self.excitation_fc, self.fs)
+        pulse, _ = util.gausspulse(self.excitation_fc, self.excitation_bw / self.excitation_fc, self.fs)
         self._pulse = pulse
 
         return field
@@ -92,8 +91,8 @@ class TransmitReceiveBeamplot(object):
             field_pos = self.field_pos
         field_pos = np.atleast_2d(field_pos)
 
-        array_rf = list()
-        array_t0s = list()
+        array_rf = []
+        array_t0s = []
 
         for info in rect_info:
 
@@ -131,8 +130,8 @@ class TransmitReceiveBeamplot(object):
             # set mathematical element delays
             field.ele_delay(rx, np.arange(len(rx_ele_delays)) + 1, rx_ele_delays)
 
-            pos_rf = list()
-            pos_t0s = list()
+            pos_rf = []
+            pos_t0s = []
 
             for i, pos in enumerate(field_pos):
 
@@ -140,7 +139,7 @@ class TransmitReceiveBeamplot(object):
 
                     # calculate element factor corrections
                     r_tx = np.atleast_2d(pos) - np.atleast_2d(tx_centers)
-                    r, a, b = sim.cart2sec(r_tx).T
+                    r, a, b = util.cart2sec(r_tx).T
                     tx_correction = interpolator(np.rad2deg(np.abs(a)), np.rad2deg(np.abs(b)))
 
                     # apply correction as apodization
@@ -148,7 +147,7 @@ class TransmitReceiveBeamplot(object):
 
                     # calculate element factor corrections
                     r_rx = np.atleast_2d(pos) - np.atleast_2d(rx_centers)
-                    r, a, b = sim.cart2sec(r_rx).T
+                    r, a, b = util.cart2sec(r_rx).T
                     rx_correction = interpolator(np.rad2deg(np.abs(a)), np.rad2deg(np.abs(b)))
 
                     # apply correction as apodization
@@ -159,7 +158,7 @@ class TransmitReceiveBeamplot(object):
                 pos_rf.append(_rf)
                 pos_t0s.append(_t0)
 
-            _array_rf, _array_t0 = sim.concatenate_with_padding(pos_rf, pos_t0s, fs)
+            _array_rf, _array_t0 = util.concatenate_with_padding(pos_rf, pos_t0s, fs)
 
             array_rf.append(_array_rf)
             array_t0s.append(_array_t0)
@@ -167,15 +166,15 @@ class TransmitReceiveBeamplot(object):
             field.xdc_free(tx)
             field.xdc_free(rx)
 
-        rf_data, t0 = sim.sum_with_padding(array_rf, array_t0s, fs)
+        rf_data, t0 = util.sum_with_padding(array_rf, array_t0s, fs)
         times = t0 + np.arange(rf_data.shape[1]) / fs
 
         result['rf_data'] = rf_data
-        result['times'] = [times,] * len(rf_data)
+        result['times'] = times
 
     @staticmethod
     def get_objects_from_spec(*files):
-        spec = list()
+        spec = []
 
         for file in files:
             obj = abstract.load(file)
@@ -187,7 +186,7 @@ class TransmitReceiveBeamplot(object):
         if len(spec) < 2:
             raise Exception
 
-        arrays = list()
+        arrays = []
         for obj in spec:
             if isinstance(obj, abstract.Array):
                 arrays.append(obj)
@@ -212,7 +211,7 @@ class TransmitReceiveBeamplot(object):
         c = simulation.get('sound_speed', 1540)
         delay_quant = simulation.get('delay_quantization', 0)
 
-        rectangles_info = list()
+        rectangles_info = []
         for array in arrays:
 
             if tx_focus is not None:  # apply transmit focus
@@ -225,7 +224,7 @@ class TransmitReceiveBeamplot(object):
 
             rectangles_info.append(dict(tx_info=tx_info, rx_info=rx_info))
 
-        output = dict()
+        output = {}
         output['rectangles_info'] = rectangles_info
         output['c'] = simulation['sound_speed']
         output['fs'] = simulation['sampling_frequency']
@@ -239,7 +238,7 @@ class TransmitReceiveBeamplot(object):
         output['excitation_fc'] = simulation['excitation_center_frequecy']
         output['excitation_bw'] = simulation['excitation_bandwidth']
 
-        meta = dict()
+        meta = {}
 
         return output, meta
 
@@ -247,16 +246,19 @@ class TransmitReceiveBeamplot(object):
 def _construct_rectangles_info(array, kind='tx'):
 
     # create lists to store info about each mathematical element in the array
-    channel_centers = list()
-    channel_delays = list()
-    channel_apodizations = list()
-    rectangles = list()
-    ele_delays = list()
+    channel_centers = []
+    channel_delays = []
+    channel_apodizations = []
+    rectangles = []
+    ele_delays = []
 
     if kind.lower() in ['tx', 'transmit']:
         channels = [ch for ch in array['channels'] if ch['kind'].lower() in ['tx', 'transmit', 'both', 'txrx']]
     elif kind.lower() in ['rx', 'receive']:
         channels = [ch for ch in array['channels'] if ch['kind'].lower() in ['rx', 'receive', 'both', 'txrx']]
+
+    if len(channels) == 0:
+        return
 
     for ch_no, ch in enumerate(channels):
 
@@ -269,7 +271,7 @@ def _construct_rectangles_info(array, kind='tx'):
         channel_delays.append(ch_delay)
         channel_apodizations.append(ch_apod)
 
-        ele_delays_row = list()
+        ele_delays_row = []
 
         for elem in ch['elements']:
 
@@ -302,7 +304,7 @@ def _construct_rectangles_info(array, kind='tx'):
                 # apply rotations
                 if rotations is not None:
                     for vec, angle in rotations:
-                        ele_centers = sim.rotate_nodes(ele_centers, vec, angle)
+                        ele_centers = util.rotate_nodes(ele_centers, vec, angle)
 
                 ele_centers += mem_center
 
@@ -318,10 +320,10 @@ def _construct_rectangles_info(array, kind='tx'):
                     # apply rotations
                     if rotations is not None:
                         for vec, angle in rotations:
-                            vert00 = sim.rotate_nodes(vert00, vec, angle)
-                            vert01 = sim.rotate_nodes(vert01, vec, angle)
-                            vert11 = sim.rotate_nodes(vert11, vec, angle)
-                            vert10 = sim.rotate_nodes(vert10, vec, angle)
+                            vert00 = util.rotate_nodes(vert00, vec, angle)
+                            vert01 = util.rotate_nodes(vert01, vec, angle)
+                            vert11 = util.rotate_nodes(vert11, vec, angle)
+                            vert10 = util.rotate_nodes(vert10, vec, angle)
 
                     vert00 += center
                     vert01 += center
@@ -329,7 +331,7 @@ def _construct_rectangles_info(array, kind='tx'):
                     vert10 += center
 
                     # create rectangles and ele_delays, order matters!
-                    rectangles_row = list()
+                    rectangles_row = []
 
                     rectangles_row.append(ch_no + 1)
                     rectangles_row += list(vert00)
@@ -353,7 +355,7 @@ def _construct_rectangles_info(array, kind='tx'):
     channel_apodizations = np.array(channel_apodizations)
     ele_delays = np.array(ele_delays)
 
-    output = dict()
+    output = {}
     output['rectangles'] = rectangles
     output['centers'] = channel_centers
     output['delays'] = channel_delays

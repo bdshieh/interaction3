@@ -1,42 +1,40 @@
-## mfield / tests/ test_simulate_transmit_beamplot.py
+## interaction3 / mfield / tests / test_simulate_transmit_receive_beamplot_with_folding_error.py
 
 import numpy as np
 import subprocess
 
 from interaction3 import abstract
-from interaction3.abstract.arrays import foldable_linear_array
-from interaction3.abstract import MfieldSimulation as Simulation
+from interaction3.arrays import foldable_vernier
 
-arrays = abstract.arrays.foldable_linear_array.init()
+array_kwargs = {}
+array_kwargs['ntransmit'] = 10
+array_kwargs['nreceive'] = 10
 
-sim = Simulation(transmit_focus=[0, 0, 0.05],
-                 receive_focus=[0, 0, 0.05],
-                 delay_quantization=0,
-                 threads=4,
-                 rotations=[[0, 'y'], [2, '-y']],
-                 angles=[0, 1, 1],
-                 sampling_frequency=100e6,
-                 sound_speed=1500,
-                 use_attenuation=True,
-                 frequency_attenuation=0,
-                 attenuation_center_frequency=1e6,
-                 excitation_center_frequecy=7e6,
-                 excitation_bandwidth=5.6e6,
-                 use_element_factor=False,
-                 element_factor_file='',
-                 mesh_mode='cartesian',
-                 mesh_vector1=[0, 0.05, 51],
-                 mesh_vector2=[0, 0.05, 51],
-                 mesh_vector3=[0.05, 0.06, 1],
-                 save_image_data_only=False
-                 )
+sim_kwargs = {}
+sim_kwargs['focus'] = [0, 0, 0.05]
+sim_kwargs['delay_quantization'] = 0
+sim_kwargs['threads'] = 3
+sim_kwargs['rotations'] = [[0, 'y'], [2, '-y']]
+sim_kwargs['angles'] = [0, 5, 1]
+sim_kwargs['angle_tolerance'] = 0.5
+sim_kwargs['sampling_frequency'] = 100e6
+sim_kwargs['sound_speed'] = 1540
+sim_kwargs['excitation_center_frequecy'] = 7e6
+sim_kwargs['excitation_bandwidth'] = 5.6e6
+sim_kwargs['mesh_mode'] ='cartesian'
+sim_kwargs['mesh_vector1'] = [-0.02, 0.02, 41]
+sim_kwargs['mesh_vector2'] = [-0.02, 0.02, 41]
+sim_kwargs['mesh_vector3'] = [0.05, 0.06, 1]
 
-abstract.dump((sim,) + arrays, 'spec.json', mode='w')
+arrays = foldable_vernier.create(**array_kwargs)
+simulation = abstract.MfieldSimulation(**sim_kwargs)
+
+abstract.dump((simulation,) + arrays, 'test_spec.json', mode='w')
 
 command = '''
-          python -m interaction3.mfield.scripts.simulate_transmit_receive_beamplot_with_folding_error 
-          test.db
-          -s spec.json
+          python -m interaction3.mfield.scripts.simulate_transmit_receive_beamplot_with_folding_error
+          test_database.db
+          -s test_spec.json
           '''
 subprocess.run(command.split())
 
@@ -44,7 +42,11 @@ import sqlite3 as sql
 import pandas as pd
 from matplotlib import pyplot as plt
 
-con = sql.connect('test.db')
-image = np.array(pd.read_sql('SELECT brightness FROM image WHERE angle=0 ORDER BY x, y, z', con))
-plt.imshow(20*np.log10(np.abs(image)).reshape((41,41)).T)
+con = sql.connect('test_database.db')
+image = np.array(pd.read_sql('SELECT brightness FROM image ORDER BY angle, x, y, z', con))
+image = image.reshape((6, 41, 41))
+plt.figure()
+plt.imshow(20 * np.log10(np.abs(image[0, ...]) / image[0, ...].max()))
+plt.figure()
+plt.imshow(20 * np.log10(np.abs(image[5, ...]) / image[5, ...].max()))
 plt.show()

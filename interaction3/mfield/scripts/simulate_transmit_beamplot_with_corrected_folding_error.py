@@ -20,7 +20,7 @@ sql.register_adapter(np.int64, int)
 sql.register_adapter(np.int32, int)
 
 # set default script parameters
-defaults = dict()
+defaults = {}
 defaults['threads'] = multiprocessing.cpu_count()
 defaults['transmit_focus'] = None
 defaults['delay_quantization'] = 0
@@ -39,6 +39,12 @@ def init_process(_write_lock, _simulation, _arrays):
     simulation_base = abstract.loads(_simulation)
     arrays_base = abstract.loads(_arrays)
 
+    # important! avoid solver overriding current delays
+    if 'transmit_focus' in simulation_base:
+        simulation_base.pop('transmit_focus')
+    if 'receive_focus' in simulation_base:
+        simulation_base.pop('receive_focus')
+
 
 def process(job):
 
@@ -55,13 +61,12 @@ def process(job):
                 abstract.rotate_array(array, dir, np.deg2rad(angle))
 
     # set focus delays while array is in rotated state
-    tx_focus = simulation['transmit_focus']
-    if tx_focus is not None:
+    focus = simulation['focus']
+    if focus is not None:
         c = simulation['sound_speed']
         delay_quant = simulation['delay_quantization']
         for array in arrays:
-            abstract.focus_array(array, tx_focus, c, delay_quant, kind='tx')
-    simulation.pop('transmit_focus')  # important! avoid solver overriding current delays
+            abstract.focus_array(array, focus, c, delay_quant, kind='both')
 
     arrays_plus = arrays.copy()
     arrays_minus = arrays.copy()
@@ -78,13 +83,11 @@ def process(job):
                 abstract.rotate_array(array, dir, np.deg2rad(-angle_tol))
 
     # create and run simulation
-
     kwargs, meta = TransmitBeamplot.connector(simulation, *arrays_plus)
     solver_plus = TransmitBeamplot(**kwargs)
     solver_plus.solve(field_pos)
 
     # create and run simulation
-    simulation['transmit_focus'] = None
     kwargs, meta = TransmitBeamplot.connector(simulation, *arrays_minus)
     solver_minus = TransmitBeamplot(**kwargs)
     solver_minus.solve(field_pos)
@@ -97,11 +100,11 @@ def process(job):
 
             rf_data = solver_plus.result['rf_data']
             p = np.max(util.envelope(rf_data, axis=1), axis=1)
-            update_pressures_table(con, angle, angle_tol, 'plus', field_pos, p)
+            update_image_table(con, angle, angle_tol, 'plus', field_pos, p)
 
             rf_data = solver_minus.result['rf_data']
             p = np.max(util.envelope(rf_data, axis=1), axis=1)
-            update_pressures_table(con, angle, angle_tol, 'minus', field_pos, p)
+            update_image_table(con, angle, angle_tol, 'minus', field_pos, p)
 
             util.update_progress(con, job_id)
 
@@ -159,7 +162,7 @@ def main(**args):
     # create rotation rules which will be distributed by the pool
     array_ids = [id for id, _ in rotations]
     dirs = [dir for _, dir in rotations]
-    zip_args = list()
+    zip_args = []
     for id, dir in zip(array_ids, dirs):
         zip_args.append(zip(repeat(id), repeat(dir), angles))
     rotation_rules = list(zip(*zip_args))
@@ -229,7 +232,7 @@ def create_database(file, args, njobs, field_pos):
         util.create_metadata_table(con, **args)
         util.create_progress_table(con, njobs)
         create_field_positions_table(con, field_pos)
-        create_pressures_table(con)
+        create_image_table(con)
 
 
 def create_field_positions_table(con, field_pos):
@@ -245,12 +248,12 @@ def create_field_positions_table(con, field_pos):
         con.executemany('INSERT INTO field_positions VALUES (?, ?, ?)', zip(x, y, z))
 
 
-def create_pressures_table(con):
+def create_image_table(con):
 
     with con:
         # create table
         query = '''
-                CREATE TABLE pressures (
+                CREATE TABLE image (
                 id INTEGER PRIMARY KEY,
                 angle float,
                 angle_tolerance float,
@@ -258,25 +261,25 @@ def create_pressures_table(con):
                 x float,
                 y float,
                 z float,
-                pressure float,
+                brightness float,
                 FOREIGN KEY (x, y, z) REFERENCES field_positions (x, y, z)
                 )
                 '''
         con.execute(query)
         # create indexes
-        con.execute('CREATE INDEX pressure_index ON pressures (angle, x, y, z)')
+        con.execute('CREATE INDEX image_index ON image (angle, x, y, z)')
 
 
-def update_pressures_table(con, angle, angle_tol, error_type, field_pos, pressures):
+def update_image_table(con, angle, angle_tol, error_type, field_pos, brightness):
 
     x, y, z = np.array(field_pos).T
 
     with con:
         query = '''
-                INSERT INTO pressures (angle, angle_tolerance, error_type, x, y, z, pressure)
+                INSERT INTO image (angle, angle_tolerance, error_type, x, y, z, brightness)
                 VALUES (?, ?, ?, ?, ?, ?, ?)
                 '''
-        con.executemany(query, zip(repeat(angle), repeat(angle_tol), repeat(error_type), x, y, z, pressures.ravel()))
+        con.executemany(query, zip(repeat(angle), repeat(angle_tol), repeat(error_type), x, y, z, brightness.ravel()))
 
 
 ## COMMAND LINE INTERFACE ##

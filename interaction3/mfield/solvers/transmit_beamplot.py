@@ -1,4 +1,4 @@
-## mfield / simulations / transmit_receive_beamplot.py
+## interaction3 / mfield / solvers / transmit_beamplot.py
 
 import numpy as np
 import attr
@@ -91,8 +91,8 @@ class TransmitBeamplot(object):
             field_pos = self.field_pos
         field_pos = np.atleast_2d(field_pos)
 
-        array_rf = list()
-        array_t0s = list()
+        array_rf = []
+        array_t0s = []
 
         for info in rect_info:
 
@@ -113,8 +113,8 @@ class TransmitBeamplot(object):
             # set mathematical element delays
             field.ele_delay(tx, np.arange(len(tx_ele_delays)) + 1, tx_ele_delays)
 
-            pos_rf = list()
-            pos_t0s = list()
+            pos_rf = []
+            pos_t0s = []
 
             for i, pos in enumerate(field_pos):
 
@@ -148,7 +148,7 @@ class TransmitBeamplot(object):
 
     @staticmethod
     def get_objects_from_spec(*files):
-        spec = list()
+        spec = []
 
         for file in files:
             obj = abstract.load(file)
@@ -160,7 +160,7 @@ class TransmitBeamplot(object):
         if len(spec) < 2:
             raise Exception
 
-        arrays = list()
+        arrays = []
         for obj in spec:
             if isinstance(obj, abstract.Array):
                 arrays.append(obj)
@@ -184,7 +184,7 @@ class TransmitBeamplot(object):
         c = simulation.get('sound_speed', 1540)
         delay_quant = simulation.get('delay_quantization', None)
 
-        rectangles_info = list()
+        rectangles_info = []
         for array in arrays:
 
             if tx_focus is not None:  # apply transmit focus
@@ -192,7 +192,7 @@ class TransmitBeamplot(object):
             tx_info = _construct_rectangles_info(array, kind='tx')
             rectangles_info.append(dict(tx_info=tx_info))
 
-        output = dict()
+        output = {}
         output['rectangles_info'] = rectangles_info
         output['c'] = simulation['sound_speed']
         output['fs'] = simulation['sampling_frequency']
@@ -206,7 +206,7 @@ class TransmitBeamplot(object):
         output['excitation_fc'] = simulation['excitation_center_frequecy']
         output['excitation_bw'] = simulation['excitation_bandwidth']
 
-        meta = dict()
+        meta = {}
 
         return output, meta
 
@@ -214,11 +214,11 @@ class TransmitBeamplot(object):
 def _construct_rectangles_info(array, kind='tx'):
 
     # create lists to store info about each mathematical element in the array
-    channel_centers = list()
-    channel_delays = list()
-    channel_apodizations = list()
-    rectangles = list()
-    ele_delays = list()
+    channel_centers = []
+    channel_delays = []
+    channel_apodizations = []
+    rectangles = []
+    ele_delays = []
 
     if kind.lower() in ['tx', 'transmit']:
         channels = [ch for ch in array['channels'] if ch['kind'].lower() in ['tx', 'transmit', 'both', 'txrx']]
@@ -236,7 +236,7 @@ def _construct_rectangles_info(array, kind='tx'):
         channel_delays.append(ch_delay)
         channel_apodizations.append(ch_apod)
 
-        ele_delays_row = list()
+        ele_delays_row = []
 
         for elem in ch['elements']:
 
@@ -296,7 +296,7 @@ def _construct_rectangles_info(array, kind='tx'):
                     vert10 += center
 
                     # create rectangles and ele_delays, order matters!
-                    rectangles_row = list()
+                    rectangles_row = []
 
                     rectangles_row.append(ch_no + 1)
                     rectangles_row += list(vert00)
@@ -320,7 +320,7 @@ def _construct_rectangles_info(array, kind='tx'):
     channel_apodizations = np.array(channel_apodizations)
     ele_delays = np.array(ele_delays)
 
-    output = dict()
+    output = {}
     output['rectangles'] = rectangles
     output['centers'] = channel_centers
     output['delays'] = channel_delays
@@ -328,4 +328,3 @@ def _construct_rectangles_info(array, kind='tx'):
     output['ele_delays'] = ele_delays
 
     return output
-

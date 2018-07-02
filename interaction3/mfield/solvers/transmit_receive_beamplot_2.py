@@ -1,16 +1,14 @@
-## mfield / simulations / transmit_receive_beamplot_with_reflector.py
+## interaction3 / mfield / solvers / transmit_receive_beamplot.py
 
 import numpy as np
 import attr
-from scipy.interpolate import interp2d
 
-from interaction3 import abstract
+from interaction3 import abstract, util
 from .. core import mfield
-from . import sim_functions as sim
 
 
 @attr.s
-class TransmitReceiveBeamplot(object):
+class TransmitReceiveBeamplot2(object):
 
     # INSTANCE VARIABLES, FIELD II PARAMETERS
     c = attr.ib()
@@ -22,15 +20,12 @@ class TransmitReceiveBeamplot(object):
     rectangles_info = attr.ib(repr=False)
 
     # INSTANCE VARIABLES, OTHER PARAMETERS
-    use_element_factor = attr.ib()
-    element_factor_file = attr.ib(repr=False)
     excitation_fc = attr.ib()
     excitation_bw = attr.ib()
     field_pos = attr.ib(default=None, repr=False)
 
     # INSTANCE VARIABLES, NO INIT
     _field = attr.ib(init=False, repr=False)
-    _interpolator = attr.ib(init=False, repr=False)
     result = attr.ib(init=False, default=attr.Factory(dict), repr=False)
 
     @_field.default
@@ -48,43 +43,16 @@ class TransmitReceiveBeamplot(object):
         field.set_field('att_f0', self.att_f0)
 
         # create excitation
-        pulse, _ = sim.gausspulse(self.excitation_fc, self.excitation_bw / self.excitation_fc, self.fs)
+        pulse, _ = util.gausspulse(self.excitation_fc, self.excitation_bw / self.excitation_fc, self.fs)
         self._pulse = pulse
 
         return field
-
-    @_interpolator.default
-    def _interpolator_default(self):
-
-        if self.use_element_factor:
-            with np.load(self.element_factor_file) as root:
-                alpha = np.linspace(0, 90, 91)
-                beta = np.linspace(0, 90, 91)
-                correction_db = root['correction_db']
-
-                fcubic = interp2d(alpha, beta, 10 ** (correction_db / 20.), kind='cubic')
-
-            def interpolator(a, b):
-
-                n = len(a)
-                z = np.zeros(n)
-
-                for i, (ai, bi) in enumerate(zip(a, b)):
-                    z[i] = fcubic(ai, bi)
-
-                return z
-
-            return interpolator
-        else:
-            return
 
     def solve(self, field_pos=None):
 
         field = self._field
         rect_info = self.rectangles_info
         pulse = self._pulse
-        use_element_factor = self.use_element_factor
-        interpolator = self._interpolator
         fs = self.fs
         result = self.result
 
@@ -92,88 +60,104 @@ class TransmitReceiveBeamplot(object):
             field_pos = self.field_pos
         field_pos = np.atleast_2d(field_pos)
 
-        array_rf = list()
-        array_t0s = list()
+        # read rect_info and create list of transmit and receive apertures
+        tx_apertures = []
+        rx_apertures = []
 
         for info in rect_info:
 
             tx_info = info['tx_info']
-            tx_rectangles = tx_info['rectangles']
-            tx_centers = tx_info['centers']
-            tx_delays = tx_info['delays']
-            tx_apod = tx_info['apodizations']
-            tx_ele_delays = tx_info['ele_delays']
-
-            # create transmit aperture and set aperture parameters
-            tx = field.xdc_rectangles(tx_rectangles, tx_centers, np.array([[0, 0, 300]]))
-            field.xdc_impulse(tx, pulse)
-            field.xdc_excitation(tx, np.array([1]))
-            field.xdc_focus_times(tx, np.zeros((1, 1)), tx_delays)
-            field.xdc_apodization(tx, np.zeros((1, 1)), tx_apod)
-
-            # set mathematical element delays
-            field.ele_delay(tx, np.arange(len(tx_ele_delays)) + 1, tx_ele_delays)
-
             rx_info = info['rx_info']
-            rx_rectangles = rx_info['rectangles']
-            rx_centers = rx_info['centers']
-            rx_delays = rx_info['delays']
-            rx_apod = rx_info['apodizations']
-            rx_ele_delays = rx_info['ele_delays']
 
-            # create receive aperture and set aperture parameters
-            rx = field.xdc_rectangles(rx_rectangles, rx_centers, np.array([[0, 0, 300]]))
-            field.xdc_impulse(rx, pulse)
-            field.xdc_excitation(rx, np.array([1]))
-            field.xdc_focus_times(rx, np.zeros((1, 1)), rx_delays)
-            field.xdc_apodization(rx, np.zeros((1, 1)), rx_apod)
+            if tx_info is not None:
 
-            # set mathematical element delays
-            field.ele_delay(rx, np.arange(len(rx_ele_delays)) + 1, rx_ele_delays)
+                tx_rectangles = tx_info['rectangles']
+                tx_centers = tx_info['centers']
+                tx_delays = tx_info['delays']
+                tx_apod = tx_info['apodizations']
+                tx_ele_delays = tx_info['ele_delays']
 
-            pos_rf = list()
-            pos_t0s = list()
+                # create transmit aperture and set aperture parameters
+                tx = field.xdc_rectangles(tx_rectangles, tx_centers, np.array([[0, 0, 300]]))
+                field.xdc_impulse(tx, pulse)
+                field.xdc_excitation(tx, np.array([1]))
+                field.xdc_focus_times(tx, np.zeros((1, 1)), tx_delays)
+                field.xdc_apodization(tx, np.zeros((1, 1)), tx_apod)
 
-            for i, pos in enumerate(field_pos):
+                # set mathematical element delays
+                field.ele_delay(tx, np.arange(len(tx_ele_delays)) + 1, tx_ele_delays)
 
-                if use_element_factor:
+                # add aperture to list
+                tx_apertures.append(tx)
 
-                    # calculate element factor corrections
-                    r_tx = np.atleast_2d(pos) - np.atleast_2d(tx_centers)
-                    r, a, b = sim.cart2sec(r_tx).T
-                    tx_correction = interpolator(np.rad2deg(np.abs(a)), np.rad2deg(np.abs(b)))
-                    # apply correction as apodization
-                    field.xdc_apodization(tx, np.zeros((1, 1)), tx_apod * tx_correction)
+            if rx_info is not None:
 
-                    # calculate element factor corrections
-                    r_rx = np.atleast_2d(pos) - np.atleast_2d(rx_centers)
-                    r, a, b = sim.cart2sec(r_rx).T
-                    rx_correction = interpolator(np.rad2deg(np.abs(a)), np.rad2deg(np.abs(b)))
-                    # apply correction as apodization
-                    field.xdc_apodization(rx, np.zeros((1, 1)), rx_apod * rx_correction)
+                rx_rectangles = rx_info['rectangles']
+                rx_centers = rx_info['centers']
+                rx_delays = rx_info['delays']
+                rx_apod = rx_info['apodizations']
+                rx_ele_delays = rx_info['ele_delays']
 
-                _rf, _t0 = field.calc_hhp(tx, rx, pos)
+                # create receive aperture and set aperture parameters
+                rx = field.xdc_rectangles(rx_rectangles, rx_centers, np.array([[0, 0, 300]]))
+                field.xdc_impulse(rx, pulse)
+                field.xdc_excitation(rx, np.array([1]))
+                field.xdc_focus_times(rx, np.zeros((1, 1)), rx_delays)
+                field.xdc_apodization(rx, np.zeros((1, 1)), rx_apod)
 
-                pos_rf.append(_rf)
-                pos_t0s.append(_t0)
+                # set mathematical element delays
+                field.ele_delay(rx, np.arange(len(rx_ele_delays)) + 1, rx_ele_delays)
 
-            _array_rf, _array_t0 = sim.concatenate_with_padding(pos_rf, pos_t0s, fs)
+                # add aperture to list
+                rx_apertures.append(rx)
 
-            array_rf.append(_array_rf)
-            array_t0s.append(_array_t0)
+        # iterate over field positions
+        pos_rf = []
+        pos_t0s = []
 
-            field.xdc_free(tx)
-            field.xdc_free(rx)
+        for i, pos in enumerate(field_pos):
 
-        rf_data, t0 = sim.sum_with_padding(array_rf, array_t0s, fs)
+            # determine sum of transmit spatial impulse responses
+            tx_sir = []
+            tx_t0 = []
+
+            for tx in tx_apertures:
+                _tx_sir, _tx_t0 = field.calc_h(tx, pos)
+                tx_sir.append(_tx_sir)
+                tx_t0.append(_tx_t0)
+
+            tx_sir, tx_t0 = util.sum_with_padding(tx_sir, tx_t0, fs)
+
+            # determine sum of receive impulse responses
+            rx_sir = []
+            rx_t0 = []
+
+            for rx in rx_apertures:
+                _rx_sir, _rx_t0 = field.calc_h(rx, pos)
+                rx_sir.append(_rx_sir)
+                rx_t0.append(_rx_t0)
+
+            rx_sir, rx_t0 = util.sum_with_padding(rx_sir, rx_t0, fs)
+
+            # calculate pulse-echo response by convolving transmit and receive spatial impulse responses
+            # _pos_rf = np.convolve(tx_sir.squeeze(), rx_sir.squeeze()) / fs
+            _pos_t0 = tx_t0 + rx_t0
+            _pos_rf = _convolver(pulse, tx_sir, rx_sir, pulse, fs=fs)
+
+            pos_rf.append(_pos_rf)
+            pos_t0s.append(_pos_t0)
+
+        result['rf'] = pos_rf, pos_t0s
+
+        rf_data, t0 = util.concatenate_with_padding(pos_rf, pos_t0s, fs, axis=0)
         times = t0 + np.arange(rf_data.shape[1]) / fs
 
         result['rf_data'] = rf_data
-        result['times'] = [times,] * len(rf_data)
+        result['times'] = times
 
     @staticmethod
     def get_objects_from_spec(*files):
-        spec = list()
+        spec = []
 
         for file in files:
             obj = abstract.load(file)
@@ -185,7 +169,7 @@ class TransmitReceiveBeamplot(object):
         if len(spec) < 2:
             raise Exception
 
-        arrays = list()
+        arrays = []
         for obj in spec:
             if isinstance(obj, abstract.Array):
                 arrays.append(obj)
@@ -202,18 +186,26 @@ class TransmitReceiveBeamplot(object):
         att = simulation.get('attenuation', 0)
         freq_att = simulation.get('frequency_attenuation', 0)
         att_f0 = simulation.get('attenuation_center_frequency', 1e6)
-        use_element_factor = simulation.get('use_element_factor', False)
-        element_factor_file = simulation.get('element_factor_file', None)
         field_pos = simulation.get('field_positions', None)
+        tx_focus = simulation.get('transmit_focus', None)
+        rx_focus = simulation.get('receive_focus', None)
+        c = simulation.get('sound_speed', 1540)
+        delay_quant = simulation.get('delay_quantization', 0)
 
-        rectangles_info = list()
+        rectangles_info = []
         for array in arrays:
 
+            if tx_focus is not None:  # apply transmit focus
+                abstract.focus_array(array, tx_focus, c, delay_quant, kind='tx')
             tx_info = _construct_rectangles_info(array, kind='tx')
+
+            if rx_focus is not None:  # apply receive focus
+                abstract.focus_array(array, rx_focus, c, delay_quant, kind='rx')
             rx_info = _construct_rectangles_info(array, kind='rx')
+
             rectangles_info.append(dict(tx_info=tx_info, rx_info=rx_info))
 
-        output = dict()
+        output = {}
         output['rectangles_info'] = rectangles_info
         output['c'] = simulation['sound_speed']
         output['fs'] = simulation['sampling_frequency']
@@ -221,30 +213,39 @@ class TransmitReceiveBeamplot(object):
         output['att'] = att
         output['freq_att'] = freq_att
         output['att_f0'] = att_f0
-        output['use_element_factor'] = use_element_factor
-        output['element_factor_file'] = element_factor_file
         output['field_pos'] = field_pos
         output['excitation_fc'] = simulation['excitation_center_frequecy']
         output['excitation_bw'] = simulation['excitation_bandwidth']
 
-        meta = dict()
+        meta = {}
 
         return output, meta
+
+
+def _convolver(*args, fs=None):
+
+    result = args[0].squeeze()
+    for a in args[1:]:
+        result = np.convolve(result, a.squeeze()) / fs
+    return result
 
 
 def _construct_rectangles_info(array, kind='tx'):
 
     # create lists to store info about each mathematical element in the array
-    channel_centers = list()
-    channel_delays = list()
-    channel_apodizations = list()
-    rectangles = list()
-    ele_delays = list()
+    channel_centers = []
+    channel_delays = []
+    channel_apodizations = []
+    rectangles = []
+    ele_delays = []
 
     if kind.lower() in ['tx', 'transmit']:
         channels = [ch for ch in array['channels'] if ch['kind'].lower() in ['tx', 'transmit', 'both', 'txrx']]
     elif kind.lower() in ['rx', 'receive']:
         channels = [ch for ch in array['channels'] if ch['kind'].lower() in ['rx', 'receive', 'both', 'txrx']]
+
+    if len(channels) == 0:
+        return
 
     for ch_no, ch in enumerate(channels):
 
@@ -257,7 +258,7 @@ def _construct_rectangles_info(array, kind='tx'):
         channel_delays.append(ch_delay)
         channel_apodizations.append(ch_apod)
 
-        ele_delays_row = list()
+        ele_delays_row = []
 
         for elem in ch['elements']:
 
@@ -290,7 +291,7 @@ def _construct_rectangles_info(array, kind='tx'):
                 # apply rotations
                 if rotations is not None:
                     for vec, angle in rotations:
-                        ele_centers = sim.rotate_nodes(ele_centers, vec, angle)
+                        ele_centers = util.rotate_nodes(ele_centers, vec, angle)
 
                 ele_centers += mem_center
 
@@ -306,10 +307,10 @@ def _construct_rectangles_info(array, kind='tx'):
                     # apply rotations
                     if rotations is not None:
                         for vec, angle in rotations:
-                            vert00 = sim.rotate_nodes(vert00, vec, angle)
-                            vert01 = sim.rotate_nodes(vert01, vec, angle)
-                            vert11 = sim.rotate_nodes(vert11, vec, angle)
-                            vert10 = sim.rotate_nodes(vert10, vec, angle)
+                            vert00 = util.rotate_nodes(vert00, vec, angle)
+                            vert01 = util.rotate_nodes(vert01, vec, angle)
+                            vert11 = util.rotate_nodes(vert11, vec, angle)
+                            vert10 = util.rotate_nodes(vert10, vec, angle)
 
                     vert00 += center
                     vert01 += center
@@ -317,7 +318,7 @@ def _construct_rectangles_info(array, kind='tx'):
                     vert10 += center
 
                     # create rectangles and ele_delays, order matters!
-                    rectangles_row = list()
+                    rectangles_row = []
 
                     rectangles_row.append(ch_no + 1)
                     rectangles_row += list(vert00)
@@ -341,7 +342,7 @@ def _construct_rectangles_info(array, kind='tx'):
     channel_apodizations = np.array(channel_apodizations)
     ele_delays = np.array(ele_delays)
 
-    output = dict()
+    output = {}
     output['rectangles'] = rectangles
     output['centers'] = channel_centers
     output['delays'] = channel_delays

@@ -1,16 +1,17 @@
-## interaction3 / mfield / scripts / simulate_transmit_beamplot.py
+## interaction3 / mfield / scripts / simulate_transmit_receive_beamplot_with_corrected_folding_error.py
 
 import numpy as np
 import multiprocessing
 import os
 import sqlite3 as sql
+from itertools import repeat
 from contextlib import closing
 from tqdm import tqdm
 import traceback
 import sys
 
 from interaction3 import abstract, util
-from interaction3.mfield.solvers import TransmitBeamplot
+from interaction3.mfield.solvers import TransmitReceiveBeamplot2 as Solver
 
 # register adapters for sqlite to convert numpy types
 sql.register_adapter(np.float64, float)
@@ -21,6 +22,8 @@ sql.register_adapter(np.int32, int)
 # set default script parameters
 defaults = {}
 defaults['threads'] = multiprocessing.cpu_count()
+defaults['transmit_focus'] = None
+defaults['delay_quantization'] = 0
 
 
 ## PROCESS FUNCTIONS ##
@@ -30,28 +33,79 @@ POSITIONS_PER_PROCESS = 1000
 
 def init_process(_write_lock, _simulation, _arrays):
 
-    global write_lock, solver
+    global write_lock, simulation_base, arrays_base
 
     write_lock = _write_lock
-    simulation = abstract.loads(_simulation)
-    arrays = abstract.loads(_arrays)
+    simulation_base = abstract.loads(_simulation)
+    arrays_base = abstract.loads(_arrays)
 
-    kwargs, meta = TransmitBeamplot.connector(simulation, *arrays)
-    solver = TransmitBeamplot(**kwargs)
+    # important! avoid solver overriding current delays
+    if 'transmit_focus' in simulation_base:
+        simulation_base.pop('transmit_focus')
+    if 'receive_focus' in simulation_base:
+        simulation_base.pop('receive_focus')
 
 
 def process(job):
 
-    job_id, (file, field_pos) = job
+    job_id, (file, field_pos, rotation_rule) = job
 
-    solver.solve(field_pos)
+    rotation_rule = rotation_rule[0] # remove enclosing list
+    arrays = arrays_base.copy()
+    simulation = simulation_base.copy()
 
-    rf_data = solver.result['rf_data']
-    p = np.max(util.envelope(rf_data, axis=1), axis=1)
+    # rotate arrays based on rotation rule
+    for array_id, dir, angle in rotation_rule:
+        for array in arrays:
+            if array['id'] == array_id:
+                abstract.rotate_array(array, dir, np.deg2rad(angle))
+
+    # set focus delays while array is in rotated state
+    focus = simulation['focus']
+    if focus is not None:
+        c = simulation['sound_speed']
+        delay_quant = simulation['delay_quantization']
+        for array in arrays:
+            abstract.focus_array(array, focus, c, delay_quant, kind='both')
+
+    arrays_plus = arrays.copy()
+    arrays_minus = arrays.copy()
+
+    # rotate arrays again based on plus and minus tolerance
+    angle_tol = simulation['angle_tolerance']
+    for array_id, dir, _ in rotation_rule:
+        for array in arrays_plus:
+            if array['id'] == array_id:
+                abstract.rotate_array(array, dir, np.deg2rad(angle_tol))
+
+        for array in arrays_minus:
+            if array['id'] == array_id:
+                abstract.rotate_array(array, dir, np.deg2rad(-angle_tol))
+
+    # create and run simulation
+    kwargs, meta = Solver.connector(simulation, *arrays_plus)
+    solver_plus = Solver(**kwargs)
+    solver_plus.solve(field_pos)
+
+    # create and run simulation
+    kwargs, meta = Solver.connector(simulation, *arrays_minus)
+    solver_minus = Solver(**kwargs)
+    solver_minus.solve(field_pos)
+
+    # extract results and save
+    angle = rotation_rule[0][2]
 
     with write_lock:
         with closing(sql.connect(file)) as con:
-            update_image_table(con, field_pos, p)
+
+            rf_data = solver_plus.result['rf_data']
+            b = np.max(util.envelope(rf_data, axis=1), axis=1)
+            update_image_table(con, angle, angle_tol, 'plus', field_pos, b)
+
+            rf_data = solver_minus.result['rf_data']
+            b = np.max(util.envelope(rf_data, axis=1), axis=1)
+            update_image_table(con, angle, angle_tol, 'minus', field_pos, b)
+
             util.update_progress(con, job_id)
 
 
@@ -69,7 +123,8 @@ def main(**args):
 
     # get abstract objects from specification
     spec = args['spec']
-    objects = TransmitBeamplot.get_objects_from_spec(*spec)
+
+    objects = Solver.get_objects_from_spec(*spec)
     simulation = objects[0]
     arrays = objects[1:]
 
@@ -94,14 +149,27 @@ def main(**args):
     mesh_vector1 = args['mesh_vector1']
     mesh_vector2 = args['mesh_vector2']
     mesh_vector3 = args['mesh_vector3']
+    rotations = args['rotations']
+    a_start, a_stop, a_step = args['angles']
 
     # create field positions
     field_pos = util.meshview(np.linspace(*mesh_vector1), np.linspace(*mesh_vector2), np.linspace(*mesh_vector3),
                              mode=mode)
 
+    # create angles
+    angles = np.arange(a_start, a_stop + a_step, a_step)
+
+    # create rotation rules which will be distributed by the pool
+    array_ids = [id for id, _ in rotations]
+    dirs = [dir for _, dir in rotations]
+    zip_args = []
+    for id, dir in zip(array_ids, dirs):
+        zip_args.append(zip(repeat(id), repeat(dir), angles))
+    rotation_rules = list(zip(*zip_args))
+
     # calculate job-related values
     is_complete = None
-    njobs = int(np.ceil(len(field_pos) / POSITIONS_PER_PROCESS))
+    njobs = int(np.ceil(len(field_pos) / POSITIONS_PER_PROCESS) * len(rotation_rules))
     ijob = 0
 
     # check for existing file
@@ -139,7 +207,8 @@ def main(**args):
         arrays = abstract.dumps(arrays)
         pool = multiprocessing.Pool(threads, initializer=init_process, initargs=(write_lock, simulation, arrays))
 
-        jobs = util.create_jobs(file, (field_pos, POSITIONS_PER_PROCESS), mode='zip', is_complete=is_complete)
+        jobs = util.create_jobs(file, (field_pos, POSITIONS_PER_PROCESS), (rotation_rules, 1), mode='product',
+                                is_complete=is_complete)
         result = pool.imap_unordered(run_process, jobs)
 
         for r in tqdm(result, desc='Simulating', total=njobs, initial=ijob):
@@ -168,7 +237,7 @@ def create_database(file, args, njobs, field_pos):
 
 def create_field_positions_table(con, field_pos):
 
-    x, y, z = field_pos.T
+    x, y, z = np.atleast_2d(field_pos).T
 
     with con:
         # create table
@@ -176,41 +245,51 @@ def create_field_positions_table(con, field_pos):
         # create indexes
         con.execute('CREATE UNIQUE INDEX field_position_index ON field_positions (x, y, z)')
         # insert values into table
-        query = 'INSERT INTO field_positions VALUES (?, ?, ?)'
-        con.executemany(query, zip(x, y, z))
+        con.executemany('INSERT INTO field_positions VALUES (?, ?, ?)', zip(x, y, z))
 
 
 def create_image_table(con):
 
     with con:
-
         # create table
         query = '''
                 CREATE TABLE image (
                 id INTEGER PRIMARY KEY,
+                angle float,
+                angle_tolerance float,
+                error_type string,
                 x float,
                 y float,
                 z float,
                 brightness float,
-                FOREIGN KEY (x, y, z) REFERENCES nodes (x, y, z)
+                FOREIGN KEY (x, y, z) REFERENCES field_positions (x, y, z)
                 )
                 '''
         con.execute(query)
-
         # create indexes
-        con.execute('CREATE INDEX image_index ON image (x, y, z)')
+        con.execute('CREATE INDEX image_index ON image (angle, x, y, z)')
 
 
-def update_image_table(con, field_pos, brightness):
+def update_image_table(con, angle, angle_tol, error_type, field_pos, brightness):
 
     x, y, z = np.array(field_pos).T
 
     with con:
-        query = 'INSERT INTO image (x, y, z,  brightness) VALUES (?, ?, ?, ?)'
-        con.executemany(query, zip(x, y, z, brightness.ravel()))
+        query = '''
+                INSERT INTO image (angle, angle_tolerance, error_type, x, y, z, brightness)
+                VALUES (?, ?, ?, ?, ?, ?, ?)
+                '''
+        con.executemany(query, zip(repeat(angle), repeat(angle_tol), repeat(error_type), x, y, z, brightness.ravel()))
 
 
 ## COMMAND LINE INTERFACE ##
+
+def parse_rotation(string):
+    try:
+        return int(string)
+    except ValueError:
+        return string
+
 
 if __name__ == '__main__':
 
@@ -221,6 +300,8 @@ if __name__ == '__main__':
     parser.add_argument('file', nargs='?')
     parser.add_argument('-s', '--spec', nargs='+')
     parser.add_argument('-t', '--threads', type=int)
+    # parser.add_argument('-r', '--rotations', nargs=2, action='append', type=parse_rotation)
+    # parser.add_argument('-a', '--angles', nargs=3, type=float)
 
     args = vars(parser.parse_args())
     main(**args)
