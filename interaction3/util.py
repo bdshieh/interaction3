@@ -400,7 +400,7 @@ def create_progress_table(con, njobs):
 @open_sqlite_file
 def get_progress(con):
 
-    table = pd.read_sql('SELECT is_complete FROM progress SORT BY job_id', con)
+    table = pd.read_sql('SELECT is_complete FROM progress ORDER BY job_id', con)
 
     is_complete = np.array(table).squeeze()
     ijob = sum(is_complete) + 1
