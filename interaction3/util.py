@@ -22,7 +22,7 @@ def meshview(v1, v2, v3, mode='cartesian', as_list=True):
 
     elif mode.lower() in ('spherical', 'sphere', 'polar'):
 
-        r, theta, phi = np.meshgrid(v1, v2, v3, indexing='ij')
+        r, theta, phi = np.meshgrid(v1, np.deg2rad(v2), np.deg2rad(v3), indexing='ij')
 
         x = r * np.cos(theta) * np.sin(phi)
         y = r * np.sin(theta) * np.sin(phi)
@@ -30,7 +30,7 @@ def meshview(v1, v2, v3, mode='cartesian', as_list=True):
 
     elif mode.lower() in ('sector', 'sec'):
 
-        r, py, px = np.meshgrid(v1, v2, v3, indexing='ij')
+        r, py, px = np.meshgrid(v1, np.deg2rad(v2), np.deg2rad(v3), indexing='ij')
 
         px = -px
         pyp = np.arctan(np.cos(px) * np.sin(py) / np.cos(py))

@@ -97,7 +97,7 @@ def main(**args):
 
     # create field positions
     field_pos = util.meshview(np.linspace(*mesh_vector1), np.linspace(*mesh_vector2), np.linspace(*mesh_vector3),
-                             mode=mode)
+                              mode=mode)
 
     is_complete = None
     njobs = int(np.ceil(len(field_pos) / POSITIONS_PER_PROCESS))
