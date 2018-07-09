@@ -44,7 +44,6 @@ setup(
         'jupyter',
         'cython',
         'pandas',
-        'sqlite',
         'sympy',
         'attrs',
         'tqdm',
