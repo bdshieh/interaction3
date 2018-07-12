@@ -10,7 +10,7 @@ import traceback
 import sys
 
 from interaction3 import abstract, util
-from interaction3.mfield.solvers import TransmitReceiveBeamplot2 as Solver
+from interaction3.mfield.solvers import TransmitReceiveBeamplot3 as Solver
 
 # register adapters for sqlite to convert numpy types
 sql.register_adapter(np.float64, float)
@@ -24,7 +24,7 @@ defaults['threads'] = multiprocessing.cpu_count()
 
 ## PROCESS FUNCTIONS ##
 
-POSITIONS_PER_PROCESS = 1000
+POSITIONS_PER_PROCESS = 4000
 
 
 def init_process(_write_lock, _simulation, _arrays):

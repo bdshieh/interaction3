@@ -1,4 +1,4 @@
-## interaction3 / mfield / solvers / transmit_receive_beamplot_2.py
+## interaction3 / mfield / solvers / transmit_receive_beamplot_3.py
 
 import numpy as np
 import attr
@@ -8,7 +8,7 @@ from .. core import mfield
 
 
 @attr.s
-class TransmitReceiveBeamplot2(object):
+class TransmitReceiveBeamplot3(object):
 
     # INSTANCE VARIABLES, FIELD II PARAMETERS
     c = attr.ib()
@@ -31,6 +31,8 @@ class TransmitReceiveBeamplot2(object):
     @_field.default
     def _field_default(self):
 
+        rect_info = self.rectangles_info
+
         field = mfield.MField()
 
         # initialize Field II with parameters
@@ -46,20 +48,6 @@ class TransmitReceiveBeamplot2(object):
         pulse, _ = util.gausspulse(self.excitation_fc, self.excitation_bw / self.excitation_fc, self.fs)
         self._pulse = pulse
 
-        return field
-
-    def solve(self, field_pos=None):
-
-        field = self._field
-        rect_info = self.rectangles_info
-        pulse = self._pulse
-        fs = self.fs
-        result = self.result
-
-        if field_pos is None:
-            field_pos = self.field_pos
-        field_pos = np.atleast_2d(field_pos)
-
         # read rect_info and create list of transmit and receive apertures
         tx_apertures = []
         rx_apertures = []
@@ -70,7 +58,6 @@ class TransmitReceiveBeamplot2(object):
             rx_info = info['rx_info']
 
             if tx_info is not None:
-
                 tx_rectangles = tx_info['rectangles']
                 tx_centers = tx_info['centers']
                 tx_delays = tx_info['delays']
@@ -91,7 +78,6 @@ class TransmitReceiveBeamplot2(object):
                 tx_apertures.append(tx)
 
             if rx_info is not None:
-
                 rx_rectangles = rx_info['rectangles']
                 rx_centers = rx_info['centers']
                 rx_delays = rx_info['delays']
@@ -110,6 +96,24 @@ class TransmitReceiveBeamplot2(object):
 
                 # add aperture to list
                 rx_apertures.append(rx)
+
+        self._tx_apertures = tx_apertures
+        self._rx_apertures = rx_apertures
+
+        return field
+
+    def solve(self, field_pos=None):
+
+        field = self._field
+        pulse = self._pulse
+        fs = self.fs
+        tx_apertures = self._tx_apertures
+        rx_apertures = self._rx_apertures
+        result = self.result
+
+        if field_pos is None:
+            field_pos = self.field_pos
+        field_pos = np.atleast_2d(field_pos)
 
         # iterate over field positions
         pos_rf = []
@@ -151,12 +155,6 @@ class TransmitReceiveBeamplot2(object):
 
         rf_data, t0 = util.concatenate_with_padding(pos_rf, pos_t0s, fs, axis=0)
         times = t0 + np.arange(rf_data.shape[1]) / fs
-
-        # free apertures from memory
-        for tx in tx_apertures:
-            field.xdc_free(tx)
-        for rx in rx_apertures:
-            field.xdc_free(rx)
 
         result['rf_data'] = rf_data
         result['times'] = times
