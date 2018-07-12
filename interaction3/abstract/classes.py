@@ -7,6 +7,7 @@ from namedlist import namedlist, FACTORY
 from collections import OrderedDict
 from copy import deepcopy, copy
 import sys, inspect
+import json
 
 
 # def __copy__(self):
@@ -17,6 +18,60 @@ import sys, inspect
 #
 #     return type(self)(_skip_validation=True, **deepcopy(dict(self), memo=memo))
 
+def _generate_json_from_object(obj):
+
+    typename = type(obj).__name__
+
+    if typename in classes:
+
+        d = {}
+        d['_type'] = typename
+        for k, v in obj._asdict().items():
+            d[k] = _generate_json_from_object(v)
+        return d
+
+    elif isinstance(obj, dict):
+
+        d = {}
+        for k, v in obj.items():
+            d[k] = _generate_json_from_object(v)
+        return d
+
+    elif isinstance(obj, (list, tuple)):
+
+        l = []
+        for i in var:
+            l.append(_generate_json_from_object(i))
+        return l
+
+    else:
+        return obj
+
+
+def _generate_object_from_json(js):
+
+    if isinstance(js, dict):
+
+        d = dict()
+        for key, val in var.items():
+            d[key] = generate_objects_from_json(val)
+
+        if '_name' in d:
+
+            object_name = d.pop('_name')
+            return ObjectFactory.create(object_name, d)
+        return d
+
+    elif isinstance(var, list):
+
+        l = []
+        for i in var:
+            l.append(generate_objects_from_json(i))
+        return l
+
+    else:
+        return var
+
 
 def _repr(self):
     return self.__str__()
@@ -26,20 +81,27 @@ def _str(self):
     return pretty(self)
 
 
-def _dump(self):
-    pass
+def dump(obj, fp, indent=2, mode='x', *args, **kwargs):
+    json.dump(generate_json_object_with_name(obj), open(fp, mode), indent=indent, *args, **kwargs)
+
+
+def dumps(obj, indent=2, *args, **kwargs):
+    return json.dumps(_generate_json_object_with_type(obj), indent=indent, *args, **kwargs)
+
+
+def load(fp, *args, **kwargs):
+    return generate_objects_from_json(json.load(open(fp, 'r'), *args, **kwargs))
+
+
+def loads(s, *args, **kwargs):
+    return generate_objects_from_json(json.loads(s, *args, **kwargs))
 
 
 def _dumps(self):
-    pass
 
+    for k, v in self._asdict().items():
+    json.dumps(
 
-def _load(self):
-    pass
-
-
-def _loads(self):
-    pass
 
 
 def abstracttype(*args, **kwargs):
@@ -50,56 +112,6 @@ def abstracttype(*args, **kwargs):
     cls.__str__ = _str
 
     return cls
-
-
-# def pprint(obj, indent=0, depth=0, maxdepth=2):
-#
-#     if type(obj).__name__ in classes:
-#
-#         if depth >= maxdepth:
-#             if 'id' in obj._fields:
-#                 return type(obj).__name__ + ' (id=' + str(obj.id) + ')' + '\n'
-#             else:
-#                 return type(obj).__name__ + '\n'
-#
-#         strings = []
-#         strings.append(' ' * indent + type(obj).__name__ + '\n')
-#
-#         for key, val in obj._asdict().items():
-#             strings.append(' ' * (indent + 2) + str(key) + ': ')
-#
-#             if type(val).__name__ in classes:
-#                 strings.append('\n' + pprint(val, indent + 4, depth + 1, maxdepth))
-#             else:
-#                 strings.append(pprint(val, indent + 4, depth + 1, maxdepth))
-#
-#         return ''.join(strings)
-#
-#     elif isinstance(obj, (list, tuple)):
-#
-#         if len(obj) == 0:
-#             return '[]' + '\n'
-#
-#         elif depth >= maxdepth:
-#             return '[...]' + '\n'
-#
-#         elif type(obj[0]).__name__ in classes:
-#
-#             if depth == 0:
-#                 strings = []
-#             else:
-#                 strings = ['\n', ]
-#
-#             for val in obj:
-#                 strings.append(' ' * indent)
-#                 strings.append(pprint(val, indent, depth + 1, maxdepth))
-#             return ''.join(strings)
-#
-#         else:
-#             return str(list(obj)) + '\n'
-#
-#     else:
-#         return str(obj) + '\n'
 
 
 def pretty(obj, indent=0):
