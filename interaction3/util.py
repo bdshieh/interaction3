@@ -16,68 +16,95 @@ import sqlite3 as sql
 
 def meshview(v1, v2, v3, mode='cartesian', as_list=True):
 
-    if mode.lower() in ('cart', 'cartesian', 'rect'):
-
+    if mode.lower() in ('cart', 'cartesian'):
         x, y, z = np.meshgrid(v1, v2, v3, indexing='ij')
 
-    elif mode.lower() in ('spherical', 'sphere', 'polar'):
-
+    elif mode.lower() in ('sph', 'spherical'):
         r, theta, phi = np.meshgrid(v1, np.deg2rad(v2), np.deg2rad(v3), indexing='ij')
+        x, y, z = sph2cart(r, theta, phi)
 
-        x = r * np.cos(theta) * np.sin(phi)
-        y = r * np.sin(theta) * np.sin(phi)
-        z = r * np.cos(phi)
+    elif mode.lower() in ('sec', 'sector'):
+        r, alpha, beta = np.meshgrid(v1, np.deg2rad(v2), np.deg2rad(v3), indexing='ij')
+        x, y, z = sec2cart(r, alpha, beta)
 
-    elif mode.lower() in ('sector', 'sec'):
-
-        r, py, px = np.meshgrid(v1, np.deg2rad(v2), np.deg2rad(v3), indexing='ij')
-
-        px = -px
-        pyp = np.arctan(np.cos(px) * np.sin(py) / np.cos(py))
-
-        x = r * np.sin(pyp)
-        y = -r * np.cos(pyp) * np.sin(px)
-        z = r * np.cos(px) * np.cos(pyp)
+    elif mode.lower() in ('dp', 'dpolar'):
+        r, alpha, beta = np.meshgrid(v1, np.deg2rad(v2), np.deg2rad(v3), indexing='ij')
+        x, y, z = dp2cart(r, alpha, beta)
 
     if as_list:
-        return np.c_[x.ravel(order='F'), y.ravel(order='F'), z.ravel(order='F')]
+        return np.c_[x.ravel('F'), y.ravel('F'), z.ravel('F')]
     else:
         return x, y, z
 
 
-def cart2sec(xyz):
+def sec2cart(r, alpha, beta):
 
-    x, y, z = np.atleast_2d(xyz).T
+    z = r / np.sqrt(np.tan(alpha)**2 + np.tan(beta)**2 + 1)
+    x = z * np.tan(alpha)
+    y = z * np.tan(beta)
 
-    r = np.sqrt(x ** 2 + y ** 2 + z ** 2)
-    pyp = np.arcsin(x / r)
-    px = np.arcsin(-y / r / np.cos(pyp))
-    py = np.arctan(np.tan(pyp) / np.cos(px))
+    # alpha_p = np.arctan(np.tan(alpha) * np.cos(beta))
+    # x = np.sin(alpha_p) * r
+    # y = -np.sin(beta) * r * np.cos(alpha_p)
+    # z = np.sqrt(r**2 - x**2 - y**2)
 
-    return np.c_[r, py, -px]
+    # px = -px
+    # pyp = np.arctan(np.cos(px) * np.sin(py) / np.cos(py))
+    # x = r * np.sin(pyp)
+    # y = -r * np.cos(pyp) * np.sin(px)
+    # z = r * np.cos(px) * np.cos(pyp)
 
-
-def cart2sec2(xyz):
-
-    x, y, z = np.atleast_2d(xyz).T
-
-    r = np.sqrt(x ** 2 + y ** 2 + z ** 2)
-    py = np.arccos(z / (np.sqrt(x ** 2 + z ** 2)))
-    px = np.arccos(z / (np.sqrt(y ** 2 + z ** 2)))
-
-    return np.c_[r, px, py]
+    return x, y, z
 
 
-def sec2cart(rpxpy):
+def cart2sec(x, y, z):
 
-    r, px, py = np.atleast_2d(rpxpy).T
+    r = np.sqrt(x**2 + y**2 + z**2)
+    alpha = np.arccos(z / (np.sqrt(x**2 + z**2)))
+    beta = np.arccos(z / (np.sqrt(y**2 + z**2)))
 
-    pyp = np.arctan(np.tan(py) * np.cos(px))
-    x = np.sin(pyp) * r
-    y = -np.sin(px) * r * np.cos(pyp)
-    z = np.sqrt(r ** 2 - x ** 2 - y ** 2)
+    # r = np.sqrt(x**2 + y**2 + z**2)
+    # alpha_p = np.arcsin(x / r)
+    # beta = -np.arcsin(-y / r / np.cos(alpha_p))
+    # alpha = np.arctan(np.tan(alpha_p) / np.cos(beta))
 
-    return np.c_[x, y, z]
+    return r, alpha, beta
+
+
+def sph2cart(r, theta, phi):
+
+    x = r * np.cos(theta) * np.sin(phi)
+    y = r * np.sin(theta) * np.sin(phi)
+    z = r * np.cos(phi)
+
+    return x, y, z
+
+
+def cart2sph(x, y, z):
+
+    r = np.sqrt(x**2 + y**2 + z**2)
+    theta = np.arctan(y / x)
+    phi = np.arccos(z / r)
+
+    return r, theta, phi
+
+
+def cart2dp(x, y, z):
+
+    r = np.sqrt(x**2 + y**2 + z**2)
+    alpha = np.arccos((np.sqrt(y**2 + z**2) / r))
+    beta = np.arccos((np.sqrt(x**2 + z**2) / r))
+
+    return r, alpha, beta
+
+
+def dp2cart(r, alpha, beta):
+
+    z = r * (1 - np.sin(alpha)**2 - np.sin(beta)**2)
+    x = r * np.sin(alpha)
+    y = r * np.sin(beta)
+
+    return x, y, z
 
 
 def rotation_matrix(vec, angle):
@@ -413,3 +440,20 @@ def update_progress(con, job_id):
 
     with con:
         con.execute('UPDATE progress SET is_complete=1 WHERE job_id=?', [job_id,])
+
+
+if __name__ == '__main__':
+
+    from matplotlib import pyplot as plt
+    from mpl_toolkits.mplot3d import Axes3D
+
+    pos = meshview(1, np.arange(90), np.arange(90), mode='sec')
+
+    fig = plt.figure()
+    ax = fig.add_subplot(111, projection='3d')
+    ax.plot(*pos.T, '.')
+    ax.set_xlim(0, 1)
+    ax.set_ylim(0, 1)
+    ax.set_zlim(0, 1)
+    ax.set_aspect('equal')
+    fig.show()
