@@ -60,8 +60,8 @@ def sec2cart(r, alpha, beta):
 def cart2sec(x, y, z):
 
     r = np.sqrt(x**2 + y**2 + z**2)
-    alpha = np.arccos(z / (np.sqrt(x**2 + z**2)))
-    beta = np.arccos(z / (np.sqrt(y**2 + z**2)))
+    alpha = np.arccos(z / (np.sqrt(x**2 + z**2))) * np.sign(x)
+    beta = np.arccos(z / (np.sqrt(y**2 + z**2))) * np.sign(y)
 
     # r = np.sqrt(x**2 + y**2 + z**2)
     # alpha_p = np.arcsin(x / r)

@@ -24,7 +24,7 @@ defaults['threads'] = multiprocessing.cpu_count()
 
 ## PROCESS FUNCTIONS ##
 
-POSITIONS_PER_PROCESS = 4000
+POSITIONS_PER_PROCESS = 2000
 
 
 def init_process(_write_lock, _simulation, _arrays):
