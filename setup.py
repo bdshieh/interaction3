@@ -6,7 +6,7 @@ Setup script to compile cython files. To compile, use:
 Author: Bernard Shieh (bshieh@gatech.edu)
 '''
 # from distutils.core import setup, Extension
-from setuptools import setup
+from setuptools import setup, find_packages
 from setuptools.extension import Extension
 from Cython.Build import cythonize
 
@@ -29,19 +29,26 @@ ext_modules = [
               sources=['interaction3/beamform/engines_cy.pyx'],
               include_dirs=[np.get_include()],
               language=_LANGUAGE
-
     )
 ]
 
 
 setup(
     name='interaction3',
+    version='0.5',
     ext_modules=cythonize(ext_modules),
+    packages=find_packages(),
+    package_data={
+      'interaction3.abstract': ['*.json']
+    },
+    entry_points={
+      'console_scripts': [
+          'interaction3 = interaction3.cli:main'
+      ]
+    },
     install_requires=[
         'numpy',
         'scipy',
-        'matplotlib',
-        'jupyter',
         'cython',
         'pandas',
         'sympy',

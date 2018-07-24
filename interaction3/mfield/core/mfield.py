@@ -74,7 +74,7 @@ class MField(object):
         amplitudes_mat = self._numpy_to_mat(amplitudes, orient='col')
 
         ret = self._mateng.calc_scat(Th1, Th2, points_mat, amplitudes_mat,
-            nargout=2)
+            nargout=2, stdout=io.StringIO())
 
         scat = self._mat_to_numpy(ret[0])
         t0 = ret[1]
@@ -87,7 +87,7 @@ class MField(object):
         amplitudes_mat = self._numpy_to_mat(amplitudes, orient='col')
 
         ret = self._mateng.calc_scat_all(Th1, Th2, points_mat, amplitudes_mat,
-            dec_factor, nargout=2)
+            dec_factor, nargout=2, stdout=io.StringIO())
 
         scat = self._mat_to_numpy(ret[0])
         t0 = ret[1]
@@ -100,7 +100,7 @@ class MField(object):
         amplitudes_mat = self._numpy_to_mat(amplitudes, orient='col')
 
         ret = self._mateng.calc_scat_multi(Th1, Th2, points_mat, amplitudes_mat,
-            nargout=2)
+            nargout=2, stdout=io.StringIO())
 
         scat = self._mat_to_numpy(ret[0])
         t0 = ret[1]
@@ -111,7 +111,7 @@ class MField(object):
 
         points_mat = self._numpy_to_mat(points, orient='row')
 
-        ret = self._mateng.calc_h(Th, points_mat, nargout=2)
+        ret = self._mateng.calc_h(Th, points_mat, nargout=2, stdout=io.StringIO())
 
         h = self._mat_to_numpy(ret[0])
         t0 = ret[1]
@@ -122,7 +122,7 @@ class MField(object):
 
         points_mat = self._numpy_to_mat(points, orient='row')
 
-        ret = self._mateng.calc_hp(Th, points_mat, nargout=2)
+        ret = self._mateng.calc_hp(Th, points_mat, nargout=2, stdout=io.StringIO())
 
         hp = self._mat_to_numpy(ret[0])
         t0 = ret[1]
@@ -133,7 +133,7 @@ class MField(object):
 
         points_mat = self._numpy_to_mat(points, orient='row')
 
-        ret = self._mateng.calc_hhp(Th1, Th2, points_mat, nargout=2)
+        ret = self._mateng.calc_hhp(Th1, Th2, points_mat, nargout=2, stdout=io.StringIO())
 
         hhp = self._mat_to_numpy(ret[0])
         t0 = ret[1]

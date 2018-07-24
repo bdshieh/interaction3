@@ -9,7 +9,7 @@ from tqdm import tqdm
 import traceback
 import sys
 
-from interaction3.bem.simulations import ReceiveCrosstalk, sim_functions as sim
+from interaction3.bem.solvers import ReceiveCrosstalk, sim_functions as sim
 from interaction3 import abstract
 
 # register adapters for sqlite to convert numpy types

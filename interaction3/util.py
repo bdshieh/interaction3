@@ -194,11 +194,11 @@ def sum_with_padding(rf_data, t0s, fs):
 
     for rf, fpad, bpad in zip(rf_data, frontpads, backpads):
 
-        new_rf = np.pad(rf, ((0,0), (fpad, bpad)), mode='constant')
+        new_rf = np.pad(rf, ((0, 0), (fpad, bpad)), mode='constant')
         new_data.append(new_rf)
 
-    return np.sum(new_data, axis=0), mint0
-
+    # return np.sum(new_data, axis=0), mint0
+    return sum(new_data), mint0
 
 def gausspulse(fc, fbw, fs):
 

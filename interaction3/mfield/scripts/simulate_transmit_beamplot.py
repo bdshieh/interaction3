@@ -7,10 +7,11 @@ import sqlite3 as sql
 from contextlib import closing
 from tqdm import tqdm
 import traceback
+import argparse
 import sys
 
 from interaction3 import abstract, util
-from interaction3.mfield.solvers import TransmitBeamplot
+from interaction3.mfield.solvers import TransmitBeamplot2 as TransmitBeamplot
 
 # register adapters for sqlite to convert numpy types
 sql.register_adapter(np.float64, float)
@@ -25,7 +26,7 @@ defaults['threads'] = multiprocessing.cpu_count()
 
 ## PROCESS FUNCTIONS ##
 
-POSITIONS_PER_PROCESS = 1000
+POSITIONS_PER_PROCESS = 20000
 
 
 def init_process(_write_lock, _simulation, _arrays):
@@ -46,8 +47,9 @@ def process(job):
 
     solver.solve(field_pos)
 
-    rf_data = solver.result['rf_data']
-    p = np.max(util.envelope(rf_data, axis=1), axis=1)
+    # rf_data = solver.result['rf_data']
+    # p = np.max(util.envelope(rf_data, axis=1), axis=1)
+    p = solver.result['brightness']
 
     with write_lock:
         with closing(sql.connect(file)) as con:
@@ -65,7 +67,15 @@ def run_process(*args, **kwargs):
 
 ## ENTRY POINT ##
 
-def main(**args):
+def main(args):
+
+    # define and parse arguments
+    parser = argparse.ArgumentParser()
+    parser.add_argument('file', nargs='?')
+    parser.add_argument('-s', '--spec', nargs='+')
+    parser.add_argument('-t', '--threads', type=int)
+    parser.add_argument('-o', '--overwrite', action='store_true')
+    args = vars(parser.parse_args(args))
 
     # get abstract objects from specification
     spec = args['spec']
@@ -90,6 +100,7 @@ def main(**args):
     # get args needed in main
     file = args['file']
     threads = args['threads']
+    overwrite = args['overwrite']
     mode = args['mesh_mode']
     mesh_vector1 = args['mesh_vector1']
     mesh_vector2 = args['mesh_vector2']
@@ -107,19 +118,13 @@ def main(**args):
     # check for existing file
     if os.path.isfile(file):
 
-        response = input('File ' + str(file) + ' already exists.\n' +
-                         'Continue (c), overwrite (o), or do nothing (any other key)?')
-
-        if response.lower() in ['o', 'overwrite']:  # if file exists, prompt for overwrite
+        if overwrite:  # if file exists, prompt for overwrite
 
             os.remove(file)  # remove existing file
             create_database(file, args, njobs, field_pos)  # create database
 
-        elif response.lower() in ['c', 'continue']:  # continue from current progress
+        else: # continue from current progress
             is_complete, ijob = util.get_progress(file)
-
-        else:
-            raise Exception('Database already exists')
 
     else:
 
@@ -210,18 +215,8 @@ def update_image_table(con, field_pos, brightness):
         con.executemany(query, zip(x, y, z, brightness.ravel()))
 
 
-## COMMAND LINE INTERFACE ##
-
 if __name__ == '__main__':
+    main(sys.argv[1:])
 
-    import argparse
 
-    # define and parse arguments
-    parser = argparse.ArgumentParser()
-    parser.add_argument('file', nargs='?')
-    parser.add_argument('-s', '--spec', nargs='+')
-    parser.add_argument('-t', '--threads', type=int)
-
-    args = vars(parser.parse_args())
-    main(**args)
 

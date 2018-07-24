@@ -1,4 +1,4 @@
-## interaction3 / mfield / solvers / transmit_receive_beamplot_3.py
+## interaction3 / mfield / solvers / transmit_beamplot.py
 
 import numpy as np
 import attr
@@ -8,7 +8,7 @@ from .. core import mfield
 
 
 @attr.s
-class TransmitReceiveBeamplot3(object):
+class TransmitBeamplot2(object):
 
     # INSTANCE VARIABLES, FIELD II PARAMETERS
     c = attr.ib()
@@ -48,16 +48,15 @@ class TransmitReceiveBeamplot3(object):
         pulse, _ = util.gausspulse(self.excitation_fc, self.excitation_bw / self.excitation_fc, self.fs)
         self._pulse = pulse
 
-        # read rect_info and create list of transmit and receive apertures
+        # read rect_info and create list of transmit
         tx_apertures = []
-        rx_apertures = []
 
         for info in rect_info:
 
             tx_info = info['tx_info']
-            rx_info = info['rx_info']
 
             if tx_info is not None:
+
                 tx_rectangles = tx_info['rectangles']
                 tx_centers = tx_info['centers']
                 tx_delays = tx_info['delays']
@@ -77,38 +76,15 @@ class TransmitReceiveBeamplot3(object):
                 # add aperture to list
                 tx_apertures.append(tx)
 
-            if rx_info is not None:
-                rx_rectangles = rx_info['rectangles']
-                rx_centers = rx_info['centers']
-                rx_delays = rx_info['delays']
-                rx_apod = rx_info['apodizations']
-                rx_ele_delays = rx_info['ele_delays']
-
-                # create receive aperture and set aperture parameters
-                rx = field.xdc_rectangles(rx_rectangles, rx_centers, np.array([[0, 0, 300]]))
-                field.xdc_impulse(rx, pulse)
-                field.xdc_excitation(rx, np.array([1]))
-                field.xdc_focus_times(rx, np.zeros((1, 1)), rx_delays)
-                field.xdc_apodization(rx, np.zeros((1, 1)), rx_apod)
-
-                # set mathematical element delays
-                field.ele_delay(rx, np.arange(len(rx_ele_delays)) + 1, rx_ele_delays)
-
-                # add aperture to list
-                rx_apertures.append(rx)
-
         self._tx_apertures = tx_apertures
-        self._rx_apertures = rx_apertures
 
         return field
 
     def solve(self, field_pos=None):
 
         field = self._field
-        pulse = self._pulse
-        fs = self.fs
         tx_apertures = self._tx_apertures
-        rx_apertures = self._rx_apertures
+        fs = self.fs
         result = self.result
 
         if field_pos is None:
@@ -116,48 +92,20 @@ class TransmitReceiveBeamplot3(object):
         field_pos = np.atleast_2d(field_pos)
 
         # iterate over field positions
-        pos_rf = []
-        pos_t0s = []
+        tx_p, tx_t0 = [], []
 
-        for i, pos in enumerate(field_pos):
+        for tx in tx_apertures:
 
-            # determine sum of transmit spatial impulse responses
-            tx_sir = []
-            tx_t0 = []
+            _p, _t0 = field.calc_hp(tx, field_pos)
+            tx_p.append(_p.T)
+            tx_t0.append(_t0)
 
-            for tx in tx_apertures:
-                _tx_sir, _tx_t0 = field.calc_h(tx, pos)
-                tx_sir.append(_tx_sir)
-                tx_t0.append(_tx_t0)
+        # p, t0 = util.sum_with_padding(tx_p, tx_t0, fs)
+        # brightness = np.max(util.envelope(p, axis=1), axis=1)
 
-            tx_sir, tx_t0 = util.sum_with_padding(tx_sir, tx_t0, fs)
-
-            # determine sum of receive impulse responses
-            rx_sir = []
-            rx_t0 = []
-
-            for rx in rx_apertures:
-                _rx_sir, _rx_t0 = field.calc_h(rx, pos)
-                rx_sir.append(_rx_sir)
-                rx_t0.append(_rx_t0)
-
-            rx_sir, rx_t0 = util.sum_with_padding(rx_sir, rx_t0, fs)
-
-            # calculate pulse-echo response by convolving transmit and receive spatial impulse responses
-            # _pos_rf = np.convolve(tx_sir.squeeze(), rx_sir.squeeze()) / fs
-            _pos_t0 = tx_t0 + rx_t0
-            _pos_rf = _convolver(pulse, tx_sir, rx_sir, pulse, fs=fs)
-
-            pos_rf.append(_pos_rf)
-            pos_t0s.append(_pos_t0)
-
-        # result['rf'] = pos_rf, pos_t0s
-
-        rf_data, t0 = util.concatenate_with_padding(pos_rf, pos_t0s, fs, axis=0)
-        times = t0 + np.arange(rf_data.shape[1]) / fs
-
-        result['rf_data'] = rf_data
-        result['times'] = times
+        result['p'] = tx_p
+        result['t0'] = tx_t0
+        # result['brightness'] = brightness
 
     @staticmethod
     def get_objects_from_spec(*files):
@@ -192,9 +140,8 @@ class TransmitReceiveBeamplot3(object):
         att_f0 = simulation.get('attenuation_center_frequency', 1e6)
         field_pos = simulation.get('field_positions', None)
         tx_focus = simulation.get('transmit_focus', None)
-        rx_focus = simulation.get('receive_focus', None)
         c = simulation.get('sound_speed', 1540)
-        delay_quant = simulation.get('delay_quantization', 0)
+        delay_quant = simulation.get('delay_quantization', None)
 
         rectangles_info = []
         for array in arrays:
@@ -202,12 +149,7 @@ class TransmitReceiveBeamplot3(object):
             if tx_focus is not None:  # apply transmit focus
                 abstract.focus_array(array, tx_focus, c, delay_quant, kind='tx')
             tx_info = _construct_rectangles_info(array, kind='tx')
-
-            if rx_focus is not None:  # apply receive focus
-                abstract.focus_array(array, rx_focus, c, delay_quant, kind='rx')
-            rx_info = _construct_rectangles_info(array, kind='rx')
-
-            rectangles_info.append(dict(tx_info=tx_info, rx_info=rx_info))
+            rectangles_info.append(dict(tx_info=tx_info))
 
         output = {}
         output['rectangles_info'] = rectangles_info
@@ -226,14 +168,6 @@ class TransmitReceiveBeamplot3(object):
         return output, meta
 
 
-def _convolver(*args, fs=None):
-
-    result = args[0].squeeze()
-    for a in args[1:]:
-        result = np.convolve(result, a.squeeze()) / fs
-    return result
-
-
 def _construct_rectangles_info(array, kind='tx'):
 
     # create lists to store info about each mathematical element in the array
@@ -247,9 +181,6 @@ def _construct_rectangles_info(array, kind='tx'):
         channels = [ch for ch in array['channels'] if ch['kind'].lower() in ['tx', 'transmit', 'both', 'txrx']]
     elif kind.lower() in ['rx', 'receive']:
         channels = [ch for ch in array['channels'] if ch['kind'].lower() in ['rx', 'receive', 'both', 'txrx']]
-
-    if len(channels) == 0:
-        return
 
     for ch_no, ch in enumerate(channels):
 
@@ -354,4 +285,3 @@ def _construct_rectangles_info(array, kind='tx'):
     output['ele_delays'] = ele_delays
 
     return output
-

@@ -2,7 +2,7 @@
 
 from interaction3 import abstract
 import interaction3.abstract.arrays.matrix_array
-from interaction3.bem.simulations import TransmitCrosstalk
+from interaction3.bem.solvers import TransmitCrosstalk
 
 array = abstract.arrays.matrix_array.init(nelem=[2,2])
 simulation = abstract.BemSimulation(frequency=1e6,
