@@ -18,30 +18,23 @@ import json
 #
 #     return type(self)(_skip_validation=True, **deepcopy(dict(self), memo=memo))
 
-def _generate_json_from_object(obj):
+def _generate_object_with_type(obj):
 
-    typename = type(obj).__name__
+    _type = type(obj).__name__
 
-    if typename in classes:
+    if _type in classes or _type is 'dict':
 
         d = {}
-        d['_type'] = typename
+        d['_type'] = _type
         for k, v in obj._asdict().items():
-            d[k] = _generate_json_from_object(v)
-        return d
-
-    elif isinstance(obj, dict):
-
-        d = {}
-        for k, v in obj.items():
-            d[k] = _generate_json_from_object(v)
+            d[k] = _generate_object_with_type(v)
         return d
 
     elif isinstance(obj, (list, tuple)):
 
         l = []
-        for i in var:
-            l.append(_generate_json_from_object(i))
+        for i in obj:
+            l.append(_generate_object_with_type(i))
         return l
 
     else:
@@ -52,25 +45,35 @@ def _generate_object_from_json(js):
 
     if isinstance(js, dict):
 
-        d = dict()
-        for key, val in var.items():
-            d[key] = generate_objects_from_json(val)
+        _type = js.pop('_type')
 
-        if '_name' in d:
+        d = {}
 
-            object_name = d.pop('_name')
-            return ObjectFactory.create(object_name, d)
+        if _type is 'dict':
+
+            for key, val in js.items():
+                d[key] = _generate_object_from_json(val)
+
+
+        elif _type in classes:
+            return ObjectFactory.create(_type, d)
         return d
 
-    elif isinstance(var, list):
+    elif isinstance(js, (list, tuple)):
 
         l = []
-        for i in var:
-            l.append(generate_objects_from_json(i))
+        for i in js:
+            l.append(_generate_object_from_json(i))
         return l
 
     else:
-        return var
+        return js
+
+
+class ObjectFactory():
+
+    def create(self, _type, js):
+        pass
 
 
 def _repr(self):
@@ -81,27 +84,20 @@ def _str(self):
     return pretty(self)
 
 
-def dump(obj, fp, indent=2, mode='x', *args, **kwargs):
-    json.dump(generate_json_object_with_name(obj), open(fp, mode), indent=indent, *args, **kwargs)
+def dump(obj, fp, indent=1, mode='x', *args, **kwargs):
+    json.dump(_generate_object_with_type(obj), open(fp, mode), indent=indent, *args, **kwargs)
 
 
-def dumps(obj, indent=2, *args, **kwargs):
-    return json.dumps(_generate_json_object_with_type(obj), indent=indent, *args, **kwargs)
+def dumps(obj, indent=1, *args, **kwargs):
+    return json.dumps(_generate_object_with_type(obj), indent=indent, *args, **kwargs)
 
 
-def load(fp, *args, **kwargs):
-    return generate_objects_from_json(json.load(open(fp, 'r'), *args, **kwargs))
-
-
-def loads(s, *args, **kwargs):
-    return generate_objects_from_json(json.loads(s, *args, **kwargs))
-
-
-def _dumps(self):
-
-    for k, v in self._asdict().items():
-    json.dumps(
-
+# def load(fp, *args, **kwargs):
+#     return generate_objects_from_json(json.load(open(fp, 'r'), *args, **kwargs))
+#
+#
+# def loads(s, *args, **kwargs):
+#     return generate_objects_from_json(json.loads(s, *args, **kwargs))
 
 
 def abstracttype(*args, **kwargs):
