@@ -200,6 +200,7 @@ def sum_with_padding(rf_data, t0s, fs):
     # return np.sum(new_data, axis=0), mint0
     return sum(new_data), mint0
 
+
 def gausspulse(fc, fbw, fs):
 
     cutoff = scipy.signal.gausspulse('cutoff', fc=fc, bw=fbw, tpr=-100, bwr=-3)
@@ -211,8 +212,12 @@ def gausspulse(fc, fbw, fs):
     return pulse, t
 
 
-def envelope(rf_data, axis=-1):
-    return np.abs(scipy.signal.hilbert(np.atleast_2d(rf_data), axis=axis))
+def nextpow2(n):
+    return 2 ** int(np.ceil(np.log2(n)))
+
+
+def envelope(rf_data, N=None, axis=-1):
+    return np.abs(scipy.signal.hilbert(np.atleast_2d(rf_data), N, axis=axis))
 
 
 def qbutter(x, fn, fs=1, btype='lowpass', n=4, plot=False, axis=-1):

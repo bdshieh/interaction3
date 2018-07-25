@@ -26,7 +26,9 @@ defaults['threads'] = multiprocessing.cpu_count()
 
 ## PROCESS FUNCTIONS ##
 
-POSITIONS_PER_PROCESS = 20000
+# lower number means positions are closer to each other,
+# preventing excessive zero-padding when aligning time signals
+POSITIONS_PER_PROCESS = 400
 
 
 def init_process(_write_lock, _simulation, _arrays):
@@ -119,15 +121,15 @@ def main(args):
     if os.path.isfile(file):
 
         if overwrite:  # if file exists, prompt for overwrite
-
             os.remove(file)  # remove existing file
             create_database(file, args, njobs, field_pos)  # create database
 
         else: # continue from current progress
             is_complete, ijob = util.get_progress(file)
+            if np.all(is_complete):
+                return
 
     else:
-
         # Make directories if they do not exist
         file_dir = os.path.dirname(os.path.abspath(file))
         if not os.path.exists(file_dir):
@@ -137,7 +139,6 @@ def main(args):
         create_database(file, args, njobs, field_pos)
 
     try:
-
         # start multiprocessing pool and run process
         write_lock = multiprocessing.Lock()
         simulation = abstract.dumps(simulation)
@@ -188,7 +189,6 @@ def create_field_positions_table(con, field_pos):
 def create_image_table(con):
 
     with con:
-
         # create table
         query = '''
                 CREATE TABLE image (

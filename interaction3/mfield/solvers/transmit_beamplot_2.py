@@ -100,12 +100,12 @@ class TransmitBeamplot2(object):
             tx_p.append(_p.T)
             tx_t0.append(_t0)
 
-        # p, t0 = util.sum_with_padding(tx_p, tx_t0, fs)
-        # brightness = np.max(util.envelope(p, axis=1), axis=1)
+        p, t0 = util.sum_with_padding(tx_p, tx_t0, fs)
+        brightness = np.max(util.envelope(p, N=util.nextpow2(p.shape[1]), axis=1), axis=1)
 
-        result['p'] = tx_p
-        result['t0'] = tx_t0
-        # result['brightness'] = brightness
+        # result['p'] = tx_p
+        # result['t0'] = tx_t0
+        result['brightness'] = brightness
 
     @staticmethod
     def get_objects_from_spec(*files):
