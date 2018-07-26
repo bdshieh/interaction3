@@ -39,7 +39,8 @@ setup(
     ext_modules=cythonize(ext_modules),
     packages=find_packages(),
     package_data={
-      'interaction3.abstract': ['*.json']
+        'interaction3.abstract': ['*.json'],
+        'interaction3.mfield.core': ['*.m', '*.mat', '*.pdf', '*.mexw64', '*.mexa64']
     },
     entry_points={
       'console_scripts': [
