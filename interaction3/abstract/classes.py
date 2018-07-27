@@ -48,15 +48,12 @@ def _generate_object_from_json(js):
         _type = js.pop('_type')
 
         d = {}
+        for key, val in js.items():
+            d[key] = _generate_object_from_json(val)
 
-        if _type is 'dict':
+        if _type in classes:
+            return ObjectFactory.create(_type, **d)
 
-            for key, val in js.items():
-                d[key] = _generate_object_from_json(val)
-
-
-        elif _type in classes:
-            return ObjectFactory.create(_type, d)
         return d
 
     elif isinstance(js, (list, tuple)):
@@ -70,10 +67,11 @@ def _generate_object_from_json(js):
         return js
 
 
-class ObjectFactory():
+class ObjectFactory:
 
-    def create(self, _type, js):
-        pass
+    @staticmethod
+    def create(_type, *args, **kwargs):
+        return globals()[_type](*args, **kwargs)
 
 
 def _repr(self):
@@ -92,12 +90,12 @@ def dumps(obj, indent=1, *args, **kwargs):
     return json.dumps(_generate_object_with_type(obj), indent=indent, *args, **kwargs)
 
 
-# def load(fp, *args, **kwargs):
-#     return generate_objects_from_json(json.load(open(fp, 'r'), *args, **kwargs))
-#
-#
-# def loads(s, *args, **kwargs):
-#     return generate_objects_from_json(json.loads(s, *args, **kwargs))
+def load(fp, *args, **kwargs):
+    return _generate_object_from_json(json.load(open(fp, 'r'), *args, **kwargs))
+
+
+def loads(s, *args, **kwargs):
+    return _generate_object_from_json(json.loads(s, *args, **kwargs))
 
 
 def abstracttype(*args, **kwargs):
@@ -180,6 +178,22 @@ _SquareCmutMembrane['ndiv_x'] = 2
 _SquareCmutMembrane['ndiv_y'] = 2
 
 _CircularCmutMembrane = OrderedDict()
+_CircularCmutMembrane['id'] = None
+_CircularCmutMembrane['radius'] = 35e-6
+_CircularCmutMembrane['electrode_r'] = 35e-6
+_CircularCmutMembrane['thickness'] = (2e-6,)
+_CircularCmutMembrane['density'] = (2040,)
+_CircularCmutMembrane['y_modulus'] = (110e9,)
+_CircularCmutMembrane['p_ratio'] = (0.22,)
+_CircularCmutMembrane['isolation'] = 50e-9
+_CircularCmutMembrane['permittivity'] = 6.3
+_CircularCmutMembrane['gap'] = 100e-9
+_CircularCmutMembrane['att_mech'] = 0
+_CircularCmutMembrane['nnodes_x'] = 9
+_CircularCmutMembrane['nnodes_y'] = 9
+_CircularCmutMembrane['ndiv_x'] = 2
+_CircularCmutMembrane['ndiv_y'] = 2
+
 _SquarePmutMembrane = OrderedDict()
 _CircularPmutMembrane = OrderedDict()
 
@@ -204,6 +218,9 @@ _Array['vertices'] = FACTORY(list)
 _Array['channels'] = FACTORY(list)
 
 _BemSimulation = OrderedDict()
+
+
+
 _MfieldSimulation = OrderedDict()
 
 
