@@ -1,8 +1,13 @@
 # mfield / mfield.py
 
 import numpy as np
-import matlab
-import matlab.engine
+
+try:
+    import matlab
+    import matlab.engine
+except ImportError:
+    pass
+
 import time
 import io
 import os
