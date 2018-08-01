@@ -208,13 +208,11 @@ class MField(object):
 
         ret = self._mateng.xdc_focused_array(no_elements, width, height, kerf,
             rfocus, no_sub_x, no_sub_y, focus_mat, nargout=1)
-
         return ret
     
     def xdc_piston(self, radius, ele_size):
         
         ret = self._mateng.xdc_piston(radius, ele_size)
-        
         return ret
 
     def xdc_apodization(self, Th, times, values):
@@ -230,8 +228,10 @@ class MField(object):
     def xdc_2d_array(self):
         raise NotImplementedError
 
-    def xdc_concave(self):
-        raise NotImplementedError
+    def xdc_concave(self, radius, focal_radius, ele_size):
+        
+        ret = self._mateng.xdc_concave(radius, focal_radius, ele_size)
+        return ret
 
     def xdc_convex_array(self):
         raise NotImplementedError
