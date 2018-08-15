@@ -89,9 +89,56 @@ def _window_converter(value):
 @attr.s
 class Beamformer(object):
     """
+    A generalized delay-and-sum beamformer.
 
+    Parameters
+    ----------
+    rfdata : array_like, shape (M, N, P)
+        A 2-D or 3-D RF data matrix with M samples, N channels, and P frames.
+    field_pos : array_like, shape (..., 3)
+        A 2-D array of field positions to beamform to.
+    receive_pos : array_like, shape (N, 3)
+        A 2-D array of receive positions for each channel
+    transmit_pos : array_like, shape (..., 3)
+        A 2-D array of transmit positions. If planewave is True, this is interpreted as the origin location of the
+        planewave. Otherwise, each transmit position corresponds to a frame, where the sequence is repeated if the
+        number of transmit positions is less than the number of frames.
+    planewave: bool, optional
+        Assume planewave in transmit beamforming, default is False.
+    angles: array_like or None, optional
+        A 1-D array of angles corresponding to a frame for angular compounding. Default is None, which ignores
+        compounding.
+    window: int, optional
+        Number of samples in window of returned beamformed data. Default is 51.
+    sample_frequency: float, optional
+        Sampling rate in samples per second. Default is 40e6.
+    sound_speed: float, optional
+        Speed of sound in meters per second. Default is 1540.
+    t0: float, optional
+        Time corresponding to the first sample in seconds. Default is 0.
+    resample: int, optional
+        Integer factor to resample RF data. Default is 1.
+    apodization: array_like, optional
+        A 1-D array of apodization values for each channel. Default is an array of ones.
+    channel_mask: array_like, optional
+        A 1-D array of boolean values determining whether a channel is used (True) or ignored (False). Default is an
+        array of True.
+    normalize_delays: bool, optional
+        Normalize delays for each field position by shifting so that the minimum delay is zero. Default is True.
+    ram_limit: float, optional
+        Limits RAM usage (approximately) to this value in GB. Default is 1.
+    threads: int, optional
+        Number of threads. Default is number of logical cores available.
+    return_image: bool, optional
+        Return the image only, i.e. the envelope-detected brightness, instead of beamformed data. Greatly reduces
+        RAM usage. Default is True.
+
+
+
+    Methods
+    -------
+    run
     """
-
     rfdata = attr.ib(converter=_rfdata_converter)
     field_pos = attr.ib(converter=np.atleast_2d)
     receive_pos = attr.ib(converter=np.atleast_2d)
@@ -135,7 +182,16 @@ class Beamformer(object):
                 raise ValueError('For planewave, transmit_pos must be a single position')
 
     def run(self):
+        """
+        Runs the beamformer.
 
+        Returns
+        -------
+        Result : array_like, shape (M, ..., P)
+            Result of the beamforming operation where M is the number of field positions and P is the number of frames.
+            If return_image is True, returns image data with shape (M, 1, P). Otherwise, returns beamformed data with
+            (M, N, P) where N is the number of samples in the window.
+        """
         rfdata = self.rfdata
         field_pos = self.field_pos
         transmit_pos = self.transmit_pos
