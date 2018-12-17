@@ -5,31 +5,7 @@ from scipy.spatial.distance import cdist as distance
 from scipy.optimize import brentq
 
 from interaction3.abstract import *
-
-
-# default parameters
-defaults = {}
-
-# membrane properties
-defaults['length'] = [35e-6, 35e-6]
-defaults['electrode'] = [35e-6, 35e-6]
-defaults['nnodes'] = [9, 9]
-defaults['thickness'] = [2.2e-6,]
-defaults['density'] = [2040,]
-defaults['y_modulus'] = [110e9,]
-defaults['p_ratio'] = [0.22,]
-defaults['isolation'] = 200e-9
-defaults['permittivity'] = 6.3
-defaults['gap'] = 50e-9
-defaults['att_mech'] = 3000
-defaults['ndiv'] = [2, 2]
-
-# array properties
-defaults['mempitch'] = [45e-6, 45e-6]
-defaults['nmem'] = [2, 2]
-defaults['nelem'] = 512
-defaults['edge_buffer'] = np.sqrt(2 * 40e-6 ** 2)
-defaults['taper_radius'] = 3.7125e-3
+from interaction3 import util
 
 
 def blackman_functions(R):
@@ -60,44 +36,40 @@ def _get_blackman_symbolic_equations():
     return integral, a_eff
 
 
-def create(**kwargs):
+def main(cfg, args):
 
-    # set defaults if not in kwargs:
-    for k, v in defaults.items():
-        kwargs.setdefault(k, v)
-
-    nelem = kwargs['nelem']
-    nmem_x, nmem_y = kwargs['nmem']
-    mempitch_x, mempitch_y = kwargs['mempitch']
-    length_x, length_y = kwargs['length']
-    electrode_x, electrode_y = kwargs['electrode']
-    nnodes_x, nnodes_y = kwargs['nnodes']
-    ndiv_x, ndiv_y = kwargs['ndiv']
-    edge_buffer = kwargs['edge_buffer']
-    taper_radius = kwargs['taper_radius']
+    nelem = cfg.nelem
+    nmem_x, nmem_y = cfg.nmem
+    mempitch_x, mempitch_y = cfg.mempitch
+    length_x, length_y = cfg.length
+    electrode_x, electrode_y = cfg.electrode
+    nnodes_x, nnodes_y = cfg.nnodes
+    ndiv_x, ndiv_y = cfg.ndiv
+    edge_buffer = cfg.edge_buffer
+    taper_radius = cfg.taper_radius
 
     # calculated parameters
     gr = np.pi * (np.sqrt(5) - 1)
     integral, a_eff = blackman_functions(taper_radius)
 
     # membrane properties
-    mem_properties = dict()
-    mem_properties['length_x'] = length_x
-    mem_properties['length_y'] = length_y
-    mem_properties['electrode_x'] = electrode_x
-    mem_properties['electrode_y'] = electrode_y
-    mem_properties['y_modulus'] = kwargs['y_modulus']
-    mem_properties['p_ratio'] = kwargs['p_ratio']
-    mem_properties['isolation'] = kwargs['isolation']
-    mem_properties['permittivity'] = kwargs['permittivity']
-    mem_properties['gap'] = kwargs['gap']
-    mem_properties['nnodes_x'] = nnodes_x
-    mem_properties['nnodes_y'] = nnodes_y
-    mem_properties['thickness'] = kwargs['thickness']
-    mem_properties['density'] = kwargs['density']
-    mem_properties['att_mech'] = kwargs['att_mech']
-    mem_properties['ndiv_x'] = ndiv_x
-    mem_properties['ndiv_y'] = ndiv_y
+    memprops = {}
+    memprops['length_x'] = length_x
+    memprops['length_y'] = length_y
+    memprops['electrode_x'] = electrode_x
+    memprops['electrode_y'] = electrode_y
+    memprops['y_modulus'] = cfg.y_modulus
+    memprops['p_ratio'] = cfg.p_ratio
+    memprops['isolation'] = cfg.isolation
+    memprops['permittivity'] = cfg.permittivity
+    memprops['gap'] = cfg.gap
+    memprops['nnodes_x'] = nnodes_x
+    memprops['nnodes_y'] = nnodes_y
+    memprops['thickness'] = cfg.thickness
+    memprops['density'] = cfg.density
+    memprops['att_mech'] = cfg.att_mech
+    memprops['ndiv_x'] = ndiv_x
+    memprops['ndiv_y'] = ndiv_y
 
     # calculate membrane positions
     xx, yy, zz = np.meshgrid(np.linspace(0, (nmem_x - 1) * mempitch_x, nmem_x),
@@ -131,7 +103,7 @@ def create(**kwargs):
     xx, yy, zz = elem_pos.T
     mask = np.logical_and(np.logical_and(np.logical_and(xx >= (x0 + edge_buffer), xx < (x1 - edge_buffer)),
                                          yy >= (y0 + edge_buffer)), yy < (y1 - edge_buffer))
-    array0 = _construct_array(0, np.array([-1.25e-3, 0, 0]), vertices, elem_pos[mask, :], mem_pos, mem_properties)
+    array0 = _construct_array(0, np.array([-1.25e-3, 0, 0]), vertices, elem_pos[mask, :], mem_pos, memprops)
 
     vertices = [[-1.25e-3, -3.75e-3, 0],
                 [-1.25e-3, 3.75e-3, 0],
@@ -142,7 +114,7 @@ def create(**kwargs):
     xx, yy, zz = elem_pos.T
     mask = np.logical_and(np.logical_and(np.logical_and(xx >= (x0 + edge_buffer), xx < (x1 - edge_buffer)),
                                          yy >= (y0 + edge_buffer)), yy < (y1 - edge_buffer))
-    array1 = _construct_array(1, np.array([0, 0, 0]), vertices, elem_pos[mask, :], mem_pos, mem_properties)
+    array1 = _construct_array(1, np.array([0, 0, 0]), vertices, elem_pos[mask, :], mem_pos, memprops)
 
     vertices = [[1.25e-3, -3.75e-3, 0],
                 [1.25e-3, 3.75e-3, 0],
@@ -153,86 +125,97 @@ def create(**kwargs):
     xx, yy, zz = elem_pos.T
     mask = np.logical_and(np.logical_and(np.logical_and(xx >= (x0 + edge_buffer), xx < (x1 - edge_buffer)),
                                          yy >= (y0 + edge_buffer)), yy < (y1 - edge_buffer))
-    array2 = _construct_array(2, np.array([1.25e-3, 0, 0]), vertices, elem_pos[mask, :], mem_pos, mem_properties)
+    array2 = _construct_array(2, np.array([1.25e-3, 0, 0]), vertices, elem_pos[mask, :], mem_pos, memprops)
 
     return array0, array1, array2
 
 
-def _construct_array(id, rotation_origin, vertices, elem_pos, mem_pos, mem_properties):
+def _construct_array(id, rotation_origin, vertices, elem_pos, mem_pos, memprops):
 
     if rotation_origin is None:
         rotation_origin = np.array([0,0,0])
 
     # construct channels
-    channels = []
+    elements = []
     mem_counter = 0
     elem_counter = 0
-    ch_counter = 0
 
-    for e_pos in elem_pos:
-
+    for epos in elem_pos:
         membranes = []
-        elements = []
-
-        for m_pos in mem_pos:
-
+        for mpos in mem_pos:
             # construct membrane
-            m = SquareCmutMembrane(**mem_properties)
-            m['id'] = mem_counter
-            m['position'] = (e_pos + m_pos).tolist()
+            m = SquareCmutMembrane(**memprops)
+            m.id = mem_counter
+            m.position = (epos + mpos).tolist()
+
             membranes.append(m)
             mem_counter += 1
 
         # construct element
-        elem = Element(id=elem_counter,
-                       position=e_pos.tolist(),
-                       membranes=membranes)
+        elem = Element()
+        elem.id = elem_counter
+        elem.kind = 'both'
+        elem.dc_bias = 0
+        elem.active = True
+        elem.delay = 0
+        elem.position = epos.tolist()
+        elem.membranes = membranes
         element_position_from_membranes(elem)
+
         elements.append(elem)
         elem_counter += 1
 
-        # construct channel
-        ch = Channel(id=ch_counter,
-                     kind='both',
-                     position=e_pos.tolist(),
-                     elements=elements,
-                     dc_bias=0,
-                     active=True,
-                     delay=0)
-
-        channels.append(ch)
-        ch_counter += 1
-
     # construct array
-    array = Array(id=id,
-                  channels=channels,
-                  rotation_origin=rotation_origin.tolist(),
-                  vertices=vertices)
+    array = Array()
+    array.id = id
+    array.elements = elements,
+    array.rotation_origin = rotation_origin.tolist()
+    array.vertices = vertices
     array_position_from_vertices(array)
 
     return array
 
 
-## COMMAND LINE INTERFACE ##
+# default parameters
+_Config = {}
+# membrane properties
+_Config['length'] = [35e-6, 35e-6]
+_Config['electrode'] = [35e-6, 35e-6]
+_Config['nnodes'] = [9, 9]
+_Config['thickness'] = [2.2e-6,]
+_Config['density'] = [2040,]
+_Config['y_modulus'] = [110e9,]
+_Config['p_ratio'] = [0.22,]
+_Config['isolation'] = 200e-9
+_Config['permittivity'] = 6.3
+_Config['gap'] = 50e-9
+_Config['att_mech'] = 3000
+_Config['ndiv'] = [2, 2]
+# array properties
+_Config['mempitch'] = [45e-6, 45e-6]
+_Config['nmem'] = [2, 2]
+_Config['nelem'] = 512
+_Config['edge_buffer'] = np.sqrt(2 * 40e-6 ** 2)
+_Config['taper_radius'] = 3.7125e-3
+
+Config = register_type('Config', _Config)
 
 if __name__ == '__main__':
 
-    import argparse
+    import sys
+    from cnld import util
 
-    parser = argparse.ArgumentParser()
-    parser.add_argument('--nmem', nargs=2, type=int)
-    parser.add_argument('--mempitch', nargs=2, type=float)
-    parser.add_argument('--length', nargs=2, type=float)
-    parser.add_argument('--electrode', nargs=2, type=float)
-    parser.add_argument('--nelem', type=int)
-    parser.add_argument('-d', '--dump', nargs='?', default=None)
-    parser.set_defaults(**defaults)
+    # get script parser and parse arguments
+    parser, run_parser = util.script_parser(main, Config)
+    args = parser.parse_args()
+    array = args.func(args)
 
-    args = vars(parser.parse_args())
-    filename = args.pop('dump')
-
-    spec = create(**args)
-    print(spec)
-
-    if filename is not None:
-        dump(spec, filename, mode='w')
+    if array is not None:
+        if args.file:
+            dump(array, args.file)
+        else:
+            print(array)
+            print('Total number of channels ->', sum(get_channel_count(array)))
+            print('Number of transmit channels ->', sum(get_channel_count(array, kind='tx')))
+            print('Number of receive channels ->', sum(get_channel_count(array, kind='rx')))
+            print('Number of transmit/receive channels ->', sum(get_channel_count(array, kind='both')))

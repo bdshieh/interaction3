@@ -107,7 +107,6 @@ def _construct_array(id, rotation_origin, vertices, elem_pos, mem_pos, memprops)
     elements = []
     mem_counter = 0
     elem_counter = 0
-    ch_counter = 0
 
     for epos in elem_pos:
         # construct membrane list
@@ -139,9 +138,9 @@ def _construct_array(id, rotation_origin, vertices, elem_pos, mem_pos, memprops)
     # construct array
     array = Array()
     array.id = id
-    array.channels = channels,
-    array.rotation_origin = rotation_origin.tolist(),
-    array.vertices = vertices)
+    array.elements = elements,
+    array.rotation_origin = rotation_origin.tolist()
+    array.vertices = vertices
     array_position_from_vertices(array)
 
     return array
@@ -170,7 +169,7 @@ _Config['nelem'] = [80, 80]
 _Config['edge_buffer'] = 40e-6  # np.sqrt(2 * 40e-6 ** 2)
 _Config['taper_radius'] = 3.7125e-3
 
-_Config = register_type('Config', _Config)
+Config = register_type('Config', _Config)
 
 if __name__ == '__main__':
 
