@@ -46,7 +46,7 @@ class TransmitBeamplot(object):
         _Config['field_positions'] = None
         _Config['transmit_focus'] = None
         _Config['sound_speed'] = 1500.
-        _Config['delay_quantization'] = None
+        _Config['delay_quantization'] = 0
         return abstract.register_type('Config', _Config)
 
     @_field.default

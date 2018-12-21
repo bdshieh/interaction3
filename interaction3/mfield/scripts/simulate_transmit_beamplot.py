@@ -21,39 +21,34 @@ sql.register_adapter(np.int32, int)
 
 ## PROCESS FUNCTIONS ##
 
-POSITIONS_PER_PROCESS = 1000
+def init_process(_write_lock, _cfg, _args):
 
-
-def init_process(_write_lock, _simulation, _arrays):
-
-    global write_lock, simulation, arrays
+    global write_lock, cfg, args
 
     write_lock = _write_lock
-    simulation = abstract.loads(_simulation)
-    arrays = abstract.loads(_arrays)
+    cfg = _cfg
+    args = _args
 
 
 def process(job):
 
-    job_id, (file, field_pos) = job
+    job_id, (field_pos) = job
 
-    simulation['field_positions'] = field_pos
+    solver_cfg = TransmitBeamplot.Config(**cfg._asdict())
+    arrays = abstract.load(cfg.array_config)
 
-    kwargs, meta = TransmitBeamplot.connector(simulation, *arrays)
-    solver = TransmitBeamplot(**kwargs)
+    solver = TransmitBeamplot.from_abstract(solver_cfg, arrays)
     solver.solve(field_pos)
 
     rf_data = solver.result['rf_data']
     p = np.max(util.envelope(rf_data, axis=1), axis=1)
 
     with write_lock:
-        with closing(sql.connect(file)) as con:
-            update_pressures_table(con, field_pos, p)
-            util.update_progress(con, job_id)
+        update_pressures_table(args.file, field_pos, p)
+        util.update_progress(args.file, job_id)
 
 
 def run_process(*args, **kwargs):
-
     try:
         return process(*args, **kwargs)
     except:
@@ -62,20 +57,17 @@ def run_process(*args, **kwargs):
 
 ## DATABASE FUNCTIONS ##
 
-def create_database(file, args, njobs, field_pos):
-
+def create_database(file, cfg, args, field_pos):
     with closing(sql.connect(file)) as con:
         # create database tables (metadata, progress, field_positions, pressures)
-        util.create_metadata_table(con, **args)
-        util.create_progress_table(con, njobs)
+        util.create_metadata_table(con, **cfg._asdict(), **vars(args))
         create_field_positions_table(con, field_pos)
         create_pressures_table(con)
 
 
+@util.open_db
 def create_field_positions_table(con, field_pos):
-
     x, y, z = field_pos.T
-
     with con:
         # create table
         con.execute('CREATE TABLE field_positions (x float, y float, z float)')
@@ -86,8 +78,8 @@ def create_field_positions_table(con, field_pos):
         con.executemany(query, zip(x, y, z))
 
 
+@util.open_db
 def create_pressures_table(con):
-
     with con:
         # create table
         query = '''
@@ -101,15 +93,13 @@ def create_pressures_table(con):
                 )
                 '''
         con.execute(query)
-
         # create indexes
         con.execute('CREATE INDEX pressure_index ON pressures (x, y, z)')
 
 
+@util.open_db
 def update_pressures_table(con, field_pos, pressures):
-
     x, y, z = np.array(field_pos).T
-
     with con:
         query = 'INSERT INTO pressures (x, y, z,  pressure) VALUES (?, ?, ?, ?)'
         con.executemany(query, zip(x, y, z, pressures.ravel()))
@@ -119,23 +109,19 @@ def update_pressures_table(con, field_pos, pressures):
 
 def main(cfg, args):
 
-    # get abstract objects from specification
-    spec = args['spec']
-    objects = TransmitBeamplot.get_objects_from_spec(*spec)
-    simulation = objects[0]
-    arrays = objects[1:]
-
-    print('simulation parameters as key --> value:')
-    for k, v in args.items():
-        print(k, '-->', v)
+    # get parameters from config and args
+    file = args.file
+    write_over = args.write_over
+    threads = args.threads if args.threads else multiprocessing.cpu_count()
+    positions_per_process = cfg.positions_per_process
 
     # get args needed in main
-    file = args['file']
-    threads = args['threads']
-    mode = args['mesh_mode']
-    mesh_vector1 = args['mesh_vector1']
-    mesh_vector2 = args['mesh_vector2']
-    mesh_vector3 = args['mesh_vector3']
+    file = args.file
+    threads = args.threads
+    mode = cfg.mesh_mode
+    mesh_vector1 = cfg.mesh_vector1
+    mesh_vector2 = cfg.mesh_vector2
+    mesh_vector3 = cfg.mesh_vector3
 
     # create field positions
     field_pos = util.meshview(np.linspace(*mesh_vector1), np.linspace(*mesh_vector2), np.linspace(*mesh_vector3),
@@ -143,55 +129,40 @@ def main(cfg, args):
 
     # calculate job-related values
     is_complete = None
-    njobs = int(np.ceil(len(field_pos) / POSITIONS_PER_PROCESS))
+    njobs = int(np.ceil(len(field_pos) / positions_per_process))
     ijob = 0
 
     # check for existing file
     if os.path.isfile(file):
-
-        response = input('File ' + str(file) + ' already exists.\n' +
-                         'Continue (c), overwrite (o), or do nothing (any other key)?')
-
-        if response.lower() in ['o', 'overwrite']:  # if file exists, prompt for overwrite
-
+        if write_over:  # if file exists, write over
             os.remove(file)  # remove existing file
-            create_database(file, args, njobs, field_pos)  # create database
+            create_database(file, cfg, args, field_pos)  # create database
+            util.create_progress_table(file, njobs)
 
-        elif response.lower() in ['c', 'continue']:  # continue from current progress
+        else: # continue from current progress
             is_complete, ijob = util.get_progress(file)
-
-        else:
-            raise Exception('Database already exists')
-
+            if np.all(is_complete): return
     else:
-
         # Make directories if they do not exist
         file_dir = os.path.dirname(os.path.abspath(file))
         if not os.path.exists(file_dir):
             os.makedirs(file_dir)
 
         # create database
-        create_database(file, args, njobs, field_pos)
+        create_database(file, cfg, args, field_pos)  # create database
+        util.create_progress_table(file, njobs)
 
+    # start multiprocessing pool and run process
     try:
-
-        # start multiprocessing pool and run process
         write_lock = multiprocessing.Lock()
-        simulation = abstract.dumps(simulation)
-        arrays = abstract.dumps(arrays)
-        pool = multiprocessing.Pool(threads, initializer=init_process, initargs=(write_lock, simulation, arrays))
-
-        jobs = util.create_jobs(file, (field_pos, POSITIONS_PER_PROCESS), mode='zip', is_complete=is_complete)
+        pool = multiprocessing.Pool(threads, initializer=init_process, initargs=(write_lock, cfg, args))
+        jobs = util.create_jobs((field_pos, positions_per_process), mode='zip', is_complete=is_complete)
         result = pool.imap_unordered(run_process, jobs)
-
-        for r in tqdm(result, desc='Simulating', total=njobs, initial=ijob):
+        for r in tqdm(result, desc='Calculating', total=njobs, initial=ijob):
             pass
-
     except Exception as e:
         print(e)
-
     finally:
-
         pool.terminate()
         pool.close()
 
@@ -202,8 +173,21 @@ if __name__ == '__main__':
 
     # define default configuration for this script
     Config = {}
+    Config['use_attenuation'] = False
+    Config['attenuation'] = 0
+    Config['frequency_attenuation'] = 0
+    Config['attenuation_center_frequency'] = 1e6
+    Config['use_element_factor'] = False
+    Config['element_factor_file'] = None
+    Config['field_positions'] = None
     Config['transmit_focus'] = None
+    Config['sound_speed'] = 1500.
     Config['delay_quantization'] = 0
+    Config['mesh_mode'] = 'sector'
+    Config['mesh_vector1'] = None
+    Config['mesh_vector2'] = None
+    Config['mesh_vector3'] = None
+    Config['positions_per_process'] = 5000
 
     # get script parser and parse arguments
     parser, run_parser = util.script_parser(main, Config)

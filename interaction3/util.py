@@ -323,6 +323,10 @@ def create_jobs(*args, mode='zip', is_complete=None):
 ''' DATABASE FUNCTIONS '''
 
 def open_db(f):
+    '''
+    If first arg is a filename, opens the filename and creates a connection object,
+    otherwise assume connection object.
+    '''
     def decorator(firstarg, *args, **kwargs):
         if isinstance(firstarg, sql.Connection):
             return f(firstarg, *args, **kwargs)
@@ -335,14 +339,12 @@ def open_db(f):
 
 @open_db
 def table_exists(con, name):
-
     query = '''SELECT count(*) FROM sqlite_master WHERE type='table' and name=?'''
     return con.execute(query, (name,)).fetchone()[0] != 0
 
 
 @open_db
 def create_metadata_table(con, **kwargs):
-
     table = [[str(v) for v in list(kwargs.values())]]
     columns = list(kwargs.keys())
     pd.DataFrame(table, columns=columns, dtype=str).to_sql('metadata', con, if_exists='replace', index=False)
@@ -350,7 +352,6 @@ def create_metadata_table(con, **kwargs):
 
 @open_db
 def create_progress_table(con, njobs):
-
     with con:
         # create table
         con.execute('CREATE TABLE progress (job_id INTEGER PRIMARY KEY, is_complete boolean)')
@@ -360,9 +361,7 @@ def create_progress_table(con, njobs):
 
 @open_db
 def get_progress(con):
-
     table = pd.read_sql('SELECT is_complete FROM progress ORDER BY job_id', con)
-
     is_complete = np.array(table).squeeze()
     ijob = sum(is_complete) + 1
 
