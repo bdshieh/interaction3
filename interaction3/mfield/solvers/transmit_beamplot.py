@@ -31,6 +31,23 @@ class TransmitBeamplot(object):
     _field = attr.ib(init=False, repr=False)
     _interpolator = attr.ib(init=False, repr=False)
     result = attr.ib(init=False, default=attr.Factory(dict), repr=False)
+    Config = attr.ib(init=False, repr=False)
+
+    @Config.default
+    def _Config_default(self):
+
+        _Config = {}
+        _Config['use_attenuation'] = False
+        _Config['attenuation'] = 0
+        _Config['frequency_attenuation'] = 0
+        _Config['attenuation_center_frequency'] = 1e6
+        _Config['use_element_factor'] = False
+        _Config['element_factor_file'] = None
+        _Config['field_positions'] = None
+        _Config['transmit_focus'] = None
+        _Config['sound_speed'] = 1500.
+        _Config['delay_quantization'] = None
+        return abstract.register_type('Config', _Config)
 
     @_field.default
     def _field_default(self):
@@ -54,7 +71,6 @@ class TransmitBeamplot(object):
 
     @_interpolator.default
     def _interpolator_default(self):
-
         if self.use_element_factor:
             with np.load(self.element_factor_file) as root:
                 alpha = np.linspace(0, 90, 91)
@@ -64,13 +80,11 @@ class TransmitBeamplot(object):
                 fcubic = interp2d(alpha, beta, 10 ** (correction_db / 20.), kind='cubic')
 
             def interpolator(a, b):
-
                 n = len(a)
                 z = np.zeros(n)
 
                 for i, (ai, bi) in enumerate(zip(a, b)):
                     z[i] = fcubic(ai, bi)
-
                 return z
 
             return interpolator
@@ -91,8 +105,8 @@ class TransmitBeamplot(object):
             field_pos = self.field_pos
         field_pos = np.atleast_2d(field_pos)
 
-        array_rf = list()
-        array_t0s = list()
+        array_rf = []
+        array_t0s = []
 
         for info in rect_info:
 
@@ -113,18 +127,15 @@ class TransmitBeamplot(object):
             # set mathematical element delays
             field.ele_delay(tx, np.arange(len(tx_ele_delays)) + 1, tx_ele_delays)
 
-            pos_rf = list()
-            pos_t0s = list()
+            pos_rf = []
+            pos_t0s = []
 
             for i, pos in enumerate(field_pos):
-
                 if use_element_factor:
-
                     # calculate element factor corrections
                     r_tx = np.atleast_2d(pos) - np.atleast_2d(tx_centers)
                     r, a, b = util.cart2sec(r_tx).T
                     tx_correction = interpolator(np.rad2deg(np.abs(a)), np.rad2deg(np.abs(b)))
-
                     # apply correction as apodization
                     field.xdc_apodization(tx, np.zeros((1, 1)), tx_apod * tx_correction)
 
@@ -146,185 +157,141 @@ class TransmitBeamplot(object):
         result['rf_data'] = rf_data
         result['times'] = times
 
-    @staticmethod
-    def get_objects_from_spec(*files):
-        spec = list()
+    @classmethod
+    def from_abstract(cls, cfg, *arrays):
 
-        for file in files:
-            obj = abstract.load(file)
-            if isinstance(obj, list):
-                spec += obj
-            else:
-                spec.append(obj)
+        tx_focus = cfg.transmit_focus
+        c = cfg.sound_speed
+        delay_quant = cfg.delay_quantization
 
-        if len(spec) < 2:
-            raise Exception
-
-        arrays = list()
-        for obj in spec:
-            if isinstance(obj, abstract.Array):
-                arrays.append(obj)
-            elif isinstance(obj, abstract.MfieldSimulation):
-                simulation = obj
-
-        return [simulation,] + arrays
-
-    @staticmethod
-    def connector(simulation, *arrays):
-
-        # set simulation defaults
-        use_att = simulation.get('use_attenuation', False)
-        att = simulation.get('attenuation', 0)
-        freq_att = simulation.get('frequency_attenuation', 0)
-        att_f0 = simulation.get('attenuation_center_frequency', 1e6)
-        use_element_factor = simulation.get('use_element_factor', False)
-        element_factor_file = simulation.get('element_factor_file', None)
-        field_pos = simulation.get('field_positions', None)
-        tx_focus = simulation.get('transmit_focus', None)
-        c = simulation.get('sound_speed', 1540)
-        delay_quant = simulation.get('delay_quantization', None)
-
-        rectangles_info = list()
+        rectangles_info = []
         for array in arrays:
-
             if tx_focus is not None:  # apply transmit focus
                 abstract.focus_array(array, tx_focus, c, delay_quant, kind='tx')
             tx_info = _construct_rectangles_info(array, kind='tx')
             rectangles_info.append(dict(tx_info=tx_info))
 
-        output = dict()
-        output['rectangles_info'] = rectangles_info
-        output['c'] = simulation['sound_speed']
-        output['fs'] = simulation['sampling_frequency']
-        output['use_att'] = use_att
-        output['att'] = att
-        output['freq_att'] = freq_att
-        output['att_f0'] = att_f0
-        output['use_element_factor'] = use_element_factor
-        output['element_factor_file'] = element_factor_file
-        output['field_pos'] = field_pos
-        output['excitation_fc'] = simulation['excitation_center_frequecy']
-        output['excitation_bw'] = simulation['excitation_bandwidth']
+        args = {}
+        args['rectangles_info'] = rectangles_info
+        args['c'] = cfg.sound_speed
+        args['fs'] = cfg.sampling_frequency
+        args['use_att'] = cfg.use_att
+        args['att'] = cfg.att
+        args['freq_att'] = cfg.freq_att
+        args['att_f0'] = cfg.att_f0
+        args['use_element_factor'] = cfg.use_element_factor
+        args['element_factor_file'] = cfg.element_factor_file
+        args['field_pos'] = cfg.field_pos
+        args['excitation_fc'] = cfg.excitation_center_frequecy
+        args['excitation_bw'] = cfg.excitation_bandwidth
 
-        meta = dict()
-
-        return output, meta
+        obj = cls(**args)
+        obj.metadata = {}
+        return obj
 
 
 def _construct_rectangles_info(array, kind='tx'):
 
     # create lists to store info about each mathematical element in the array
-    channel_centers = list()
-    channel_delays = list()
-    channel_apodizations = list()
-    rectangles = list()
-    ele_delays = list()
+    elements_centers = []
+    elements_delays = []
+    elements_apodizations = []
+    rectangles = []
+    ele_delays = []
 
-    if kind.lower() in ['tx', 'transmit']:
-        channels = [ch for ch in array['channels'] if ch['kind'].lower() in ['tx', 'transmit', 'both', 'txrx']]
-    elif kind.lower() in ['rx', 'receive']:
-        channels = [ch for ch in array['channels'] if ch['kind'].lower() in ['rx', 'receive', 'both', 'txrx']]
+    elements = abstract.get_elements_from_array(array, kind=kind)
 
-    for ch_no, ch in enumerate(channels):
+    for elem_no, elem in enumerate(elements):
 
-        # pull channel properties
-        ch_center = ch['position']  # required property
-        ch_delay = ch.get('delay', 0)  # optional property
-        ch_apod = ch.get('apodization', 1)  # optional property
+        # pull elements properties
+        elem_center = elem.position  
+        elem_delay = elem.delay  
+        elem_apod = elem.apodization  
+        elements_centers.append(elem_center)
+        elements_delays.append(elem_delay)
+        elements_apodizations.append(elem_apod)
 
-        channel_centers.append(ch_center)
-        channel_delays.append(ch_delay)
-        channel_apodizations.append(ch_apod)
+        ele_delays_row = []
 
-        ele_delays_row = list()
+        for mem in elements.membranes:
 
-        for elem in ch['elements']:
+            # pull membrane properties
+            mem_center = mem.position  
+            length_x = mem.length_x  
+            length_y = mem.length_y  
+            ndiv_x = mem.ndiv_x  
+            ndiv_y = mem.ndiv_y  
+            mem_delay = mem.delay  
+            mem_apod = mem.apodization  
+            rotations = mem.rotations  
 
-            # pull element properties
-            elem_delay = elem.get('delay', 0)  # optional property
-            elem_apod = elem.get('apodization', 1)  # optional property
+            ele_length_x = length_x / ndiv_x
+            ele_length_y = length_y / ndiv_y
 
-            for mem in elem['membranes']:
+            # use meshgrid to determine centers of mathematical elements
+            xv = np.linspace(-length_x / 2 + ele_length_x / 2, length_x / 2 - ele_length_x / 2, ndiv_x)
+            yv = np.linspace(-length_y / 2 + ele_length_y / 2, length_y / 2 - ele_length_y / 2, ndiv_y)
+            zv = 0
+            x, y, z = np.meshgrid(xv, yv, zv, indexing='xy')
+            ele_centers = np.c_[x.ravel(), y.ravel(), z.ravel()]
 
-                # pull membrane properties
-                mem_center = mem['position']  # required property
-                length_x = mem['length_x']  # required property
-                length_y = mem['length_y']  # required property
-                ndiv_x = mem.get('ndiv_x', 2)  # optional property
-                ndiv_y = mem.get('ndiv_y', 2)  # optional property
-                mem_delay = mem.get('delay', 0)  # optional property
-                mem_apod = mem.get('apodization', 1)  # optional property
-                rotations = mem.get('rotations', None)  # optional property
+            # apply rotations
+            if rotations is not None:
+                for vec, angle in rotations:
+                    ele_centers = util.rotate_nodes(ele_centers, vec, angle)
 
-                ele_length_x = length_x / ndiv_x
-                ele_length_y = length_y / ndiv_y
+            ele_centers += mem_center
 
-                # use meshgrid to determine centers of mathematical elements
-                xv = np.linspace(-length_x / 2 + ele_length_x / 2, length_x / 2 - ele_length_x / 2, ndiv_x)
-                yv = np.linspace(-length_y / 2 + ele_length_y / 2, length_y / 2 - ele_length_y / 2, ndiv_y)
-                zv = 0
-                x, y, z = np.meshgrid(xv, yv, zv, indexing='xy')
-                ele_centers = np.c_[x.ravel(), y.ravel(), z.ravel()]
+            # loop over mathematical elements
+            for center in ele_centers:
+
+                # determine vertices in clock-wise order starting from the lower left
+                vert00 = np.array([-ele_length_x / 2, -ele_length_y / 2, 0])
+                vert01 = np.array([-ele_length_x / 2, ele_length_y / 2, 0])
+                vert11 = np.array([ele_length_x / 2, ele_length_y / 2, 0])
+                vert10 = np.array([ele_length_x / 2, -ele_length_y / 2, 0])
 
                 # apply rotations
                 if rotations is not None:
                     for vec, angle in rotations:
-                        ele_centers = util.rotate_nodes(ele_centers, vec, angle)
+                        vert00 = util.rotate_nodes(vert00, vec, angle)
+                        vert01 = util.rotate_nodes(vert01, vec, angle)
+                        vert11 = util.rotate_nodes(vert11, vec, angle)
+                        vert10 = util.rotate_nodes(vert10, vec, angle)
 
-                ele_centers += mem_center
+                vert00 += center
+                vert01 += center
+                vert11 += center
+                vert10 += center
 
-                # loop over mathematical elements
-                for center in ele_centers:
+                # create rectangles and ele_delays, order matters!
+                rectangles_row = []
+                rectangles_row.append(elem_no + 1)
+                rectangles_row += list(vert00)
+                rectangles_row += list(vert01)
+                rectangles_row += list(vert11)
+                rectangles_row += list(vert10)
+                rectangles_row.append(mem_apod)
+                rectangles_row.append(ele_length_x)
+                rectangles_row.append(ele_length_y)
+                rectangles_row += list(center)
 
-                    # determine vertices in clock-wise order starting from the lower left
-                    vert00 = np.array([-ele_length_x / 2, -ele_length_y / 2, 0])
-                    vert01 = np.array([-ele_length_x / 2, ele_length_y / 2, 0])
-                    vert11 = np.array([ele_length_x / 2, ele_length_y / 2, 0])
-                    vert10 = np.array([ele_length_x / 2, -ele_length_y / 2, 0])
-
-                    # apply rotations
-                    if rotations is not None:
-                        for vec, angle in rotations:
-                            vert00 = util.rotate_nodes(vert00, vec, angle)
-                            vert01 = util.rotate_nodes(vert01, vec, angle)
-                            vert11 = util.rotate_nodes(vert11, vec, angle)
-                            vert10 = util.rotate_nodes(vert10, vec, angle)
-
-                    vert00 += center
-                    vert01 += center
-                    vert11 += center
-                    vert10 += center
-
-                    # create rectangles and ele_delays, order matters!
-                    rectangles_row = list()
-
-                    rectangles_row.append(ch_no + 1)
-                    rectangles_row += list(vert00)
-                    rectangles_row += list(vert01)
-                    rectangles_row += list(vert11)
-                    rectangles_row += list(vert10)
-                    rectangles_row.append(elem_apod * mem_apod)
-                    rectangles_row.append(ele_length_x)
-                    rectangles_row.append(ele_length_y)
-                    rectangles_row += list(center)
-
-                    ele_delays_row.append(elem_delay + mem_delay)
-
-                    rectangles.append(rectangles_row)
+                ele_delays_row.append(mem_delay)
+                rectangles.append(rectangles_row)
 
         ele_delays.append(ele_delays_row)
 
     rectangles = np.array(rectangles)
-    channel_centers = np.array(channel_centers)
-    channel_delays = np.array(channel_delays)
-    channel_apodizations = np.array(channel_apodizations)
+    elements_centers = np.array(elements_centers)
+    elements_delays = np.array(elements_delays)
+    elements_apodizations = np.array(elements_apodizations)
     ele_delays = np.array(ele_delays)
 
-    output = dict()
+    output = {}
     output['rectangles'] = rectangles
-    output['centers'] = channel_centers
-    output['delays'] = channel_delays
-    output['apodizations'] = channel_apodizations
+    output['centers'] = elements_centers
+    output['delays'] = elements_delays
+    output['apodizations'] = elements_apodizations
     output['ele_delays'] = ele_delays
 
     return output

@@ -18,12 +18,6 @@ sql.register_adapter(np.float32, float)
 sql.register_adapter(np.int64, int)
 sql.register_adapter(np.int32, int)
 
-# set default script parameters
-defaults = dict()
-defaults['threads'] = multiprocessing.cpu_count()
-defaults['transmit_focus'] = None
-defaults['delay_quantization'] = 0
-
 
 ## PROCESS FUNCTIONS ##
 
@@ -66,25 +60,70 @@ def run_process(*args, **kwargs):
         raise Exception("".join(traceback.format_exception(*sys.exc_info())))
 
 
+## DATABASE FUNCTIONS ##
+
+def create_database(file, args, njobs, field_pos):
+
+    with closing(sql.connect(file)) as con:
+        # create database tables (metadata, progress, field_positions, pressures)
+        util.create_metadata_table(con, **args)
+        util.create_progress_table(con, njobs)
+        create_field_positions_table(con, field_pos)
+        create_pressures_table(con)
+
+
+def create_field_positions_table(con, field_pos):
+
+    x, y, z = field_pos.T
+
+    with con:
+        # create table
+        con.execute('CREATE TABLE field_positions (x float, y float, z float)')
+        # create indexes
+        con.execute('CREATE UNIQUE INDEX field_position_index ON field_positions (x, y, z)')
+        # insert values into table
+        query = 'INSERT INTO field_positions VALUES (?, ?, ?)'
+        con.executemany(query, zip(x, y, z))
+
+
+def create_pressures_table(con):
+
+    with con:
+        # create table
+        query = '''
+                CREATE TABLE pressures (
+                id INTEGER PRIMARY KEY,
+                x float,
+                y float,
+                z float,
+                pressure float,
+                FOREIGN KEY (x, y, z) REFERENCES nodes (x, y, z)
+                )
+                '''
+        con.execute(query)
+
+        # create indexes
+        con.execute('CREATE INDEX pressure_index ON pressures (x, y, z)')
+
+
+def update_pressures_table(con, field_pos, pressures):
+
+    x, y, z = np.array(field_pos).T
+
+    with con:
+        query = 'INSERT INTO pressures (x, y, z,  pressure) VALUES (?, ?, ?, ?)'
+        con.executemany(query, zip(x, y, z, pressures.ravel()))
+
+
 ## ENTRY POINT ##
 
-def main(**args):
+def main(cfg, args):
 
     # get abstract objects from specification
     spec = args['spec']
     objects = TransmitBeamplot.get_objects_from_spec(*spec)
     simulation = objects[0]
     arrays = objects[1:]
-
-    # set defaults with the following priority: command line arguments >> simulation object >> script defaults
-    for k, v in simulation.items():
-        args.setdefault(k, v)
-        if args[k] is None:
-            args[k] = v
-    for k, v in defaults.items():
-        args.setdefault(k, v)
-        if args[k] is None:
-            args[k] = v
 
     print('simulation parameters as key --> value:')
     for k, v in args.items():
@@ -157,73 +196,17 @@ def main(**args):
         pool.close()
 
 
-## DATABASE FUNCTIONS ##
-
-def create_database(file, args, njobs, field_pos):
-
-    with closing(sql.connect(file)) as con:
-        # create database tables (metadata, progress, field_positions, pressures)
-        util.create_metadata_table(con, **args)
-        util.create_progress_table(con, njobs)
-        create_field_positions_table(con, field_pos)
-        create_pressures_table(con)
-
-
-def create_field_positions_table(con, field_pos):
-
-    x, y, z = field_pos.T
-
-    with con:
-        # create table
-        con.execute('CREATE TABLE field_positions (x float, y float, z float)')
-        # create indexes
-        con.execute('CREATE UNIQUE INDEX field_position_index ON field_positions (x, y, z)')
-        # insert values into table
-        query = 'INSERT INTO field_positions VALUES (?, ?, ?)'
-        con.executemany(query, zip(x, y, z))
-
-
-def create_pressures_table(con):
-
-    with con:
-        # create table
-        query = '''
-                CREATE TABLE pressures (
-                id INTEGER PRIMARY KEY,
-                x float,
-                y float,
-                z float,
-                pressure float,
-                FOREIGN KEY (x, y, z) REFERENCES nodes (x, y, z)
-                )
-                '''
-        con.execute(query)
-
-        # create indexes
-        con.execute('CREATE INDEX pressure_index ON pressures (x, y, z)')
-
-
-def update_pressures_table(con, field_pos, pressures):
-
-    x, y, z = np.array(field_pos).T
-
-    with con:
-        query = 'INSERT INTO pressures (x, y, z,  pressure) VALUES (?, ?, ?, ?)'
-        con.executemany(query, zip(x, y, z, pressures.ravel()))
-
-
-## COMMAND LINE INTERFACE ##
-
 if __name__ == '__main__':
 
-    import argparse
+    from interaction3 import util
 
-    # define and parse arguments
-    parser = argparse.ArgumentParser()
-    parser.add_argument('file', nargs='?')
-    parser.add_argument('-s', '--spec', nargs='+')
-    parser.add_argument('-t', '--threads', type=int)
+    # define default configuration for this script
+    Config = {}
+    Config['transmit_focus'] = None
+    Config['delay_quantization'] = 0
 
-    args = vars(parser.parse_args())
-    main(**args)
+    # get script parser and parse arguments
+    parser, run_parser = util.script_parser(main, Config)
+    args = parser.parse_args()
+    args.func(args)
 

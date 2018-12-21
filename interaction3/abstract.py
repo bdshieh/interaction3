@@ -449,7 +449,24 @@ def get_patch_count(a):
     '''
     '''
     return sum([len(m.patches) for e in a.elements for m in e.membranes])
-    
+
+
+@vectorize
+def get_elements_from_array(array, kind='both'):
+
+    if kind.lower() in ['both']:
+        elements = [e for e in array.elements if e.kind.lower() in ['both', 'txrx']]
+    elif kind.lower() in ['tx', 'transmit']
+        elements = [e for e in array.elements if e.kind.lower() in ['tx', 'transmit', 'both', 'txrx']]
+    elif kind.lower() in ['rx', 'receive']:
+        elements = [e for e in array.elements if e.kind.lower() in ['rx', 'receive', 'both', 'txrx']]
+    return elements
+
+
+@vectorize
+def get_membranes_from_array(array):
+    return [m for m in e.membranes for e in array.elements]
+
 
 if __name__ == '__main__':
 
