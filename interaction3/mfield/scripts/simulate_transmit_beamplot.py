@@ -22,9 +22,7 @@ sql.register_adapter(np.int32, int)
 ## PROCESS FUNCTIONS ##
 
 def init_process(_write_lock, _cfg, _args):
-
     global write_lock, cfg, args
-
     write_lock = _write_lock
     cfg = _cfg
     args = _args
@@ -173,6 +171,7 @@ if __name__ == '__main__':
 
     # define default configuration for this script
     Config = {}
+    Config['array_config'] = ''
     Config['use_attenuation'] = False
     Config['attenuation'] = 0
     Config['frequency_attenuation'] = 0
@@ -180,13 +179,13 @@ if __name__ == '__main__':
     Config['use_element_factor'] = False
     Config['element_factor_file'] = None
     Config['field_positions'] = None
-    Config['transmit_focus'] = None
+    Config['transmit_focus'] = [0, 0, 0.03]
     Config['sound_speed'] = 1500.
     Config['delay_quantization'] = 0
     Config['mesh_mode'] = 'sector'
-    Config['mesh_vector1'] = None
-    Config['mesh_vector2'] = None
-    Config['mesh_vector3'] = None
+    Config['mesh_vector1'] = -10, 10, 21
+    Config['mesh_vector2'] = 0, 1, 1
+    Config['mesh_vector3'] = 0, 1, 1
     Config['positions_per_process'] = 5000
 
     # get script parser and parse arguments

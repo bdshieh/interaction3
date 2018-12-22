@@ -1,7 +1,7 @@
 '''
 Abstract representation and manipulation of CMUT and PMUT arrays.
 '''
-__all__ = ['SquareCmutMembrane', 'CircularCmutMembrane', 'Patch', 'Element', 'Array', 
+__all__ = ['SquareCmutMembrane', 'CircularCmutMembrane', 'Element', 'Array', 
            'move_membrane', 'translate_membrane', 'rotate_membrane', 'move_element', 'translate_element',
            'rotate_element', 'element_position_from_membranes', 'focus_element', 'dump', 'dumps',
            'bias_element', 'activate_element', 'deactivate_element', 'move_array', 'load', 'loads',
@@ -154,10 +154,9 @@ _SquareCmutMembrane['isolation'] = 200e-9
 _SquareCmutMembrane['permittivity'] = 6.3
 _SquareCmutMembrane['gap'] = 100e-9
 _SquareCmutMembrane['att_mech'] = 0
-_SquareCmutMembrane['npatch_x'] = 3
-_SquareCmutMembrane['npatch_y'] = 3
+_SquareCmutMembrane['ndiv_x'] = 2
+_SquareCmutMembrane['ndiv_y'] = 2
 _SquareCmutMembrane['kmat_file'] = None
-_SquareCmutMembrane['patches'] = FACTORY(list)
 SquareCmutMembrane = register_type('SquareCmutMembrane', _SquareCmutMembrane)
 
 _CircularCmutMembrane = OrderedDict()
@@ -173,18 +172,8 @@ _CircularCmutMembrane['isolation'] = 200e-9
 _CircularCmutMembrane['permittivity'] = 6.3
 _CircularCmutMembrane['gap'] = 100e-9
 _CircularCmutMembrane['att_mech'] = 0
-_CircularCmutMembrane['npatch_r'] = 2
-_CircularCmutMembrane['npatch_theta'] = 4
 _CircularCmutMembrane['kmat_file'] = None
-_CircularCmutMembrane['patches'] = FACTORY(list)
 CircularCmutMembrane = register_type('CircularCmutMembrane', _CircularCmutMembrane)
-
-_Patch = OrderedDict()
-_Patch['id'] = None
-_Patch['position'] = None
-_Patch['length_x'] = None
-_Patch['length_y'] = None
-Patch = register_type('Patch', _Patch)
 
 _Element = OrderedDict()
 _Element['id'] = None
@@ -435,7 +424,7 @@ def get_element_count(a, kind=None):
     elif kind.lower() in ['rx', 'receive']:
         return len([e for e in a.elements if e.kind.lower() in ['rx', 'receive', 'both', 'txrx']])
     elif kind.lower() in ['txrx', 'both']:
-        return len([e for e in a.elements if e.kind..lower() in ['both', 'txrx']])
+        return len([e for e in a.elements if e.kind.lower() in ['both', 'txrx']])
 
 
 @vectorize
@@ -444,19 +433,13 @@ def get_membrane_count(a):
     '''
     return sum([len(e.membranes) for e in a.elements])
 
-@vectorize
-def get_patch_count(a):
-    '''
-    '''
-    return sum([len(m.patches) for e in a.elements for m in e.membranes])
-
 
 @vectorize
 def get_elements_from_array(array, kind='both'):
 
     if kind.lower() in ['both']:
         elements = [e for e in array.elements if e.kind.lower() in ['both', 'txrx']]
-    elif kind.lower() in ['tx', 'transmit']
+    elif kind.lower() in ['tx', 'transmit']:
         elements = [e for e in array.elements if e.kind.lower() in ['tx', 'transmit', 'both', 'txrx']]
     elif kind.lower() in ['rx', 'receive']:
         elements = [e for e in array.elements if e.kind.lower() in ['rx', 'receive', 'both', 'txrx']]

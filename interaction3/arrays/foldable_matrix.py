@@ -174,7 +174,7 @@ Config = register_type('Config', _Config)
 if __name__ == '__main__':
 
     import sys
-    from cnld import util
+    from interaction3 import util
 
     # get script parser and parse arguments
     parser, run_parser = util.script_parser(main, Config)

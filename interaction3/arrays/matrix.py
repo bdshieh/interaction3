@@ -1,68 +1,39 @@
-## interaction3 / arrays / matrix.py
-
+''' 
+Abstract representation of a matrix array.
+'''
 import numpy as np
 
 from interaction3.abstract import *
-
-# default parameters
-defaults = dict()
-
-# membrane properties
-defaults['length'] = [40e-6, 40e-6]
-defaults['electrode'] = [40e-6, 40e-6]
-defaults['nnodes'] = [9, 9]
-defaults['thickness'] = [2.2e-6,]
-defaults['density'] = [2040,]
-defaults['y_modulus'] = [110e9,]
-defaults['p_ratio'] = [0.22,]
-defaults['isolation'] = 200e-9
-defaults['permittivity'] = 6.3
-defaults['gap'] = 100e-9
-defaults['att_mech'] = 0
-defaults['ndiv'] = [2, 2]
-defaults['k_matrix_comsol_file'] = None
-
-# array properties
-defaults['mempitch'] = [50e-6, 50e-6]
-defaults['nmem'] = [2, 2]
-defaults['elempitch'] = [100e-6, 100e-6]
-defaults['nelem'] = [7, 7]
+from interaction3 import util
 
 
-def init(**kwargs):
+def main(cfg, args):
 
-    # set defaults if not in kwargs:
-    for k, v in defaults.items():
-        kwargs.setdefault(k, v)
-
-    nmem_x, nmem_y = kwargs['nmem']
-    mempitch_x, mempitch_y = kwargs['mempitch']
-    length_x, length_y = kwargs['length']
-    electrode_x, electrode_y = kwargs['electrode']
-    nnodes_x, nnodes_y = kwargs['nnodes']
-    ndiv_x, ndiv_y = kwargs['ndiv']
-    nelem_x, nelem_y = kwargs['nelem']
-    elempitch_x, elempitch_y = kwargs['elempitch']
+    nmem_x, nmem_y = cfg.nmem
+    mempitch_x, mempitch_y = cfg.mempitch
+    length_x, length_y = cfg.length
+    electrode_x, electrode_y = cfg.electrode
+    nelem_x, nelem_y = cfg.nelem
+    elempitch_x, elempitch_y = cfg.elempitch
+    ndiv_x, ndiv_y = cfg.ndiv
 
     # membrane properties
-    mem_properties = dict()
-    mem_properties['length_x'] = length_x
-    mem_properties['length_y'] = length_y
-    mem_properties['electrode_x'] = electrode_x
-    mem_properties['electrode_y'] = electrode_y
-    mem_properties['y_modulus'] = kwargs['y_modulus']
-    mem_properties['p_ratio'] = kwargs['p_ratio']
-    mem_properties['isolation'] = kwargs['isolation']
-    mem_properties['permittivity'] = kwargs['permittivity']
-    mem_properties['gap'] = kwargs['gap']
-    mem_properties['nnodes_x'] = nnodes_x
-    mem_properties['nnodes_y'] = nnodes_y
-    mem_properties['thickness'] = kwargs['thickness']
-    mem_properties['density'] = kwargs['density']
-    mem_properties['att_mech'] = kwargs['att_mech']
-    mem_properties['ndiv_x'] = ndiv_x
-    mem_properties['ndiv_y'] = ndiv_y
-    mem_properties['k_matrix_comsol_file'] = kwargs['k_matrix_comsol_file']
+    memprops = {}
+    memprops['length_x'] = length_x
+    memprops['length_y'] = length_y
+    memprops['electrode_x'] = electrode_x
+    memprops['electrode_y'] = electrode_y
+    memprops['y_modulus'] = cfg.y_modulus
+    memprops['p_ratio'] = cfg.p_ratio
+    memprops['isolation'] = cfg.isolation
+    memprops['permittivity'] = cfg.permittivity
+    memprops['gap'] = cfg.gap
+    memprops['ndiv_x'] = ndiv_x
+    memprops['ndiv_y'] = ndiv_y
+    memprops['thickness'] = cfg.thickness
+    memprops['density'] = cfg.density
+    memprops['att_mech'] = cfg.att_mech
+    memprops['kmat_file'] = cfg.kmat_file
 
     # calculate membrane positions
     xx, yy, zz = np.meshgrid(np.linspace(0, (nmem_x - 1) * mempitch_x, nmem_x),
@@ -80,71 +51,78 @@ def init(**kwargs):
                                                            (nelem_y - 1) * elempitch_y / 2,
                                                            0]
 
-    # construct channels
-    channels = []
+    # construct element list
+    elements = []
+    elem_counter = 0
+    mem_counter = 0
 
-    for i, epos in enumerate(elem_pos):
-
+    for epos in elem_pos:
+        # construct membrane list
         membranes = []
-        elements = []
-
-        for j, mpos in enumerate(mem_pos):
-
+        for mpos in mem_pos:
             # construct membrane
-            m = SquareCmutMembrane(**mem_properties)
-            m['id'] = i * len(mem_pos) + j
-            m['position'] = (epos + mpos).tolist()
+            m = SquareCmutMembrane(**memprops)
+            m.id = mem_counter
+            m.position = (epos + mpos).tolist()
+
             membranes.append(m)
-            # membranes.append(SquareCmutMembrane(id=(i * len(mem_pos) + j),
-            #                                     position=(epos + mpos).tolist(),
-            #                                     **mem_properties))
+            mem_counter += 1
 
         # construct element
-        elem = Element(id=i,
-                       position=epos.tolist(),
-                       membranes=membranes)
-        element_position_from_membranes(elem)
+        elem = Element()
+        elem.id = elem_counter
+        elem.position = epos.tolist()
+        elem.kind = 'both'
+        elem.membranes = membranes
+        # element_position_from_membranes(elem)
         elements.append(elem)
-
-        # construct channel
-        chan = Channel(id=i,
-                       kind='both',
-                       position=epos.tolist(),
-                       elements=elements,
-                       dc_bias=5,
-                       active=True,
-                       delay=0)
-
-        # channel_position_from_elements(chan)
-        channels.append(chan)
+        elem_counter += 1
 
     # construct array
-    array = Array(id=0,
-                  channels=channels,
-                  position=[0, 0, 0])
+    array = Array()
+    array.id = 0
+    array.elements = elements
+    array.position = [0, 0, 0]
 
     return array
 
 
-## COMMAND LINE INTERFACE ##
+# default configuration
+_Config = {}
+# membrane properties
+_Config['length'] = [40e-6, 40e-6]
+_Config['electrode'] = [40e-6, 40e-6]
+_Config['thickness'] = [2e-6,]
+_Config['density'] = [2040,]
+_Config['y_modulus'] = [110e9,]
+_Config['p_ratio'] = [0.22,]
+_Config['isolation'] = 200e-9
+_Config['permittivity'] = 6.3
+_Config['gap'] = 100e-9
+_Config['att_mech'] = 0
+_Config['ndiv'] = [2, 2]
+_Config['kmat_file'] = ''
+# array properties
+_Config['mempitch'] = [60e-6, 60e-6]
+_Config['nmem'] = [1, 1]
+_Config['elempitch'] = [60e-6, 60e-6]
+_Config['nelem'] = [5, 5]
+
+Config = register_type('Config', _Config)
 
 if __name__ == '__main__':
 
-    import argparse
+    import sys
+    from interaction3 import util
 
-    parser = argparse.ArgumentParser()
-    parser.add_argument('-nmem', '--nmem', nargs=2, type=int)
-    parser.add_argument('-mempitch', '--mempitch', nargs=2, type=float)
-    parser.add_argument('-nelem', '--nelem', nargs=2, type=int)
-    parser.add_argument('-elempitch', '--elempitch', nargs=2, type=float)
-    parser.add_argument('-d', '--dump', nargs='?', default=None)
-    parser.set_defaults(**defaults)
+    # get script parser and parse arguments
+    parser, run_parser = util.script_parser(main, Config)
+    args = parser.parse_args()
+    array = args.func(args)
 
-    args = vars(parser.parse_args())
-    filename = args.pop('dump')
-
-    spec = init(**args)
-    print(spec)
-
-    if filename is not None:
-        dump(spec, filename)
+    if array is not None:
+        if args.file:
+            dump(array, args.file)
+        else:
+            print(array)
+    

@@ -6,7 +6,7 @@ Setup script to compile cython files. To compile, use:
 Author: Bernard Shieh (bshieh@gatech.edu)
 '''
 # from distutils.core import setup, Extension
-from setuptools import setup
+from setuptools import setup, find_packages
 from setuptools.extension import Extension
 from Cython.Build import cythonize
 
@@ -35,7 +35,26 @@ ext_modules = [
 
 
 setup(
-    name = 'interaction3',
-    ext_modules = cythonize(ext_modules)
+    name='interaction3',
+    version='0.5',
+    # ext_modules=cythonize(ext_modules),
+    packages=find_packages(),
+    package_data={
+        'interaction3.mfield.core': ['*.m', '*.mat', '*.pdf', '*.mexw64', '*.mexa64']
+    },
+    entry_points={
+      'console_scripts': [
+          'interaction3 = interaction3.cli:main'
+      ]
+    },
+    # install_requires=[
+    #     'numpy',
+    #     'scipy',
+    #     'cython',
+    #     'pandas',
+    #     'sympy',
+    #     'attrs',
+    #     'tqdm',
+    #     'namedlist'
+    # ]
 )
-

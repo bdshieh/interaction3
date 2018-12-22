@@ -78,7 +78,6 @@ def process(job):
                 abstract.rotate_array(array, dir, np.deg2rad(-angle_tol))
 
     # create and run simulation
-
     kwargs, meta = TransmitBeamplot.connector(simulation, *arrays_plus)
     solver_plus = TransmitBeamplot(**kwargs)
     solver_plus.solve(field_pos)
